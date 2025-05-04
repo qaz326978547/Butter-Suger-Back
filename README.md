@@ -8,7 +8,8 @@ npm ci
 
 2. 設定環境變數
 
-使用Docker開發：
+使用 Docker 開發：
+
 ```
 POSTGRES_USER=testHexschool
 POSTGRES_PASSWORD=pgStartkit4test
@@ -26,7 +27,8 @@ JWT_EXPIRES_DAY=30d
 JWT_SECRET=hexschool666
 ```
 
-使用localhost開發伺服器（資料庫仍使用Docker）：
+使用 localhost 開發伺服器（資料庫仍使用 Docker）：
+
 ```
 POSTGRES_USER=testHexschool
 POSTGRES_PASSWORD=pgStartkit4test
@@ -51,3 +53,5 @@ JWT_SECRET=hexschool666
 - `npm run restart` - 重新啟動伺服器與資料庫
 - `npm run stop` - 關閉啟動伺服器與資料庫
 - `npm run clean` - 關閉伺服器與資料庫並清除所有資料
+- `npm run db:truncate ` - 清空所有資料表資料
+- `npm run db:drop ` - 刪除所有資料表
