@@ -9,33 +9,25 @@ const handleErrorAsync = require('./middleware/handleErrorAsync') // 引入異�
 require('dotenv').config()
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 // 引入 passport 配置
-const passport = require('passport')
+const passport = require('./config/passport')
 const session = require('express-session')
 
 const app = express()
 // Passport 設定
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+
+const allowedOrigins = ['http://localhost:5173', 'https://buttersuger-frontend.zeabur.app']
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true) // 允許請求
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
     },
-    (accessToken, refreshToken, profile, done) => {
-      // 儲存 accessToken 到 profile 中
-      profile.accessToken = accessToken
-      // 儲存資料後，傳遞給下一步
-      return done(null, profile)
-    }
-  )
+    credentials: true,
+  })
 )
-
-//當使用者成功登入時, serializeUser 會儲存使用者資訊到 session
-passport.serializeUser((user, done) => done(null, user))
-//deserializeUser 會從 session 取出使用者資訊, 並附加在 req.user
-passport.deserializeUser((obj, done) => done(null, obj))
-
-app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(

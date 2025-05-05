@@ -3,8 +3,7 @@ const router = express.Router()
 const passport = require('passport')
 const userController = require('../controllers/user')
 const handleErrorAsync = require('../middleware/handleErrorAsync')
-
-// 當使用者點擊該按鈕時，應用會將用戶重定向到 Google 的授權頁面，並要求授權用戶的 profile 和 email 資訊。
+const isAuth = require('../middleware/isAuth')
 router.get(
   '/auth/google',
   passport.authenticate('google', {
@@ -24,8 +23,8 @@ router.get(
 )
 
 // google 登入成功，回傳使用者資料
-router.get('/profile', handleErrorAsync(userController.getGoogleProfile))
-
+router.get('/profile', isAuth, handleErrorAsync(userController.getGoogleProfile))
+router.get('/info', isAuth, handleErrorAsync(userController.getUserData))
 router.get('/check', handleErrorAsync(userController.getCheck))
 
 module.exports = router
