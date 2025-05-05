@@ -15,7 +15,11 @@ const session = require('express-session')
 const app = express()
 // Passport 設定
 
-const allowedOrigins = ['http://localhost:5173', 'https://buttersuger-frontend.zeabur.app']
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://buttersuger-frontend.zeabur.app',
+  'https://buttersuger-test.zeabur.app',
+]
 app.use(
   cors({
     origin: function (origin, callback) {
