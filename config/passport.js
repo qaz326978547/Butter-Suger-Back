@@ -20,9 +20,4 @@ passport.use(
   )
 )
 
-//當使用者成功登入時, serializeUser 會儲存使用者資訊到 session
-passport.serializeUser((user, done) => done(null, user))
-//deserializeUser 會從 session 取出使用者資訊, 並附加在 req.user
-passport.deserializeUser((obj, done) => done(null, obj))
-
 module.exports = passport

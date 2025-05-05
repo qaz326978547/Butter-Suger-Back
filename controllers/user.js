@@ -81,7 +81,7 @@ const userController = {
   //取得使用者資料
   async getUserData(req, res, next) {
     try {
-      const userId = req.params.id
+      const userId = req.user.id
       const userRepo = dataSource.getRepository('users')
 
       // 確認使用者是否存在
