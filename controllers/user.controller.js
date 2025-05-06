@@ -1,7 +1,7 @@
 const { dataSource } = require('../db/data-source')
 const { appError, sendResponse } = require('../utils/responseFormat')
 const { generateJWT, verifyJWT } = require('../utils/jwtUtils')
-
+const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const userController = {
   // 取得 google 基本資料
   async getGoogleProfile(req, res, next) {
@@ -86,7 +86,16 @@ const userController = {
 
       // 確認使用者是否存在
       const findUser = await userRepo.findOne({
-        select: ['id', 'name', 'nickname', 'email', 'profile_image_url'],
+        select: [
+          'id',
+          'name',
+          'nickname',
+          'email',
+          'profile_image_url',
+          'phone',
+          'birthday',
+          'address',
+        ],
         where: { id: userId },
       })
 
@@ -142,6 +151,56 @@ const userController = {
     })
 
     return
+  },
+
+  // 更新使用者資料
+  async updateUserData(req, res, next) {
+    try {
+      const userId = req.user.id
+      const { nickname, name, phone, birthday, sex, address } = req.body
+      const userRepo = dataSource.getRepository('users')
+
+      const findUser = await userRepo.findOne({
+        select: ['id', 'name', 'nickname', 'email', 'profile_image_url'],
+        where: { id: userId },
+      })
+
+      if (!findUser) {
+        return next(appError(404, '查無個人資料，請重新登入'))
+      }
+
+      // 清理未定義的欄位
+      const updateData = cleanUndefinedFields({
+        name,
+        nickname,
+        phone,
+        birthday,
+        sex,
+        address,
+        profile_image_url: req.file ? req.file.path : findUser.profile_image_url,
+      })
+
+      // 更新使用者資料
+      const updateResult = await userRepo.update({ id: userId }, updateData)
+
+      if (updateResult.affected === 0) {
+        return next(appError(400, '更新失敗，請稍後再試'))
+      }
+
+      // 重新查找更新後的使用者資料
+      const updatedUser = await userRepo.findOne({
+        select: ['id', 'name', 'nickname', 'email', 'profile_image_url'],
+        where: { id: userId },
+      })
+
+      if (!updatedUser) {
+        return next(appError(404, '查無個人資料，請重新登入'))
+      }
+
+      sendResponse(res, 200, true, '更新使用者資料成功')
+    } catch (error) {
+      next(error)
+    }
   },
 }
 

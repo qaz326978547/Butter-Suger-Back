@@ -1,9 +1,13 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
-const userController = require('../controllers/user')
-const handleErrorAsync = require('../middleware/handleErrorAsync')
-const isAuth = require('../middleware/isAuth')
+const userController = require('../controllers/user.controller')
+const handleErrorAsync = require('../middleware/handleErrorAsync.middleware')
+const isAuth = require('../middleware/isAuth.middleware')
+const validateSchema = require('../middleware/validateSchema.middleware')
+const { updateUserSchema } = require('../schema/user.schema')
+const handleMiddleware = require('../utils/handleMiddleware')
+
 router.get(
   '/auth/google',
   passport.authenticate('google', {
@@ -22,9 +26,15 @@ router.get(
   userController.getGoogleProfile // ⬅️ 呼叫你剛剛寫的 getGoogleProfile
 )
 
-// google 登入成功，回傳使用者資料
-router.get('/profile', isAuth, handleErrorAsync(userController.getGoogleProfile))
-router.get('/info', isAuth, handleErrorAsync(userController.getUserData))
-router.get('/check', handleErrorAsync(userController.getCheck))
+// 取得使用者資料
+router.get('/info', ...handleMiddleware([isAuth], userController.getUserData))
+// 驗證使用者是否登入
+router.get('/check', ...handleMiddleware([isAuth], userController.getCheck))
+
+//更新使用者資料
+router.patch(
+  '/update',
+  ...handleMiddleware([isAuth, validateSchema(updateUserSchema), userController.updateUserData])
+)
 
 module.exports = router

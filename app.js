@@ -4,10 +4,8 @@ const path = require('path')
 const pinoHttp = require('pino-http')
 const logger = require('./utils/logger')('App')
 const userRouter = require('./routes/users.route')
-const errorHandler = require('./middleware/errorHandler') // 引入錯誤處理
-const handleErrorAsync = require('./middleware/handleErrorAsync') // 引入異步錯誤處理
+const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
 require('dotenv').config()
-const GoogleStrategy = require('passport-google-oauth20').Strategy
 // 引入 passport 配置
 const passport = require('./config/passport')
 const session = require('express-session')
@@ -39,8 +37,12 @@ app.use(
     logger,
     serializers: {
       req(req) {
-        req.body = req.raw.body
-        return req
+        return {
+          method: req.method,
+          url: req.url,
+          headers: req.headers,
+          body: req.body, // 這樣就不會破壞掉原本的 req.body
+        }
       },
     },
   })
