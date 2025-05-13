@@ -13,11 +13,12 @@ class S3StorageRepository extends StorageInterface {
       Key: key,
       Body: file.buffer,
       ContentType: file.mimetype,
+      ACL: 'public-read',
     }
 
     await s3.upload(params).promise()
 
-    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
+    return `${process.env.AWS_CLOUDFRONT_URL}/${key}`
   }
 
   async delete(fileUrl) {
