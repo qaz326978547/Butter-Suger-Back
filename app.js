@@ -4,6 +4,7 @@ const path = require('path')
 const pinoHttp = require('pino-http')
 const logger = require('./utils/logger')('App')
 const userRouter = require('./routes/users.route')
+const courseRoutes = require('./routes/courses.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
 require('dotenv').config()
 // 引入 passport 配置
@@ -61,7 +62,7 @@ app.use(passport.initialize()) // 初始化 passport
 app.use(passport.session()) // 使用 session
 
 app.use('/api/v1/users', userRouter)
-
+app.use('/api/v1/course', courseRoutes)
 // 健康檢查路由
 app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK')
