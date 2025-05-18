@@ -2,11 +2,13 @@ const express = require('express')
 const router = express.Router()
 const passport = require('passport')
 const userController = require('../controllers/user.controller')
-const handleErrorAsync = require('../middleware/handleErrorAsync.middleware')
 const isAuth = require('../middleware/isAuth.middleware')
 const validateSchema = require('../middleware/validateSchema.middleware')
 const { updateUserSchema } = require('../schema/user.schema')
 const handleMiddleware = require('../utils/handleMiddleware')
+const multer = require('multer');
+const upload = multer();
+
 
 router.get(
   '/auth/google',
@@ -34,7 +36,7 @@ router.get('/check', ...handleMiddleware([isAuth], userController.getCheck))
 //更新使用者資料
 router.patch(
   '/update',
-  ...handleMiddleware([isAuth, validateSchema(updateUserSchema), userController.updateUserData])
+  ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateUserSchema), userController.updateUserData])
 )
 
 module.exports = router

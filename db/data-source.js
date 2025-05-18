@@ -2,6 +2,7 @@ const { DataSource } = require('typeorm')
 const config = require('../config/index')
 
 const users = require('../entities/users.entity')
+const teacher = require('../entities/teacher.entity')
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -12,7 +13,7 @@ const dataSource = new DataSource({
   database: config.get('db.database'),
   synchronize: config.get('db.synchronize'),
   poolSize: 10,
-  entities: [users],
+  entities: [users, teacher],
   ssl: config.get('db.ssl'),
 })
 
