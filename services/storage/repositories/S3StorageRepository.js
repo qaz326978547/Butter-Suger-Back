@@ -1,24 +1,34 @@
-const StorageInterface = require('../interface/StorageInterface')
-const s3 = require('../../../config/s3Client')
-const { v4: uuidv4 } = require('uuid')
-const path = require('path')
+// services/storage/repositories/S3StorageRepository.js
+const Config = require('../../../config/index')
 const { URL } = require('url')
-class S3StorageRepository extends StorageInterface {
-  async upload(file, folder = '') {
+const path = require('path')
+const { v4: uuidv4 } = require('uuid')
+const { PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3')
+const s3 = require('../../../config/s3Client')
+const S3StorageInterface = require('../interface/S3StorageInterface')
+
+class S3StorageRepository extends S3StorageInterface {
+  async upload(file, folder = '', filename = null) {
     const extension = path.extname(file.originalname)
-    const key = `${folder}/${uuidv4()}${extension}`
+    const baseName = filename ? path.basename(filename, extension) : uuidv4()
+    const key = `${folder}/${baseName}${extension}`
 
     const params = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: Config.get('s3.bucketName'),
       Key: key,
       Body: file.buffer,
       ContentType: file.mimetype,
       ACL: 'public-read',
     }
 
-    await s3.upload(params).promise()
-
-    return `${process.env.AWS_CLOUDFRONT_URL}/${key}`
+    try {
+      const command = new PutObjectCommand(params)
+      await s3.send(command)
+      return `${Config.get('s3.cloudfrontUrl')}/${key}`
+    } catch (err) {
+      console.error('S3 上傳錯誤:', err)
+      throw new Error('圖片上傳失敗')
+    }
   }
 
   async delete(fileUrl) {
@@ -26,11 +36,17 @@ class S3StorageRepository extends StorageInterface {
     const key = decodeURIComponent(url.pathname.substring(1))
 
     const params = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: key,
+      Bucket: Config.get('s3.bucketName'),
+      Key: key
     }
 
-    await s3.deleteObject(params).promise()
+    try {
+      const command = new DeleteObjectCommand(params)
+      await s3.send(command)
+    } catch (err) {
+      console.error('S3 刪除錯誤:', err)
+      throw new Error('圖片刪除失敗')
+    }
   }
 }
 

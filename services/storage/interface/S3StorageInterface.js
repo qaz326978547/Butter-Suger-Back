@@ -1,4 +1,4 @@
-class StorageInterface {
+class S3StorageInterface {
     async upload(file, folderName) {
       throw new Error('Method not implemented')
     }
@@ -7,4 +7,4 @@ class StorageInterface {
     }
   }
   
-  module.exports = StorageInterface
+  module.exports = S3StorageInterface
