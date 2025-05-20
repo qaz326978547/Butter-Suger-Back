@@ -11,7 +11,7 @@ const upload = multer({ storage: multer.memoryStorage() })
 
 router.post('/create', courseController.createCourseTitle) // 新增課程
 // 單個圖片上傳
-router.post('/:id/upload-course-banner', upload.single('banner'), courseController.uploadCourseBanner)
+router.post('/teacher/:teacher_id/courses/:course_id/upload-banner', upload.single('banner'), courseController.uploadCourseBanner)
 
 // 多個文件上傳
 router.post('/upload-course-materials', upload.array('materials', 5), courseController.uploadCourseMaterials)

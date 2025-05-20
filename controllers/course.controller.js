@@ -10,10 +10,10 @@ const courseController = {
   */
 
   createCourseTitle: wrapAsync(async (req, res, next) => {
-    
-    const { title } = req.body
+    const { course_id ,  teacher_id   } = req.params
+    const { course_name } = req.body
     const courseRepo = dataSource.getRepository('courses')
-    const course = courseRepo.create({ title })
+    const course = courseRepo.create({ course_id, teacher_id, course_name })
     await courseRepo.save(course)
     return sendResponse(res, 201, true, '課程標題新增成功', { course })
   }),
@@ -22,6 +22,7 @@ const courseController = {
     * 上傳課程小圖
   */
   uploadCourseSmallImages: wrapAsync(async (req, res, next) => {
+
     if (!req.files || req.files.length === 0) {
       return next(appError(400, '請上傳圖片'))
     }
