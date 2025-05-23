@@ -15,15 +15,18 @@ module.exports = new EntitySchema({
         course_banner_imageUrl: {
             type: 'varchar',
             length: 2048,
+            nullable: true
         },
         course_name: {
             type: 'varchar',
         },
         course_banner_description: {
             type: 'text',
+            nullable: true,
         },
         course_description: {
             type: 'text',
+            nullable: true,
         },
         course_description_image: {
             type: 'text',
@@ -31,27 +34,32 @@ module.exports = new EntitySchema({
         },
         course_hours: {
             type: 'int',
-            nullable: true,
+            default: 0,
         },
         course_smallimage: {
             type: 'varchar',
             length: 2048,
+            nullable: true,
         },
         total_users: {
             type: 'int',
             nullable: true,
+            default: 0,
         },
         trailer_vimeo_id: {
             type: 'varchar',
             length: 20,
+            nullable: true,
         },
         trailer_name: {
             type: 'varchar',
             length: 255,
+            nullable: true,
         },
         trailer_url: {
             type: 'varchar',
             length: 255,
+            nullable: true,
         },
         trailer_status: {
             type: 'enum',
@@ -64,16 +72,19 @@ module.exports = new EntitySchema({
         },
         suitable_for: {
             type: 'text',
+            nullable: true,
         },
         course_goal: {
             type: 'text',
+            nullable: true,
         },
         origin_price: {
             type: 'int',
-            nullable: true,
+            default: 0,
         },
-        sell_price: {
+        price: {
             type: 'int',
+            default: 0,
         },
         course_status: {
             type: 'enum',

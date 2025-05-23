@@ -7,13 +7,14 @@ const courseController = {
 
   /*
     * 新增課程標題
+    * @route POST /api/v1/course/create/title
   */
 
   createCourseTitle: wrapAsync(async (req, res, next) => {
-    const { course_id ,  teacher_id   } = req.params
+    const teacher_id = req.user?.id
     const { course_name } = req.body
     const courseRepo = dataSource.getRepository('courses')
-    const course = courseRepo.create({ course_id, teacher_id, course_name })
+    const course = courseRepo.create({ teacher_id:teacher_id, course_name })
     await courseRepo.save(course)
     return sendResponse(res, 201, true, '課程標題新增成功', { course })
   }),
@@ -22,7 +23,7 @@ const courseController = {
     * 上傳課程小圖
   */
   uploadCourseSmallImages: wrapAsync(async (req, res, next) => {
-
+    
     if (!req.files || req.files.length === 0) {
       return next(appError(400, '請上傳圖片'))
     }
@@ -53,11 +54,10 @@ const courseController = {
     * 上傳課程 Banner 圖片
   */
   uploadCourseBanner: wrapAsync(async (req, res, next) => {
-    const courseId = req.params.id
+    const courseId = req.params.course_id
     if (!req.file || !courseId) {
       return next(appError(400, '請上傳圖片與課程 ID'))
     }
-
     const courseRepo = dataSource.getRepository('courses')
     const course = await courseRepo.findOne({ where: { id: courseId } })
     if (!course) {
@@ -65,6 +65,7 @@ const courseController = {
     }
     const imageUrl = await storage.upload(req.file, 'course-banners')
     course.course_banner_imageUrl = imageUrl
+    await courseRepo.save(course)
     return sendResponse(res, 200, true, '圖片上傳成功', { imageUrl })
   }),
 
