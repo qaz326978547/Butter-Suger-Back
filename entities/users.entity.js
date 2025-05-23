@@ -12,24 +12,29 @@ module.exports = new EntitySchema({
     },
     google_id: {
       type: 'varchar',
+      length: 100,
       unique: true, // 設定為唯一
       nullable: false, // 不允許為 null
     },
     name: {
       type: 'varchar',
+      length: 100,
       nullable: false, // 不允許為 null
     },
     nickname: {
       type: 'varchar',
+      length: 100,
       nullable: true, // 可以為 null
     },
     email: {
       type: 'varchar',
+      length: 100,
       unique: true, // 設定為唯一
       nullable: false, // 不允許為 null
     },
     phone: {
       type: 'varchar',
+      length: 20,
       nullable: true, // 可以為 null
     },
     birthday: {
@@ -60,11 +65,11 @@ module.exports = new EntitySchema({
       default: false, // 預設為 false
     },
     login_count: {
-      type: 'int',
+      type: 'integer',
       default: 0, // 預設為 0
     },
     profile_image_url: {
-      type: 'varchar',
+      type: 'text',
       nullable: true, // 可以為 null
     },
     google_token: {
