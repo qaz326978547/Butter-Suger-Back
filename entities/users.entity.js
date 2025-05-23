@@ -8,7 +8,6 @@ module.exports = new EntitySchema({
       primary: true, // 設定為主鍵
       type: 'uuid', // 資料型別為 UUID
       generated: 'uuid', // 設定為 UUID 自動生成
-      nullable: true, // 不允許為 null
     },
     google_id: {
       type: 'varchar',
