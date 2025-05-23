@@ -8,7 +8,7 @@ module.exports = new EntitySchema({
       primary: true, // 設定為主鍵
       type: 'uuid', // 資料型別為 UUID
       generated: 'uuid', // 設定為 UUID 自動生成
-      nullable: false, // 不允許為 null
+      nullable: true, // 不允許為 null
     },
     google_id: {
       type: 'varchar',
@@ -19,7 +19,7 @@ module.exports = new EntitySchema({
     name: {
       type: 'varchar',
       length: 100,
-      nullable: false, // 不允許為 null
+      nullable: true, // 不允許為 null
     },
     nickname: {
       type: 'varchar',
@@ -30,7 +30,7 @@ module.exports = new EntitySchema({
       type: 'varchar',
       length: 100,
       unique: true, // 設定為唯一
-      nullable: false, // 不允許為 null
+      nullable: true, // 不允許為 null
     },
     phone: {
       type: 'varchar',
@@ -53,7 +53,7 @@ module.exports = new EntitySchema({
     role: {
       type: 'enum',
       enum: ['student', 'teacher', 'admin'],
-      nullable: false, // 不允許為 null
+      nullable: true, // 不允許為 null
     },
     is_active: {
       type: 'boolean',
@@ -62,7 +62,7 @@ module.exports = new EntitySchema({
     is_verified: {
       //是否已驗證
       type: 'boolean',
-      default: false, // 預設為 false
+      default: true, // 預設為 true
     },
     login_count: {
       type: 'integer',
