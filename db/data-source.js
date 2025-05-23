@@ -16,6 +16,7 @@ const dataSource = new DataSource({
   password: config.get('db.password'),
   database: config.get('db.database'),
   synchronize: config.get('db.synchronize'),
+  schema: "public",
   poolSize: 10,
   entities: [ users, courses , courseCategory , courseSection, courseSubsection , teacher],
   ssl: config.get('db.ssl'),

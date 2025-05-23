@@ -14,7 +14,7 @@ module.exports = new EntitySchema({
       type: 'varchar',
       length: 100,
       unique: true, // 設定為唯一
-      nullable: false, // 不允許為 null
+      nullable: true, // 不允許為 null
     },
     name: {
       type: 'varchar',
