@@ -97,12 +97,12 @@
 					"formdata": [
 						{
 							"key": "name",
-							"value": "王小明",
+							"value": "陳小明",
 							"type": "text"
 						},
 						{
 							"key": "nickname",
-							"value": "王小天",
+							"value": "陳小天",
 							"type": "text"
 						},
 						{
@@ -201,18 +201,18 @@
 					"formdata": [
 						{
 							"key": "name",
-							"value": "王小明",
+							"value": "陳小明",
 							"type": "text"
 						},
 						{
 							"key": "nickname",
-							"value": "王小天",
+							"value": "陳小天",
 							"type": "text"
 						},
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/C:/Users/user/Desktop/程式開發/圖片/2025_images-main/2.jpg"
+							"src": "/C:/Users/user/Desktop/程式開發/圖片/2025_images-main/10.jpg"
 						},
 						{
 							"key": "phone",
@@ -295,7 +295,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"course_id\": \"f68aa736-be03-4737-83d7-0bdbc57184d9\"\r\n}",
+					"raw": "{\r\n  \"course_id\": \"2db5ccb2-f555-4448-bf4a-bc71c55f699e\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -324,7 +324,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/teacher/d9de2d07-2252-4c6f-96c0-752fb898cccf",
+					"raw": "http://localhost:8080/api/v1/teacher/0b5818b3-1dd6-4cf4-82ca-8ccfa7270dce",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -334,7 +334,7 @@
 						"api",
 						"v1",
 						"teacher",
-						"d9de2d07-2252-4c6f-96c0-752fb898cccf"
+						"0b5818b3-1dd6-4cf4-82ca-8ccfa7270dce"
 					]
 				}
 			},
@@ -431,7 +431,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/cart/f5df8611-8d26-4f83-954b-8f0fa1002508",
+					"raw": "http://localhost:8080/api/v1/cart/96c7cfd0-ee6a-4516-aa0a-495167d2a5a1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -441,7 +441,7 @@
 						"api",
 						"v1",
 						"cart",
-						"f5df8611-8d26-4f83-954b-8f0fa1002508"
+						"96c7cfd0-ee6a-4516-aa0a-495167d2a5a1"
 					]
 				}
 			},

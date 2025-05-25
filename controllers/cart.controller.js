@@ -103,7 +103,7 @@ const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
                     .where('cartItems.cart_id = :cart_id', { cart_id })
                     .getRawOne()
     
-                    return sendResponse(res, 200, true, {
+                    return sendResponse(res, 200, true, '成功加入課程到購物車', {
                         item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
                         total_price: summaryItems?.total_price ?? 0
                     })   

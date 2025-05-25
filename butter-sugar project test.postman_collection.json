@@ -65,7 +65,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/courses/f68aa736-be03-4737-83d7-0bdbc57184d9",
+					"raw": "http://localhost:8080/api/v1/courses/fbb34f39-fd43-4cdb-b9a1-163964cc245e",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -75,7 +75,7 @@
 						"api",
 						"v1",
 						"courses",
-						"f68aa736-be03-4737-83d7-0bdbc57184d9"
+						"fbb34f39-fd43-4cdb-b9a1-163964cc245e"
 					]
 				}
 			},
@@ -88,7 +88,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"teacher_id\": \"d9de2d07-2252-4c6f-96c0-752fb898cccf\",\r\n    \"category_id\": \"132de3da-4fea-443b-a8a0-4a1c8a58bbcc\",\r\n    \"course_name\": \"麵包烘焙設備與材料選擇\",\r\n    \"course_banner_imageUrl\": \"https://cdn.butterandsugar.com/courses/bread7.jpg\",\r\n    \"course_banner_description\": \"介紹麵包烘焙中常用設備與原料選擇要點\",\r\n    \"course_description\": \"包含烤箱、攪拌機、酵母及麵粉等材料解析\",\r\n    \"course_description_image\": [],\r\n    \"course_smallimage\": \"https://cdn.butterandsugar.com/courses/bread7_small.jpg\",\r\n    \"course_hours\": 8,\r\n    \"total_users\": 260,\r\n    \"trailer_vimeo_id\": \"breadCourse-000007\",\r\n    \"trailer_name\": \"設備材料介紹\",\r\n    \"trailer_url\": \"https://vimeo.com/bread007.mp4\",\r\n    \"trailer_status\": \"ready\",\r\n    \"handout_name\": \"設備與材料講義\",\r\n    \"handout_url\": \"https://butterandsugar.com/handouts/bread7.pdf\",\r\n    \"suitable_for\": \"所有人\",\r\n    \"course_goal\": \"了解烘焙設備及材料，提升麵包品質\",\r\n    \"origin_price\": 3200,\r\n    \"sell_price\": 2900,\r\n    \"course_status\": \"上架\"\r\n  }",
+					"raw": "  {\r\n    \"teacher_id\": \"374b3a59-30c9-4aef-8341-6fdc2aa7ee55\",\r\n    \"category_id\": \"d782ce05-fa1e-4cd1-9ab8-91bbe4fca583\",\r\n    \"course_name\": \"麵包烘焙設備與材料選擇\",\r\n    \"course_banner_imageUrl\": \"https://cdn.butterandsugar.com/courses/bread7.jpg\",\r\n    \"course_banner_description\": \"介紹麵包烘焙中常用設備與原料選擇要點\",\r\n    \"course_description\": \"包含烤箱、攪拌機、酵母及麵粉等材料解析\",\r\n    \"course_description_image\": [],\r\n    \"course_smallimage\": \"https://cdn.butterandsugar.com/courses/bread7_small.jpg\",\r\n    \"course_hours\": 8,\r\n    \"total_users\": 260,\r\n    \"trailer_vimeo_id\": \"breadCourse-000007\",\r\n    \"trailer_name\": \"設備材料介紹\",\r\n    \"trailer_url\": \"https://vimeo.com/bread007.mp4\",\r\n    \"trailer_status\": \"ready\",\r\n    \"handout_name\": \"設備與材料講義\",\r\n    \"handout_url\": \"https://butterandsugar.com/handouts/bread7.pdf\",\r\n    \"suitable_for\": \"所有人\",\r\n    \"course_goal\": \"了解烘焙設備及材料，提升麵包品質\",\r\n    \"origin_price\": 3200,\r\n    \"sell_price\": 2900,\r\n    \"course_status\": \"上架\"\r\n  }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -149,7 +149,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"rating_score\": 4,\r\n  \"review_text\": \"從製作麵糊到烘烤完美可麗露，掌握關鍵技巧\"\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+					"raw": "{\r\n    \"rating_score\": 3,\r\n    \"review_text\": \"裝飾步驟稍有挑戰性，但多加練習就能做出精美甜點。\"\r\n  }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -157,7 +157,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/courses/27da8c34-8574-40cb-8641-7d7c7ad72a31/ratings",
+					"raw": "http://localhost:8080/api/v1/courses/e228c81c-d301-472f-a4f5-1474b0c69e53/ratings",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -167,7 +167,7 @@
 						"api",
 						"v1",
 						"courses",
-						"27da8c34-8574-40cb-8641-7d7c7ad72a31",
+						"e228c81c-d301-472f-a4f5-1474b0c69e53",
 						"ratings"
 					]
 				}
