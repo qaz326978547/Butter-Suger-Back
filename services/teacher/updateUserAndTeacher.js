@@ -1,3 +1,5 @@
+const { dataSource } = require('../../db/data-source')
+
 //更新教師資訊, transaction 版, 同時更新兩張表的部分欄位, 失敗時整個 transaction rollback
 const updateUserAndTeacher = async (userId, userData, teacherData) => {
     await dataSource.transaction(async (manager) => {

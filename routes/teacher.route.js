@@ -14,4 +14,10 @@ router.get('/profile', ...handleMiddleware([isAuth], teacherController.getTeache
 //更新使用者資料
 router.patch('/profile', ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateTeacherSchema), teacherController.updateTeacherData]))
 
+// 取得教師精選資料(評價分數前 10 個)
+router.get('/featured', teacherController.getTeacherFeatured)
+
+// 取得單一精選教師資料
+router.get('/:teacherId', teacherController.getSingleFeaturedTeacherData)
+
 module.exports = router

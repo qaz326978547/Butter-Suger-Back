@@ -90,7 +90,7 @@ const teacherController = {
         if(req.file){
             updateUserData.profile_image_url = await storage.upload(req.file, 'users', '')
         }
-        
+
         await updateUserAndTeacher(userId, updateUserData, updateTeacherData)
         
         sendResponse(res, 200, true, '更新使用者資料成功')

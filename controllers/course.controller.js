@@ -126,8 +126,7 @@ const courseController = {
   
     // 測試用，塞類別資料，非正式格式
     async postCategory(req, res, next) {
-      const {name} = req.body;
-  
+      const {name} = req.body;  
       const categoryRepo = dataSource.getRepository('course_category')
       const newCategory = categoryRepo.create({
           name:name

@@ -6,6 +6,8 @@ const logger = require('./utils/logger')('App')
 const userRouter = require('./routes/users.route')
 const teacherRouter = require('./routes/teacher.route')
 const courseRoutes = require('./routes/courses.route')
+const coursesRouter = require('./routes/courses.route')
+const cartRouter = require('./routes/cart.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
 require('dotenv').config()
 // 引入 passport 配置
@@ -67,6 +69,8 @@ app.use(passport.session()) // 使用 session
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/teacher', teacherRouter)
 app.use('/api/v1/course', courseRoutes)
+app.use('/api/v1/courses', coursesRouter)
+app.use('/api/v1/cart', cartRouter)
 
 // 健康檢查路由
 app.get('/healthcheck', (req, res) => {

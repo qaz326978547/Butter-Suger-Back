@@ -19,4 +19,29 @@ router.post('/:course_id/upload/course-banner-image', upload.single('banner'), .
 // 多個文件上傳
 router.post('/upload-course-materials', upload.array('materials', 5), courseController.uploadCourseMaterials)
 
+// 取得首頁熱門課程資料
+router.get('/popular', courseController.getPopularCourses)
+
+//取得所有課程, 測試用，塞資料，非正式格式 
+router.get('/', courseController.getCourseList)
+
+//建立新課程, 測試用，塞資料，非正式格式 
+router.post('/', courseController.postCourse)
+
+//取得所有類別, 測試用，塞資料，非正式格式 
+router.get('/course-category', courseController.getCategory)
+
+//建立新類別, 測試用，塞資料，非正式格式 
+router.post('/course-category', courseController.postCategory)
+
+//取得所有評價, 測試用，塞資料，非正式格式 
+router.get('/ratings', courseController.getRatings)
+
+//新增評價, 測試用，塞資料，非正式格式  
+router.post('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.postRatings))
+
+
+//取得單一課程, 測試用，塞資料，非正式格式 
+router.get('/:courseId', courseController.getCourse)
+
 module.exports = router
