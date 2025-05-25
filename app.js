@@ -17,6 +17,7 @@ const app = express()
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:8080',
   'https://buttersuger-frontend.zeabur.app',
   'https://buttersuger-test.zeabur.app',
 ]

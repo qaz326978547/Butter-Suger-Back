@@ -7,6 +7,9 @@ const courseCategory = require('../entities/course_category.entity')
 const courseSection = require('../entities/course_section.entity')
 const courseSubsection = require('../entities/course_subsection.entity')
 const teacher = require('../entities/teacher.entity')
+const ratings = require('../entities/ratings.entity')
+const carts = require('../entities/carts.entity')
+const cart_items = require('../entities/cart_items.entity')
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -18,7 +21,7 @@ const dataSource = new DataSource({
   synchronize: config.get('db.synchronize'),
   schema: "public",
   poolSize: 10,
-  entities: [ users, courses , courseCategory , courseSection, courseSubsection , teacher],
+  entities: [ users, courses , courseCategory , courseSection, courseSubsection , teacher, ratings, carts, cart_items],
   ssl: config.get('db.ssl'),
 })
 

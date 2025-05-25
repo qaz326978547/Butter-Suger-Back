@@ -2,6 +2,8 @@ const { dataSource } = require('../db/data-source')
 const { appError, sendResponse } = require('../utils/responseFormat')
 const { generateJWT, verifyJWT } = require('../utils/jwtUtils')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
+const storage = require('../services/storage')
+
 const userController = {
   // 取得 google 基本資料
   async getGoogleProfile(req, res, next) {
@@ -180,6 +182,15 @@ const userController = {
         profile_image_url: req.file ? req.file.path : findUser.profile_image_url,
       })
 
+      if (req.file) {
+        try {
+          updateData.profile_image_url = await storage.upload(req.file, 'users', findUser.profile_image_url)
+        }catch (error) {
+          return next(appError(500, error.message || '圖片上傳失敗'))
+        }
+      }      
+
+
       // 更新使用者資料
       const updateResult = await userRepo.update({ id: userId }, updateData)
 
@@ -197,9 +208,9 @@ const userController = {
         return next(appError(404, '查無個人資料，請重新登入'))
       }
 
-      sendResponse(res, 200, true, '更新使用者資料成功')
+      return sendResponse(res, 200, true, '更新使用者資料成功')
     } catch (error) {
-      next(error)
+      return next(error)
     }
   },
 }

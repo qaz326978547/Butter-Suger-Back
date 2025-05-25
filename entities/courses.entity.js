@@ -1,5 +1,6 @@
 const { EntitySchema } = require('typeorm');
 
+// 測試用，塞資料，非正式格式
 module.exports = new EntitySchema({
     name: 'courses',
     tableName: 'courses',
@@ -11,55 +12,63 @@ module.exports = new EntitySchema({
         },
         teacher_id: {
             type: 'uuid',
+            nullable: true
+        },
+        category_id: {
+            type: 'uuid',
+            nullable: true
         },
         course_banner_imageUrl: {
             type: 'varchar',
             length: 2048,
-            nullable: true
+            nullable: true  //暫, 測試資料用
         },
         course_name: {
             type: 'varchar',
+            length: 30,
+            nullable: true  //暫, 測試資料用
         },
         course_banner_description: {
             type: 'text',
-            nullable: true,
+            nullable: true  //暫, 測試資料用
         },
         course_description: {
             type: 'text',
-            nullable: true,
+            nullable: true  //暫, 測試資料用
         },
         course_description_image: {
             type: 'text',
-            nullable: true,
+            nullable: true,  //暫, 測試資料用
         },
         course_hours: {
-            type: 'int',
-            default: 0,
+            type: 'numeric',
+            precision: 10,
+            scale: 2,
+            nullable: true,  //暫, 測試資料用
         },
         course_smallimage: {
             type: 'varchar',
             length: 2048,
-            nullable: true,
+            nullable: true  //暫, 測試資料用
         },
         total_users: {
-            type: 'int',
-            nullable: true,
-            default: 0,
+            type: 'integer',
+            nullable: true  //暫, 測試資料用
         },
         trailer_vimeo_id: {
             type: 'varchar',
             length: 20,
-            nullable: true,
+            nullable: true  //暫, 測試資料用
         },
         trailer_name: {
             type: 'varchar',
             length: 255,
-            nullable: true,
+            nullable: true  //暫, 測試資料用
         },
         trailer_url: {
             type: 'varchar',
             length: 255,
-            nullable: true,
+            nullable: true  //暫, 測試資料用
         },
         trailer_status: {
             type: 'enum',
@@ -68,23 +77,27 @@ module.exports = new EntitySchema({
         },
         handout_name: {
             type: 'varchar',
-            nullable: true,
+            nullable: true,     //暫, 測試資料用
+        },
+        handout_url: {
+            type: 'varchar',
+            nullable: true,   //暫, 測試資料用
         },
         suitable_for: {
             type: 'text',
-            nullable: true,
+            nullable: true     //暫, 測試資料用
         },
         course_goal: {
             type: 'text',
-            nullable: true,
+            nullable: true      //暫, 測試資料用
         },
         origin_price: {
-            type: 'int',
-            default: 0,
+            type: 'integer',
+            nullable: true,     //暫, 測試資料用
         },
-        price: {
-            type: 'int',
-            default: 0,
+        sell_price: {
+            type: 'integer',
+            nullable: true     //暫, 測試資料用
         },
         course_status: {
             type: 'enum',
@@ -101,16 +114,27 @@ module.exports = new EntitySchema({
         },
     },
     relations: {
+        teacher: {
+            target: 'teacher',
+            type: 'many-to-one',
+            inverseSide: 'teacher',
+            joinColumn: {
+                name: 'teacher_id',
+                referencedColumnName: 'id',
+                foreignKeyConstraintName: 'courses_teacher_id_fk'
+            },
+            onDelete: 'SET NULL', // 刪除教師時設為 NULL
+        },
         category: {
+            target: 'course_category', // 對應類別的實體
             type: 'many-to-one', // 多個課程對應一個類別
-            target: 'course_categories', // 對應類別的實體
-            joinColumn: { name: 'category_id' }, // 在課程表中的欄位名稱
+            inverseSide: 'courses',
+            joinColumn: { 
+                name: 'category_id',
+                referencedColumnName: 'id', 
+                foreignKeyConstraintName: 'courses_course_category_id_fk'
+            }, // 在課程表中的欄位名稱
             onDelete: 'SET NULL', // 刪除類別時設為 NULL
-        },
-        sections: {
-            type: 'one-to-many', // 一個課程對應多個章節
-            target: 'course_sections', // 對應章節的實體
-            inverseSide: 'course', // 章節實體中的 course 屬性
-        },
+        }
     },
 });
