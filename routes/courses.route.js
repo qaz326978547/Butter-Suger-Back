@@ -13,7 +13,7 @@ const upload = multer({ storage: multer.memoryStorage() })
 
 router.post('/create/title',...handleMiddleware([isAuth], courseController.createCourseTitle) ) // 新增課程
 // 單個圖片上傳
-router.post('/:course_id/upload/course-banner-image', upload.single('banner'), ...handleMiddleware([isAuth], courseController.uploadCourseBanner))
+router.post('/:courseId/upload/course-banner-image', upload.single('banner'), ...handleMiddleware([isAuth], courseController.uploadCourseBanner))
 
 // ...handleMiddleware([isAuth], userController.getUserData)
 // 多個文件上傳

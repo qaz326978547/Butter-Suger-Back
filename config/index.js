@@ -6,7 +6,20 @@ const web = require('./web')
 const s3 = require('./s3Client')
 if (result.error) {
   console.warn('[Warning] .env file not found, using environment variables from process.env')
+} else {
+  console.log('[Info] .env file loaded successfully')
 }
+
+// 這邊可以印出所有重要 env 變數，方便確認
+console.log('Config env vars:')
+console.log({
+  PORT: process.env.PORT,
+  SESSION_SECRET: process.env.SESSION_SECRET ? 'set' : 'NOT SET',
+  DB_HOST: process.env.DB_HOST,
+  DB_PORT: process.env.DB_PORT,
+  DB_NAME: process.env.DB_NAME,
+  AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
+})
 
 const config = {
   db,
