@@ -10,38 +10,49 @@ const router = express.Router()
 // 設定 Multer 來處理文件上傳
 const upload = multer({ storage: multer.memoryStorage() })
 
-
-router.post('/create/title',...handleMiddleware([isAuth], courseController.createCourseTitle) ) // 新增課程
+router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) // 新增課程
 // 單個圖片上傳
-router.post('/:courseId/upload/course-banner-image', upload.single('banner'), ...handleMiddleware([isAuth], courseController.uploadCourseBanner))
+router.post(
+  '/:courseId/upload/course-banner-image',
+  upload.single('banner'),
+  ...handleMiddleware([isAuth], courseController.uploadCourseBanner)
+)
+// 單個檔案講義上傳
+router.post(
+  '/:courseId/upload/course-handout',
+  upload.single('handout'),
+  ...handleMiddleware([isAuth], courseController.uploadCourseHandOut)
+)
 
 // ...handleMiddleware([isAuth], userController.getUserData)
 // 多個文件上傳
-router.post('/upload-course-materials', upload.array('materials', 5), courseController.uploadCourseMaterials)
-
+router.post(
+  '/:courseId/upload/course-materials',
+  upload.array('materials', 5),
+  ...handleMiddleware([isAuth], courseController.uploadCourseHandOuts)
+)
 // 取得首頁熱門課程資料
 router.get('/popular', courseController.getPopularCourses)
 
-//取得所有課程, 測試用，塞資料，非正式格式 
+//取得所有課程, 測試用，塞資料，非正式格式
 router.get('/', courseController.getCourseList)
 
-//建立新課程, 測試用，塞資料，非正式格式 
+//建立新課程, 測試用，塞資料，非正式格式
 router.post('/', courseController.postCourse)
 
-//取得所有類別, 測試用，塞資料，非正式格式 
+//取得所有類別, 測試用，塞資料，非正式格式
 router.get('/course-category', courseController.getCategory)
 
-//建立新類別, 測試用，塞資料，非正式格式 
+//建立新類別, 測試用，塞資料，非正式格式
 router.post('/course-category', courseController.postCategory)
 
-//取得所有評價, 測試用，塞資料，非正式格式 
+//取得所有評價, 測試用，塞資料，非正式格式
 router.get('/ratings', courseController.getRatings)
 
-//新增評價, 測試用，塞資料，非正式格式  
+//新增評價, 測試用，塞資料，非正式格式
 router.post('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.postRatings))
 
-
-//取得單一課程, 測試用，塞資料，非正式格式 
+//取得單一課程, 測試用，塞資料，非正式格式
 router.get('/:courseId', courseController.getCourse)
 
 module.exports = router
