@@ -1,6 +1,8 @@
 const { dataSource } = require('../db/data-source')
 const { appError, sendResponse } = require('../utils/responseFormat')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
+const summaryCartItems = require('../services/cart/summaryCartItems')
+const { In } = require('typeorm');
 
     const cartController = {
         //取得購物車資料
@@ -30,19 +32,15 @@ const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
                     })                  
                 }
 
+                // 取出購物車資料
                 const courseItems = await cartItemsRepo.createQueryBuilder('cartItems')
                 .select(['cartItems.id AS cart_item_id', 'cartItems.course_id AS course_id', 'course.course_smallimage AS course_smallimage', 'course.course_name AS course_name', 'course.sell_price AS price' ])
                 .leftJoin('cartItems.courses', 'course')
+                .where({ cart_id:cart_id })
                 .getRawMany()
 
                 //回傳購物車課程數量跟總金額
-                const summaryItems = await cartItemsRepo.createQueryBuilder('cartItems')
-                .select(['COUNT(*)::int AS item_count', 
-                        'COALESCE(SUM(course.sell_price),0)::int AS total_price'
-                        ])
-                .leftJoin('cartItems.courses', 'course')
-                .where('cartItems.cart_id = :cart_id', { cart_id })
-                .getRawOne()
+                const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
                 return sendResponse(res, 200, true, '成功取得購物車清單', {
                     cart_id: cart_id,
@@ -55,7 +53,7 @@ const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
             }
         },
 
-        //新增購物車資料, transaction 版, 只要一個資料表新增出錯，全部都 rollback！
+        //新增購物車資料,需補上課程是否存在資料庫, transaction 版, 只要一個資料表新增出錯，全部都 rollback！
         async postCartItems(req, res, next){
             await dataSource.transaction(async (manager) => {
                 const cartsRepo = manager.getRepository('carts');
@@ -106,6 +104,97 @@ const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
                     return sendResponse(res, 200, true, '成功加入課程到購物車', {
                         item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
                         total_price: summaryItems?.total_price ?? 0
+                    })   
+    
+                } catch (error) {
+                    next(error)
+                }                
+            })
+        },
+
+        //
+        /**
+        * 登入後整合購物車, 未登入購物車(未存在資料庫), 跟之前已登入的購物車(已存在資料庫)合併 
+        * 1. 合併未登入與登入購物車的課程 id
+        * 2. 查詢這些 id 是否在資料庫, 有就 isValid, 沒有就 isInValid
+        * 3. 再查詢 isValid 這批 id 是否已經在登入後的購物車
+        *    (1) 已存在： skip
+        *    (2) 沒有： 批次新增 
+        * 4. isInvalid 給 user 錯誤顯示        
+        */
+        async mergeCartItems(req, res, next){
+            const user_id = req.user.id;
+            const { course_ids } = req.body;
+
+            await dataSource.transaction(async (manager) => {
+                const cartsRepo = manager.getRepository('carts');
+                const cartItemsRepo = manager.getRepository('cart_items');
+                const coursesRepo = manager.getRepository('courses')
+    
+                try {
+                    // 查看此使用者是否建立購物車
+                    let findCart = await cartsRepo.findOne({
+                        where: { user_id: user_id }
+                    });
+
+                    // 若未建立購物車的話，就建立一個，建立後要取得 id
+                    if(!findCart){
+                        const newCart = cartsRepo.create({ user_id: user_id });
+                        findCart = await cartsRepo.save(newCart);
+                    }
+    
+                    // 如果已建立購物車，取出購物車 id
+                    const cart_id = findCart.id;
+
+                    // 取出已存在購物車資料
+                    const cartItems = await cartItemsRepo.find({
+                        where: {cart_id: cart_id}
+                    })
+
+                    // 取出已存在購物車資料, alreadyInCartIds
+                    const cartItemIds = cartItems?.map(item => item.course_id) || []
+                    //未登入前購物車 id 合併原購物車 id
+                    const mergeItemIds = Array.from(new Set([...(course_ids || []), ...cartItemIds]))
+
+                    //查看課程是否存在資料庫
+                    const validCourses = await coursesRepo.find({
+                        where: {
+                            id: In(mergeItemIds),
+                            course_status: '上架'
+                        }
+                    })
+
+                    if(validCourses.length===0){
+                        return next(appError(404, "課程不存在或已下架"))
+                    }
+
+                    //只取出 course 的 id
+                    const isValidIds = validCourses.map(item => item.id)
+                    const isInvalids = mergeItemIds.filter(id => !isValidIds.includes(id))
+                    
+                    //只取出未存在原購物車的 id
+                    const insertIds = isValidIds.filter(id => !cartItemIds.includes(id))
+
+                    //批次建立購物車物件 & 新增
+                    let result
+                    if(insertIds.length > 0){
+                        const newItems = insertIds.map(id => ({
+                            cart_id: cart_id, 
+                            course_id:id
+                        }))
+                        result = await cartItemsRepo.save(newItems)
+                    }
+
+                    //回傳購物車課程數量跟總金額
+                    const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
+    
+                    return sendResponse(res, 200, true, '成功加入課程到購物車', {
+                        item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
+                        total_price: summaryItems?.total_price ?? 0,
+                        errors: isInvalids.length > 0 ? {
+                            reason: "課程不存在或已下架",
+                            course_ids: isInvalids
+                        }: null
                     })   
     
                 } catch (error) {

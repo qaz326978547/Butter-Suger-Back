@@ -10,6 +10,9 @@ router.get('/', ...handleMiddleware([isAuth], cartController.getCartItems))
 // 購物車加入課程
 router.post('/', ...handleMiddleware([isAuth], cartController.postCartItems))
 
+// 登入後整合購物車
+router.post('/merge', ...handleMiddleware([isAuth], cartController.mergeCartItems))
+
 // 取得購物車資料
 router.delete('/:cartItemId', ...handleMiddleware([isAuth], cartController.deleteCartItems))
 

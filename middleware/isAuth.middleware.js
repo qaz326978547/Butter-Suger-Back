@@ -12,7 +12,6 @@ const isAuth = async (req, res, next) => {
       next(appError(401, '請先登入!'))
       return
     }
-
     // 取出 token
     const token = authHeader.split(' ')[1]
     //驗證 token

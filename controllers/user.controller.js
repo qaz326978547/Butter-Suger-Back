@@ -114,6 +114,7 @@ const userController = {
 
   // 驗證使用者是否登入
   async getCheck(req, res, next) {
+    console.log("========getCheck=======")
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer')) {
       //401: 請先登入!
