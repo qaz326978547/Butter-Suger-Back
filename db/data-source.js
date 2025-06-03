@@ -17,15 +17,13 @@ const dataSource = new DataSource({
   database: config.get('db.database'),
   synchronize: config.get('db.synchronize'),
   poolSize: 10,
-  entities: [
-    users,
-    courses,
-    courseCategory,
-    courseSection,
-    courseSubsection,
-    teacher,
-    courseHanout,
-  ],
+  synchronize: true, // migration 下通常要關閉自動同步
+  logging: true,
+  entities: [__dirname + '/../entities/**/*.js'],
+  // migrations: [__dirname + '/../migration/**/*.js'],
+  // cli: {
+  //   migrationsDir: './migration', // migration 資料夾位置
+  // },
   ssl: config.get('db.ssl'),
 })
 

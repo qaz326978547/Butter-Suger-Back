@@ -20,7 +20,6 @@ class S3StorageRepository extends S3StorageInterface {
       ContentType: file.mimetype,
       ACL: 'public-read',
     }
-
     try {
       const command = new PutObjectCommand(params)
       await s3.send(command)
@@ -37,7 +36,7 @@ class S3StorageRepository extends S3StorageInterface {
 
     const params = {
       Bucket: Config.get('s3.bucketName'),
-      Key: key
+      Key: key,
     }
 
     try {

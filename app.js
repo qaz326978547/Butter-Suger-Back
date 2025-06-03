@@ -68,7 +68,6 @@ app.use(passport.session()) // 使用 session
 
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/teacher', teacherRouter)
-app.use('/api/v1/course', courseRoutes)
 app.use('/api/v1/courses', coursesRouter)
 app.use('/api/v1/cart', cartRouter)
 

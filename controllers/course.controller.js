@@ -11,11 +11,27 @@ const courseController = {
    */
 
   createCourseTitle: wrapAsync(async (req, res, next) => {
-    const teacher_id = req.user?.id
+    const user_id = req.user?.id
     const { course_name } = req.body
     const courseRepo = dataSource.getRepository('courses')
-    const course = courseRepo.create({ teacher_id: teacher_id, course_name })
+    const teacherRepo = dataSource.getRepository('teacher')
+
+    // 檢查 teacher 是否存在，根據 user_id 找
+    let teacher = await teacherRepo.findOne({ where: { user_id } })
+
+    if (!teacher) {
+      teacher = teacherRepo.create({ user_id })
+      teacher = await teacherRepo.save(teacher)
+    }
+
+    // 建立課程（假設 courses.teacher_id 對應 teachers.id）
+    const course = courseRepo.create({
+      teacher_id: teacher.id,
+      course_name,
+    })
+
     await courseRepo.save(course)
+
     return sendResponse(res, 201, true, '課程標題新增成功', { course })
   }),
 
@@ -53,7 +69,7 @@ const courseController = {
    * 上傳課程 Banner 圖片
    */
   uploadCourseBanner: wrapAsync(async (req, res, next) => {
-    const courseId = req.params.course_id
+    const courseId = req.params.courseId
     if (!req.file || !courseId) {
       return next(appError(400, '請上傳圖片與課程 ID'))
     }
@@ -69,7 +85,7 @@ const courseController = {
   }),
 
   uploadCourseHandOut: wrapAsync(async (req, res, next) => {
-    const courseId = req.params.course_id
+    const courseId = req.params.courseId
 
     if (!req.file || !courseId) {
       return next(appError(400, '請上傳檔案與課程 ID'))
