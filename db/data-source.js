@@ -21,9 +21,10 @@ const dataSource = new DataSource({
   logging: true,
   entities: [__dirname + '/../entities/**/*.js'],
   // migrations: [__dirname + '/../migration/**/*.js'],
-  // cli: {
-  //   migrationsDir: './migration', // migration 資料夾位置
-  // },
+  cli: {
+    migrationsDir: './migration', // migration 資料夾位置
+    migrationsExtension: "js"
+  },
   ssl: config.get('db.ssl'),
 })
 
