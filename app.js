@@ -1,22 +1,41 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const pinoHttp = require('pino-http')
+const AWS        = require('aws-sdk')                   // ← 新增
 const logger = require('./utils/logger')('App')
 const userRouter = require('./routes/users.route')
 const teacherRouter = require('./routes/teacher.route')
 const courseRoutes = require('./routes/courses.route')
 const coursesRouter = require('./routes/courses.route')
 const cartRouter = require('./routes/cart.route')
+const videoRoutes    = require('./routes/videos.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
-require('dotenv').config()
+
 // 引入 passport 配置
 const passport = require('./config/passport')
 const session = require('express-session')
 
 const app = express()
-// Passport 設定
 
+// 1. CORS 一定要在 bodyParser + 路由之前
+app.use(cors({
+  origin: ['http://localhost:5173', ],
+  credentials: true
+}));
+
+
+// Passport 設定
+// ─── 1. AWS SDK 全域設定 ───────────────────────────────────
+AWS.config.update({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId:     process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  }
+})
+// ─── 2. CORS ────────────────────────────────────────────────
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:8080',
@@ -35,27 +54,28 @@ app.use(
     credentials: true,
   })
 )
+// ─── 3. Body Parser ────────────────────────────────────────
 app.use(express.json())
-/* app.use(express.urlencoded({ extended: false })) */
 app.use(express.urlencoded({ extended: true }))
-app.use(
-  pinoHttp({
-    logger,
-    serializers: {
-      req(req) {
-        return {
-          method: req.method,
-          url: req.url,
-          headers: req.headers,
-          body: req.body, // 這樣就不會破壞掉原本的 req.body
-        }
-      },
+// ─── 4. Logging ────────────────────────────────────────────
+app.use(pinoHttp({
+  logger,
+  serializers: {
+    req(req) {
+      return {
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+        body: req.body,
+      }
     },
-  })
-)
-app.use(express.static(path.join(__dirname, 'public')))
+  },
+}))
+// ─── 5. 靜態檔 & 上傳暫存目錄 ────────────────────────────────
+app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
-// 設定 session 和 passport
+// ─── 6. Session & Passport ─────────────────────────────────
 app.use(
   session({
     secret: process.env.SESSION_SECRET, // 使用你的 session secret
@@ -66,11 +86,13 @@ app.use(
 app.use(passport.initialize()) // 初始化 passport
 app.use(passport.session()) // 使用 session
 
+// ─── 7. 路由註冊 ────────────────────────────────────────────
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/teacher', teacherRouter)
 app.use('/api/v1/course', courseRoutes)
 app.use('/api/v1/courses', coursesRouter)
 app.use('/api/v1/cart', cartRouter)
+app.use('/api/v1/videos', videoRoutes)
 
 // 健康檢查路由
 app.get('/healthcheck', (req, res) => {
