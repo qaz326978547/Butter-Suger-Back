@@ -5,7 +5,7 @@ const pinoHttp = require('pino-http')
 const logger = require('./utils/logger')('App')
 const userRouter = require('./routes/users.route')
 const teacherRouter = require('./routes/teacher.route')
-const courseRoutes = require('./routes/courses.route')
+const courseUploadRoutes = require('./routes/courseUpload.route')
 const coursesRouter = require('./routes/courses.route')
 const cartRouter = require('./routes/cart.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
@@ -66,10 +66,8 @@ app.use(
 app.use(passport.initialize()) // 初始化 passport
 app.use(passport.session()) // 使用 session
 
-app.use('/api/v1/users', userRouter)
-app.use('/api/v1/teacher', teacherRouter)
-app.use('/api/v1/courses', coursesRouter)
-app.use('/api/v1/cart', cartRouter)
+//統一路由
+require('./routes')(app)
 
 // 健康檢查路由
 app.get('/healthcheck', (req, res) => {

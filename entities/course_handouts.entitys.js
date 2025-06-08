@@ -43,13 +43,12 @@ module.exports = new EntitySchema({
     course: {
       target: 'courses',
       type: 'many-to-one',
-      inverseSide: 'handouts',
       joinColumn: {
         name: 'course_id',
         referencedColumnName: 'id',
         foreignKeyConstraintName: 'course_handouts_course_id_fk',
       },
-      onDelete: 'CASCADE',
+      onDelete: 'CASCADE', // 課程刪除時，自動刪除 handouts
     },
   },
 })

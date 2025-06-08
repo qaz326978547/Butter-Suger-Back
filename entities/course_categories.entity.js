@@ -11,6 +11,7 @@ module.exports = new EntitySchema({
     },
     name: {
       type: 'varchar',
+      enum: ['all', 'bread', 'cookie', 'cake'],
     },
     created_at: {
       type: 'timestamp',
