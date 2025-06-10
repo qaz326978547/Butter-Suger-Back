@@ -9,6 +9,13 @@ const ALLOWED_MIME_TYPES = {
   handOut: ['application/pdf'],
 }
 
+const formatFileSize = (size) => {
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`
+  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(2)} MB`
+  return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`
+}
+
 /**
  * 更新課程圖片或影片
  * @param {Object} options
@@ -21,8 +28,8 @@ const ALLOWED_MIME_TYPES = {
 const updateCourseMediaService = async ({
   courseId,
   file,
-  folderName,
-  fieldName,
+  folderName, // 上傳目標資料夾
+  fieldName, // 資料庫欄位名稱，例如 'image' 或 'video'
   type = 'image',
 }) => {
   if (!courseId || !file) {
@@ -37,13 +44,22 @@ const updateCourseMediaService = async ({
 
   const courseRepo = dataSource.getRepository('courses')
   const course = await courseRepo.findOne({ where: { id: courseId } })
-
+  if (type === 'video') {
+    course['trailer_status'] = 'processing' // 假設預告片上傳後狀態為 '上傳中'
+    await courseRepo.save(course) // 先存「上傳中」狀態
+  }
   if (!course) {
     throw appError(404, '課程不存在')
   }
 
   const mediaUrl = await storage.upload(file, folderName)
   course[fieldName] = mediaUrl
+  if (type === 'video') {
+    course['trailer_name'] = file.originalname || '未命名預告片'
+    course['trailer_size'] = formatFileSize(file.size || 0)
+    course['trailer_status'] = 'ready' // 假設預告片上傳後狀態為 '上傳完成'
+    course['trailer_type'] = file.mimetype || 'video/mp4'
+  }
   await courseRepo.save(course)
 
   return mediaUrl
@@ -117,13 +133,43 @@ const uploadHandoutService = async ({ courseId, file, folderName }) => {
     course_id: courseId,
     name: file.originalname || '未命名講義',
     url: fileUrl,
-    size: file.size || 0,
+    size: formatFileSize(file.size || 0),
     type: file.mimetype || 'application/pdf',
   })
 
   await handoutRepo.save(handout)
 
   return handout
+}
+
+const deleteVideo = async (courseId) => {
+  if (!courseId) {
+    throw appError(400, '缺少課程 ID')
+  }
+
+  const courseRepo = dataSource.getRepository('courses')
+  const course = await courseRepo.findOne({ where: { id: courseId } })
+  if (!course) {
+    throw appError(404, '課程不存在')
+  }
+
+  // 刪除雲端檔案，避免因刪除失敗而影響流程
+  try {
+    await storage.delete(course.trailer_url)
+  } catch (error) {
+    console.error('刪除雲端檔案失敗:', error)
+    // 視情況是否繼續刪除資料庫紀錄
+  }
+
+  course.trailer_url = null
+  course.trailer_name = null
+  course.trailer_size = null
+  course.trailer_type = null
+  course.trailer_status = 'not_uploaded' // 重置狀態
+
+  await courseRepo.save(course)
+
+  return { message: '預告片已成功刪除' }
 }
 
 /** * 刪除講義
@@ -159,4 +205,5 @@ module.exports = {
   uploadHandoutService,
   deleteHandout,
   deleteCourseMedia,
+  deleteVideo,
 }

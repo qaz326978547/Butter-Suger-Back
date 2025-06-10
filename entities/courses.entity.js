@@ -56,11 +56,6 @@ module.exports = new EntitySchema({
       type: 'integer',
       nullable: true,
     },
-    trailer_vimeo_id: {
-      type: 'varchar',
-      length: 20,
-      nullable: true,
-    },
     trailer_name: {
       type: 'varchar',
       length: 255,
@@ -73,8 +68,18 @@ module.exports = new EntitySchema({
     },
     trailer_status: {
       type: 'enum',
-      enum: ['processing', 'ready', 'failed'],
-      default: 'processing',
+      enum: ['not_uploaded', 'processing', 'ready', 'failed'],
+      default: 'not_uploaded',
+    },
+    trailer_size: {
+      type: 'varchar',
+      length: 50,
+      nullable: true,
+    },
+    trailer_type: {
+      type: 'varchar',
+      length: 50,
+      nullable: true,
     },
     suitable_for: {
       type: 'text',

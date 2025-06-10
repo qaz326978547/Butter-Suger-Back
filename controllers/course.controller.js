@@ -8,6 +8,7 @@ const {
   deleteCourseMedia,
   uploadHandoutService,
   deleteHandout,
+  deleteVideo,
 } = require('../services/updateCourseMedia/updateCourseMedia.service')
 const MediaField = require('../services/updateCourseMedia/updateCourseMedia.interface')
 
@@ -28,8 +29,7 @@ const courseController = {
    */
   async getCourseList(req, res, next) {
     const courseRepo = dataSource.getRepository('courses')
-    const courses = await courseRepo.find()
-    console.log(courses)
+    const courses = await courseRepo.find({ relations: ['handouts'] })
     if (!courses || courses.length === 0) {
       return sendResponse(res, 404, false, '沒有找到任何課程')
     }
@@ -163,6 +163,41 @@ const courseController = {
       fieldName: MediaField.BANNER,
     })
     return sendResponse(res, 200, true, 'Banner 圖片已刪除')
+  }),
+
+  /*
+   * 上傳課程預告影片
+   * @route POST /api/v1/course/:courseId/upload/trailer
+   */
+  uploadCourseTrailer: wrapAsync(async (req, res, next) => {
+    const videoUrl = await updateCourseMediaService({
+      courseId: req.params.courseId,
+      file: req.file,
+      folderName: 'course-trailers',
+      fieldName: MediaField.TRAILER,
+      type: 'video', // 限制為影片格式
+    })
+    return sendResponse(res, 200, true, '預告影片上傳成功', { videoUrl })
+  }),
+
+  /*
+   * 刪除課程預告影片
+   * @route DELETE /api/v1/course/:courseId/upload/trailer
+   */
+  deleteCourseTrailer: wrapAsync(async (req, res, next) => {
+    const { courseId } = req.params
+
+    // 確認課程是否存在
+    const courseRepo = dataSource.getRepository('courses')
+    const course = await courseRepo.findOne({ where: { id: courseId } })
+    if (!course) {
+      return next(appError(404, '課程不存在'))
+    }
+
+    // 刪除預告影片
+    await deleteVideo(courseId)
+
+    return sendResponse(res, 200, true, '預告影片已刪除')
   }),
 
   /*

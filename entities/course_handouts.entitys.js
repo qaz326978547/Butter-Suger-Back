@@ -22,7 +22,8 @@ module.exports = new EntitySchema({
       length: 2048,
     },
     size: {
-      type: 'bigint',
+      type: 'varchar',
+      length: 50,
       nullable: true,
     },
     type: {

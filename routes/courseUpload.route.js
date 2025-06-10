@@ -49,8 +49,19 @@ router.post(
 )
 // 刪除課程講義
 router.delete(
-  '/:courseId/upload/course-handouts',
+  '/:handoutId/upload/course-handouts',
   ...handleMiddleware([isAuth], courseController.deleteCourseHandOuts)
+)
+
+// 課程預告片
+router.post(
+  '/:courseId/upload/course-trailer',
+  upload.single('trailer'), //這個 'trailer' 是前端上傳時的欄位名稱
+  ...handleMiddleware([isAuth], courseController.uploadCourseTrailer)
+)
+router.delete(
+  '/:courseId/upload/course-trailer',
+  ...handleMiddleware([isAuth], courseController.deleteCourseTrailer)
 )
 
 module.exports = router
