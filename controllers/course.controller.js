@@ -12,6 +12,7 @@ const courseController = {
   */
 
   createCourseTitle: wrapAsync(async (req, res, next) => {
+    // #swagger.ignore = true
     const teacher_id = req.user?.id
     const { course_name } = req.body
     const courseRepo = dataSource.getRepository('courses')
@@ -24,7 +25,7 @@ const courseController = {
     * 上傳課程小圖
   */
   uploadCourseSmallImages: wrapAsync(async (req, res, next) => {
-    
+    // #swagger.ignore = true
     if (!req.files || req.files.length === 0) {
       return next(appError(400, '請上傳圖片'))
     }
@@ -40,6 +41,7 @@ const courseController = {
     * 上傳課程描述圖片
   */
   uploadCourseDescriptionImages: wrapAsync(async (req, res, next) => {
+    // #swagger.ignore = true
     if (!req.files || req.files.length === 0) {
       return next(appError(400, '請上傳圖片'))
     }
@@ -55,6 +57,7 @@ const courseController = {
     * 上傳課程 Banner 圖片
   */
   uploadCourseBanner: wrapAsync(async (req, res, next) => {
+    // #swagger.ignore = true
     const courseId = req.params.course_id
     if (!req.file || !courseId) {
       return next(appError(400, '請上傳圖片與課程 ID'))
@@ -74,6 +77,7 @@ const courseController = {
     * 上傳課程教材
   */
   uploadCourseMaterials: wrapAsync(async (req, res, next) => {
+    // #swagger.ignore = true
     if (!req.files || req.files.length === 0) {
       return next(appError(400, '請上傳檔案'))
     }
@@ -110,18 +114,13 @@ const courseController = {
   
     // 測試用，塞類別資料，非正式格式
     async getCategory(req, res, next) {
-      
       const categoryRepo = dataSource.getRepository('course_category')
   
       const findCategory = await categoryRepo.find({
         select: ['name']
       })
   
-      res.status(200).json({
-        status: true,
-        data: findCategory
-      })
-      return
+      return sendResponse(res, 200, true, '取得類別成功', findCategory)
     },
   
     // 測試用，塞類別資料，非正式格式
@@ -174,7 +173,7 @@ const courseController = {
       const courseRepo = dataSource.getRepository('courses')
       const findCourse = await courseRepo.findOne({
         where: {id: courseId},
-        select: ['teacher_id','category_id','course_banner_imageUrl','course_name','course_banner_description','course_description','course_description_image','course_hours','course_smallimage','total_users','trailer_vimeo_id','trailer_name','trailer_url','trailer_status','handout_name','handout_url','suitable_for','course_goal','origin_price','sell_price','course_status']
+        select: ['id','teacher_id','category_id','course_banner_imageUrl','course_name','course_banner_description','course_description','course_description_image','course_hours','course_smallimage','total_users','trailer_vimeo_id','trailer_name','trailer_url','trailer_status','handout_name','handout_url','suitable_for','course_goal','origin_price','sell_price','course_status']
       })
   
       return sendResponse(res, 200, true, '取得資料成功', findCourse)
@@ -184,7 +183,7 @@ const courseController = {
     async getCourseList(req, res, next) {
       const courseRepo = dataSource.getRepository('courses')
       const findCourseList = await courseRepo.find({
-        select: ['teacher_id','category_id','course_name','course_banner_imageUrl','course_banner_description','course_description','course_description_image','course_smallimage','course_hours','total_users','trailer_vimeo_id','trailer_name','trailer_url','trailer_status','handout_name','handout_url','suitable_for','course_goal','origin_price','sell_price','course_status']
+        select: ['id','teacher_id','category_id','course_name','course_banner_imageUrl','course_banner_description','course_description','course_description_image','course_smallimage','course_hours','total_users','trailer_vimeo_id','trailer_name','trailer_url','trailer_status','handout_name','handout_url','suitable_for','course_goal','origin_price','sell_price','course_status']
       })
   
       return sendResponse(res, 200, true, '取得資料成功', findCourseList)

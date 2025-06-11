@@ -4,13 +4,16 @@ const result = dotenv.config()
 const db = require('./db')
 const web = require('./web')
 const s3 = require('./s3Client')
+const newebpay = require('./newebpay')
+
 if (result.error) {
   console.warn('[Warning] .env file not found, using environment variables from process.env')
 }
 
 const config = {
   db,
-  web,
+  web,  
+  newebpay,
   s3: {
     bucketName: process.env.AWS_S3_BUCKET_NAME,
     region: process.env.AWS_REGION,

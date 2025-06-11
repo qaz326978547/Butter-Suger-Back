@@ -13,6 +13,15 @@ router.post('/', ...handleMiddleware([isAuth], cartController.postCartItems))
 // 登入後整合購物車
 router.post('/merge', ...handleMiddleware([isAuth], cartController.mergeCartItems))
 
+//結帳
+router.post('/checkout', ...handleMiddleware([isAuth], cartController.checkout))
+
+//結帳成功
+router.post('/newebpay_return', cartController.newebpayReturn)
+
+//確認交易
+router.post('/newebpay_notify', cartController.newebpayNotify)
+
 // 取得購物車資料
 router.delete('/:cartItemId', ...handleMiddleware([isAuth], cartController.deleteCartItems))
 

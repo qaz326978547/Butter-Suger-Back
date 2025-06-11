@@ -8,17 +8,21 @@ const teacherRouter = require('./routes/teacher.route')
 const courseRoutes = require('./routes/courses.route')
 const coursesRouter = require('./routes/courses.route')
 const cartRouter = require('./routes/cart.route')
+const orderRouter = require('./routes/order.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
 require('dotenv').config()
 // 引入 passport 配置
 const passport = require('./config/passport')
 const session = require('express-session')
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 
 const app = express()
-// Passport 設定
+/* app.use(cors()) */
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5500',
   'http://localhost:8080',
   'https://buttersuger-frontend.zeabur.app',
   'https://buttersuger-test.zeabur.app',
@@ -71,11 +75,8 @@ app.use('/api/v1/teacher', teacherRouter)
 app.use('/api/v1/course', courseRoutes)
 app.use('/api/v1/courses', coursesRouter)
 app.use('/api/v1/cart', cartRouter)
-
-// 健康檢查路由
-app.get('/healthcheck', (req, res) => {
-  res.status(200).send('OK')
-})
+app.use('/api/v1/order', orderRouter)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // 讓錯誤處理 middleware 做全域錯誤處理
 app.use(errorHandler)
