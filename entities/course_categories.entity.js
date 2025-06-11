@@ -11,7 +11,11 @@ module.exports = new EntitySchema({
     },
     name: {
       type: 'varchar',
-      enum: ['all', 'bread', 'cookie', 'cake'],
+      unique: true, // 確保類別名稱唯一
+      length: 50,
+      nullable: false, // 不允許為 null
+      comment: '課程類別名稱',
+      default: 'all',
     },
     created_at: {
       type: 'timestamp',

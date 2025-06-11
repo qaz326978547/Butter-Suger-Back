@@ -3,11 +3,6 @@ const cors = require('cors')
 const path = require('path')
 const pinoHttp = require('pino-http')
 const logger = require('./utils/logger')('App')
-const userRouter = require('./routes/users.route')
-const teacherRouter = require('./routes/teacher.route')
-const courseUploadRoutes = require('./routes/courseUpload.route')
-const coursesRouter = require('./routes/courses.route')
-const cartRouter = require('./routes/cart.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
 require('dotenv').config()
 // 引入 passport 配置
@@ -76,5 +71,20 @@ app.get('/healthcheck', (req, res) => {
 
 // 讓錯誤處理 middleware 做全域錯誤處理
 app.use(errorHandler)
+const { dataSource } = require('./db/data-source')
+const seedCourseCategories = require('./db/seed/createCourseCategoriesSeed')
 
+dataSource
+  .initialize()
+  .then(async () => {
+    await seedCourseCategories()
+    // 這裡可以加上啟動 server 的程式碼
+    // 例如:
+    // app.listen(process.env.PORT || 8080, () => {
+    //   console.log('Server is running...')
+    // })
+  })
+  .catch((err) => {
+    console.error('資料庫連線失敗:', err)
+  })
 module.exports = app

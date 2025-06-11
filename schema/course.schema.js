@@ -23,4 +23,14 @@ const saveCourseSchema = Joi.object({
   }),
 })
 
-module.exports = { saveCourseSchema }
+//'all', 'bread', 'cookie', 'cake'
+const courseCategorySchema = Joi.object({
+  category: Joi.string().valid('all', 'bread', 'cookie', 'cake').required().messages({
+    'string.base': '課程類別必須是文字格式',
+    'any.required': '請選擇課程類別',
+    'string.empty': '課程類別不能為空',
+    'any.only': '課程類別必須是 all、bread、cookie 或 cake',
+  }),
+})
+
+module.exports = { saveCourseSchema, courseCategorySchema }

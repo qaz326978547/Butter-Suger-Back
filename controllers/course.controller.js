@@ -29,12 +29,22 @@ const courseController = {
    */
   async getCourseList(req, res, next) {
     const courseRepo = dataSource.getRepository('courses')
-    const courses = await courseRepo.find({ relations: ['handouts'] })
+    const courses = await courseRepo.find({ relations: ['handouts', 'category'] })
     if (!courses || courses.length === 0) {
       return sendResponse(res, 404, false, '沒有找到任何課程')
     }
 
-    return sendResponse(res, 200, true, '取得課程列表成功', { courses })
+    const result = courses.map((course) => {
+      const { category, ...rest } = course
+      return {
+        ...rest,
+        category_id: course.category_id,
+        category_name: category ? category.name : null,
+        handouts: course.handouts,
+      }
+    })
+
+    return sendResponse(res, 200, true, '取得課程列表成功', { courses: result })
   },
   /*
    * 取得單一課程
@@ -84,6 +94,30 @@ const courseController = {
     await courseRepo.save(course)
 
     return sendResponse(res, 201, true, '課程標題新增成功', { course })
+  }),
+
+  /*
+   * 新增課程類別
+   * @route POST /api/v1/course/:courseId/category
+   */
+  createCourseCategory: wrapAsync(async (req, res, next) => {
+    const courseId = req.params.courseId
+    const { category_id } = req.body
+
+    if (!courseId) {
+      return next(appError(400, '請提供課程 ID'))
+    }
+    const courseRepo = dataSource.getRepository('courses')
+    const course = await courseRepo.findOne({ where: { id: courseId } })
+    if (!course) {
+      return next(appError(404, '課程不存在'))
+    }
+    if (!category_id) {
+      return next(appError(400, '請提供類別 ID'))
+    }
+    course.category_id = category_id
+    await courseRepo.save(course)
+    return sendResponse(res, 200, true, '課程類別新增成功', { course })
   }),
 
   /*

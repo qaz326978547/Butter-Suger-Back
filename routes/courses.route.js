@@ -18,6 +18,11 @@ router.post(
   ...handleMiddleware([isAuth, validateSchema(saveCourseSchema)], courseController.saveCourse)
 ) // 儲存課程資訊
 
+//新增課程類別
+router.post(
+  '/:courseId/category',
+  ...handleMiddleware([isAuth], courseController.createCourseCategory)
+)
 // 取得課程講義
 router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
 

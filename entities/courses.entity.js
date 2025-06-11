@@ -31,11 +31,13 @@ module.exports = new EntitySchema({
       // 課程橫幅描述
       type: 'text',
       nullable: true,
+      comment: '課程橫幅描述',
     },
     course_description: {
       // 課程簡介
       type: 'text',
       nullable: true,
+      comment: '課程簡介',
     },
     course_description_imageUrl: {
       type: 'text',
@@ -84,10 +86,12 @@ module.exports = new EntitySchema({
     suitable_for: {
       type: 'text',
       nullable: true,
+      comment: '適合對象',
     },
     course_goal: {
       type: 'text',
       nullable: true,
+      comment: '課程目標',
     },
     origin_price: {
       type: 'integer',

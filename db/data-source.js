@@ -1,13 +1,5 @@
 const { DataSource } = require('typeorm')
 const config = require('../config/index')
-
-const users = require('../entities/users.entity')
-const courses = require('../entities/courses.entity')
-const courseCategory = require('../entities/course_categories.entity')
-const courseSection = require('../entities/course_section.entity')
-const courseSubsection = require('../entities/course_subsection.entity')
-const teacher = require('../entities/teacher.entity')
-const courseHanout = require('../entities/course_handouts.entitys')
 const dataSource = new DataSource({
   type: 'postgres',
   host: config.get('db.host'),
@@ -21,10 +13,10 @@ const dataSource = new DataSource({
   logging: true,
   entities: [__dirname + '/../entities/**/*.js'],
   // migrations: [__dirname + '/../migration/**/*.js'],
-  cli: {
-    migrationsDir: './migration', // migration 資料夾位置
-    migrationsExtension: "js"
-  },
+  // cli: {
+  //   migrationsDir: './migration', // migration 資料夾位置
+  //   migrationsExtension: 'js',
+  // },
   ssl: config.get('db.ssl'),
 })
 
