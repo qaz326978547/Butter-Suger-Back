@@ -2,13 +2,19 @@ const express = require('express')
 const router = express.Router()
 const passport = require('passport')
 const userController = require('../controllers/user.controller')
+const orderController = require('../controllers/order.controller')
 const isAuth = require('../middleware/isAuth.middleware')
 const validateSchema = require('../middleware/validateSchema.middleware')
 const { updateUserSchema } = require('../schema/user.schema')
 const handleMiddleware = require('../utils/handleMiddleware')
 const multer = require('multer');
-const upload = multer();
+/* const upload = multer(); */
+const upload = multer({ storage: multer.memoryStorage()})
 
+router.patch(
+  '/update', upload.single('file'), 
+  ...handleMiddleware([isAuth, validateSchema(updateUserSchema), userController.updateUserData])
+)
 
 router.get(
   '/auth/google',
@@ -30,13 +36,19 @@ router.get(
 
 // 取得使用者資料
 router.get('/info', ...handleMiddleware([isAuth], userController.getUserData))
+
 // 驗證使用者是否登入
 router.get('/check', ...handleMiddleware([isAuth], userController.getCheck))
 
-//更新使用者資料
-router.patch(
+
+
+/* router.patch(
   '/update',
   ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateUserSchema), userController.updateUserData])
-)
+) */
+
+
+// 取得所有訂單
+router.get('/orders', ...handleMiddleware([isAuth], orderController.getOrderList))
 
 module.exports = router

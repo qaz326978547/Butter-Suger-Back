@@ -88,7 +88,7 @@ const teacherController = {
         })
    
         if(req.file){
-            updateUserData.profile_image_url = await storage.upload(req.file, 'users', '')
+            updateUserData.profile_image_url = await storage.upload(req.file, 'users')
         }
 
         await updateUserAndTeacher(userId, updateUserData, updateTeacherData)

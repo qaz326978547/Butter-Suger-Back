@@ -7,11 +7,16 @@ const storage = require('../services/storage')
 const userController = {
   // 取得 google 基本資料
   async getGoogleProfile(req, res, next) {
+    // #swagger.ignore = true
     try {
       // 確保 passport 已帶入 user 資料
       if (!req.user || !req.user.id) {
         return next(appError(400, '登入失敗，缺少使用者資訊'))
       }
+
+      console.log("==============getGoogleProfile===============")
+      console.log("req.user: ", req.user)
+      console.log("==============getGoogleProfile===============")
 
       // 確保 email 經過驗證
       const emailVerified = req.user.emails?.[0]?.verified
@@ -26,6 +31,10 @@ const userController = {
         select: ['id', 'name', 'nickname', 'role', 'email', 'login_count', 'profile_image_url'],
         where: { google_id: req.user.id },
       })
+
+      console.log("==============getGoogleProfile===============")
+      console.log("findUser: ", findUser)
+      console.log("==============getGoogleProfile===============")
 
       // 若不存在，建立新使用者
       if (!findUser) {
@@ -71,9 +80,9 @@ const userController = {
         role: findUser.role,
       })
 
-      // 傳回 JSON 給前端
+      // 傳回 JSON 給前端，token= 測試用(暫不考慮安全性)
       return res.redirect(
-        `${process.env.FRONTEND_URL}/login-success?token=${token}&id=${findUser.id}`
+        `${process.env.FRONTEND_URL}/login-success.html?token=${token}&id=${findUser.id}`
       )
     } catch (error) {
       next(error)
@@ -114,6 +123,7 @@ const userController = {
 
   // 驗證使用者是否登入
   async getCheck(req, res, next) {
+    console.log("========getCheck=======")
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer')) {
       //401: 請先登入!
@@ -147,19 +157,15 @@ const userController = {
       return
     }
 
-    res.status(200).json({
-      status: true,
-      message: '驗證成功',
-    })
-
-    return
+    return sendResponse(res, 200, true, '驗證成功')
   },
 
   // 更新使用者資料
   async updateUserData(req, res, next) {
     try {
       const userId = req.user.id
-      const { nickname, name, phone, birthday, sex, address } = req.body
+      const { name, nickname, phone, birthday, sex, address } = req.body
+
       const userRepo = dataSource.getRepository('users')
 
       const findUser = await userRepo.findOne({
@@ -170,7 +176,7 @@ const userController = {
       if (!findUser) {
         return next(appError(404, '查無個人資料，請重新登入'))
       }
-
+ 
       // 清理未定義的欄位
       const updateData = cleanUndefinedFields({
         name,
@@ -179,17 +185,13 @@ const userController = {
         birthday,
         sex,
         address,
-        profile_image_url: req.file ? req.file.path : findUser.profile_image_url,
+        profile_image_url: findUser.profile_image_url || ''  //後面會判斷 req.file
       })
 
-      if (req.file) {
-        try {
-          updateData.profile_image_url = await storage.upload(req.file, 'users', findUser.profile_image_url)
-        }catch (error) {
-          return next(appError(500, error.message || '圖片上傳失敗'))
-        }
-      }      
 
+      if (req.file) {
+          updateData.profile_image_url = await storage.upload(req.file, 'users')
+      }      
 
       // 更新使用者資料
       const updateResult = await userRepo.update({ id: userId }, updateData)
@@ -208,7 +210,7 @@ const userController = {
         return next(appError(404, '查無個人資料，請重新登入'))
       }
 
-      return sendResponse(res, 200, true, '更新使用者資料成功')
+      return sendResponse(res, 200, true, '成功更新使用者資料')
     } catch (error) {
       return next(error)
     }

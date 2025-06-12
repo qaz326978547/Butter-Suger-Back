@@ -1,5 +1,6 @@
 const Joi = require('joi')
 
+//最後再加
 const cartSchema = Joi.object({
     course_id: Joi.string().required().messages({
     'string.guid': 'course_id 必須是合法的 UUID 格式',

@@ -8,10 +8,11 @@ const handleMiddleware = require('../utils/handleMiddleware')
 const multer = require('multer');
 const upload = multer();
 
+// 老師權限最後再加
 // 取得教師資料
 router.get('/profile', ...handleMiddleware([isAuth], teacherController.getTeacherData))
 
-//更新使用者資料
+//更新教師資料
 router.patch('/profile', ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateTeacherSchema), teacherController.updateTeacherData]))
 
 // 取得教師精選資料(評價分數前 10 個)

@@ -1,5 +1,6 @@
 const { DataSource } = require('typeorm')
 const config = require('../config/index')
+
 const dataSource = new DataSource({
   type: 'postgres',
   host: config.get('db.host'),
