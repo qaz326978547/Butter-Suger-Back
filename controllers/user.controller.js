@@ -7,6 +7,7 @@ const storage = require('../services/storage')
 const userController = {
   // 取得 google 基本資料
   async getGoogleProfile(req, res, next) {
+    console.log("============getGoogleProfile==============")
     // #swagger.ignore = true
     try {
       // 確保 passport 已帶入 user 資料
@@ -91,6 +92,7 @@ const userController = {
 
   //取得使用者資料
   async getUserData(req, res, next) {
+    console.log("============getUserData==============")
     try {
       const userId = req.user.id
       const userRepo = dataSource.getRepository('users')
@@ -164,7 +166,7 @@ const userController = {
   async updateUserData(req, res, next) {
     try {
       const userId = req.user.id
-      const { name, nickname, phone, birthday, sex, address } = req.body
+      const { name, nickname, phone, birthday, address } = req.body
 
       const userRepo = dataSource.getRepository('users')
 
@@ -183,7 +185,6 @@ const userController = {
         nickname,
         phone,
         birthday,
-        sex,
         address,
         profile_image_url: findUser.profile_image_url || ''  //後面會判斷 req.file
       })

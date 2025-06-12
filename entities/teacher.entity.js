@@ -68,7 +68,7 @@ module.exports = new EntitySchema({
       joinColumn: {
         name: 'user_id',
         referencedColumnName: 'id',
-        foreignKeyConstraintName: 'teacher_user_id_fk',
+        foreignKeyConstraintName: 'teacher_users_id_fk',
       },
       onDelete: 'CASCADE',
     },

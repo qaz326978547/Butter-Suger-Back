@@ -36,7 +36,7 @@ router.get(
 
 // 取得使用者資料
 router.get('/info', ...handleMiddleware([isAuth], userController.getUserData))
-
+/* router.get('/info',  userController.getUserData) */
 // 驗證使用者是否登入
 router.get('/check', ...handleMiddleware([isAuth], userController.getCheck))
 
