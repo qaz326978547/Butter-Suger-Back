@@ -7,7 +7,7 @@ const storage = require('../services/storage')
 const userController = {
   // 取得 google 基本資料
   async getGoogleProfile(req, res, next) {
-    console.log("============getGoogleProfile==============")
+    console.log('============getGoogleProfile==============')
     // #swagger.ignore = true
     try {
       // 確保 passport 已帶入 user 資料
@@ -15,9 +15,9 @@ const userController = {
         return next(appError(400, '登入失敗，缺少使用者資訊'))
       }
 
-      console.log("==============getGoogleProfile===============")
-      console.log("req.user: ", req.user)
-      console.log("==============getGoogleProfile===============")
+      console.log('==============getGoogleProfile===============')
+      console.log('req.user: ', req.user)
+      console.log('==============getGoogleProfile===============')
 
       // 確保 email 經過驗證
       const emailVerified = req.user.emails?.[0]?.verified
@@ -33,9 +33,9 @@ const userController = {
         where: { google_id: req.user.id },
       })
 
-      console.log("==============getGoogleProfile===============")
-      console.log("findUser: ", findUser)
-      console.log("==============getGoogleProfile===============")
+      console.log('==============getGoogleProfile===============')
+      console.log('findUser: ', findUser)
+      console.log('==============getGoogleProfile===============')
 
       // 若不存在，建立新使用者
       if (!findUser) {
@@ -83,7 +83,7 @@ const userController = {
 
       // 傳回 JSON 給前端，token= 測試用(暫不考慮安全性)
       return res.redirect(
-        `${process.env.FRONTEND_URL}/login-success.html?token=${token}&id=${findUser.id}`
+        `${process.env.FRONTEND_URL}/login-success?token=${token}&id=${findUser.id}`
       )
     } catch (error) {
       next(error)
@@ -92,7 +92,7 @@ const userController = {
 
   //取得使用者資料
   async getUserData(req, res, next) {
-    console.log("============getUserData==============")
+    console.log('============getUserData==============')
     try {
       const userId = req.user.id
       const userRepo = dataSource.getRepository('users')
@@ -125,7 +125,7 @@ const userController = {
 
   // 驗證使用者是否登入
   async getCheck(req, res, next) {
-    console.log("========getCheck=======")
+    console.log('========getCheck=======')
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer')) {
       //401: 請先登入!
@@ -178,7 +178,7 @@ const userController = {
       if (!findUser) {
         return next(appError(404, '查無個人資料，請重新登入'))
       }
- 
+
       // 清理未定義的欄位
       const updateData = cleanUndefinedFields({
         name,
@@ -186,13 +186,12 @@ const userController = {
         phone,
         birthday,
         address,
-        profile_image_url: findUser.profile_image_url || ''  //後面會判斷 req.file
+        profile_image_url: findUser.profile_image_url || '', //後面會判斷 req.file
       })
 
-
       if (req.file) {
-          updateData.profile_image_url = await storage.upload(req.file, 'users')
-      }      
+        updateData.profile_image_url = await storage.upload(req.file, 'users')
+      }
 
       // 更新使用者資料
       const updateResult = await userRepo.update({ id: userId }, updateData)
