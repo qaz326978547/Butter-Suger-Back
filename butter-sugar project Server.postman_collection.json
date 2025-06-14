@@ -746,6 +746,39 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "更改課程狀態",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"course_status\": \"上架\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/e2ec2fc6-f2c9-41a8-9b02-939b3a8ed177/status",
+							"protocol": "http",
+							"host": [
+								"butter-sugar-test",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"e2ec2fc6-f2c9-41a8-9b02-939b3a8ed177",
+								"status"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
