@@ -18,6 +18,9 @@ const allowedOrigins = [
   'http://localhost:8080',
   'https://buttersuger-frontend.zeabur.app',
   'https://buttersuger-test.zeabur.app',
+  'https://butter-suger.zeabur.app',
+  'https://butter-sugar-test.zeabur.app',
+  'https://ccore.newebpay.com' // 藍新金流
 ]
 app.use(
   cors({

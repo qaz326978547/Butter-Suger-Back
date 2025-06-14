@@ -54,29 +54,17 @@ const teacherController = {
 
   // 更新教師資料
   async updateTeacherData(req, res, next) {
-    console.log("================updateTeacherData==============")
-    console.log(req.user.id)
-    console.log("================updateTeacherData==============")
     try {
         const userId = req.user.id
         const {name, nickname, phone, birthday, sex, address, bank_name, bank_account, slogan, description, specialization} = req.body
 
         const teacherRepo = dataSource.getRepository('teacher')
-        console.log("================updateTeacherData teacherRepo==============")
         // 確認教師是否存在
         const findTeacher = await teacherRepo.findOne({
             select: ['id'],
             where: { user_id: userId },
             relations: ['user']
         })
-        console.log("================updateTeacherData findTeacher==============")
-        console.log(findTeacher)
-        
-        console.log("================updateTeacherData findTeacher==============")
-        console.log(findTeacher)
-        console.log("================updateTeacherData findTeacher==============")
-        console.log(findTeacher?.user?.profile_image_url)
-        console.log("================updateTeacherData findTeacher2==============")
 
       // 清理未定義的欄位
         const updateUserData = cleanUndefinedFields({
@@ -86,7 +74,7 @@ const teacherController = {
             birthday, 
             sex, 
             address,
-            profile_image_url: findTeacher?.users?.profile_image_url || '',
+            profile_image_url: findTeacher?.user?.profile_image_url || '',
             role: 'teacher',
         })
 
@@ -105,7 +93,7 @@ const teacherController = {
 
         await updateUserAndTeacher(userId, updateUserData, updateTeacherData)
         
-        return sendResponse(res, 200, true, '更新使用者資料成功')
+        return sendResponse(res, 200, true, '更新教師資料成功')
     } catch (error) {
       next(error)
     }
@@ -129,7 +117,7 @@ const teacherController = {
       'user.name AS teacher_name',
     "ROW_NUMBER() OVER (PARTITION BY teacher.id ORDER BY course.created_at DESC) AS rn"])
     .leftJoin('course.teacher', 'teacher') //relations:teacher => course.teacher
-    .leftJoin('teacher.users', 'user')
+    .leftJoin('teacher.user', 'user')
 
     //外層： 再依據教師的評價排序和課程時間(只留 rn = 1)
     const result = await dataSource.createQueryBuilder()
@@ -174,9 +162,9 @@ const teacherController = {
     return sendResponse(res, 200, true, '取得資料成功', {
       teacher: {
             teacher_id : findTeacher.id,
-            user_id : findTeacher.users.id,
-            name: findTeacher.users.name,
-            profile_image_url:findTeacher.users.profile_image_url,
+            user_id : findTeacher.user.id,
+            name: findTeacher.user.name,
+            profile_image_url:findTeacher.user.profile_image_url,
             rating_score: findTeacher.rating_score, 	
             slogan: findTeacher.slogan,
             description: findTeacher.description,

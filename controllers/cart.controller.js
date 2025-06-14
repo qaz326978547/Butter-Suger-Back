@@ -115,7 +115,7 @@ const cartController = {
             const cartsRepo = manager.getRepository('carts');
             const cartItemsRepo = manager.getRepository('cart_items');
             const coursesRepo = manager.getRepository('courses')
-
+            
             try {
                 // 查看此使用者是否建立購物車
                 let findCart = await cartsRepo.findOne({
@@ -138,14 +138,15 @@ const cartController = {
 
                 // 取出已存在購物車資料, alreadyInCartIds
                 const cartItemIds = cartItems?.map(item => item.course_id) || []
+
                 //未登入前購物車 id 合併原購物車 id
                 const mergeItemIds = Array.from(new Set([...(course_ids || []), ...cartItemIds]))
 
                 //查看課程是否存在資料庫
                 const validCourses = await coursesRepo.find({
                     where: {
-                        id: In(mergeItemIds),
-                        course_status: '上架'
+                        id: In(mergeItemIds)/* ,
+                        course_status: '上架' */
                     }
                 })
 
@@ -238,16 +239,8 @@ const cartController = {
 
     //結帳
     async checkout(req, res, next){
-        console.log("=============checkout============")
         const user_id = req.user.id
-        const { coupon_id, coupon, discount_amount } = req.body
-
-        console.log("=============checkout============")
-        console.log("req.user.id: ", req.user.id)
-        console.log("coupon_id: ", coupon_id)
-        console.log("coupon: ", coupon)
-        console.log("discount_amount: ", discount_amount)
-        console.log("=============checkout============")       
+        const { coupon_id, coupon, discount_amount } = req.body       
 
         try{
             const cartsRepo = dataSource.getRepository('carts')
@@ -262,29 +255,15 @@ const cartController = {
                 where: {id:user_id}
             })
 
-            console.log("==============checkout findUser=============")
-            console.log(findUser)
-            console.log("==============checkout findUser=============")
-
             const email = findUser.email
             const cart_id = findCart.id
             const cartItemsRepo = dataSource.getRepository('cart_items')
             const cartItemDetails = await getCartItemDetails(cartItemsRepo, cart_id)
-            
-            console.log("==============checkout cartItemDetails=============")
-            console.log(cartItemDetails)
-            console.log("==============checkout cartItemDetails=============")
-
             const course_ids = cartItemDetails.map(item =>item.course_id)
-
-            console.log("==============checkout=============")
-            console.log(course_ids)
-            console.log("==============checkout=============")
 
             //回傳購物車課程數量跟總金額
             const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
-            console.log("==============checkout1=============")
             const TimeStamp = Math.round(new Date().getTime()/1000)
             
             const order = {
@@ -294,31 +273,9 @@ const cartController = {
                 Amt: summaryItems.total_price-(Number(discount_amount)||0),
                 MerchantOrderNo: TimeStamp
             }
-        
-            console.log("==============checkout order=============")
-            console.log(order)    
-            console.log("==============checkout order=============")
 
             const aesEncrypt = createAesEncrypt(order)
             const shaEncrypt = createShaEncrypt(aesEncrypt)
-            
-            console.log("==============checkout Encrypt=============")
-            console.log("aesEncrypt: ", aesEncrypt)    
-            console.log("shaEncrypt: ", shaEncrypt) 
-            console.log("==============checkout Encrypt=============")
-
-            console.log("==============checkout newOrder=============")
-            console.log({
-                user_id: user_id,
-                coupon_id: coupon_id, //escapeHtml.escape(coupon_id)
-                discount_amount: discount_amount,  //escapeHtml.escape(discount_amount)
-                final_amount: summaryItems.total_price-(Number(discount_amount)||0), //escapeHtml.escape(discount_amount)
-                order_number: order.MerchantOrderNo,
-                payment_status: 'pending',
-                pay_trade_no: '',
-                pay_check_mac_value: shaEncrypt
-            })
-            console.log("==============checkout newOrder=============")
 
             const orderRepo = dataSource.getRepository('order')
             const newOrder = orderRepo.create({
@@ -332,10 +289,6 @@ const cartController = {
                 pay_check_mac_value: shaEncrypt
             })
             const result = await orderRepo.save(newOrder)
-            console.log("==============checkout result=============")
-            console.log(result)
-            console.log("==============checkout result=============")
-
 
             const insertOrderItems = cartItemDetails.map(item => {
                 return {order_id: result.id,
@@ -374,15 +327,7 @@ const cartController = {
     async newebpayReturn(req, res, next){
         // #swagger.ignore = true
         const response = req.body
-        console.log("============newebpayReturn req.body============")
-        console.log(req.body)
-        console.log("============newebpayReturn req.body============")
-
         const data = createAesDecrypt(response.TradeInfo)
-
-        console.log("============newebpayReturn data============")
-        console.log(data)
-        console.log("============newebpayReturn data============")
 
         const orderRepo = dataSource.getRepository('order')
         const findOrder = await orderRepo.findOne({
@@ -392,14 +337,11 @@ const cartController = {
         )
 
         const order_id = findOrder.id
-        console.log("============newebpayReturn data findOrder============")
-        console.log(findOrder)
-        console.log("============newebpayReturn data findOrder============")
 
         const orderItemRepo = dataSource.getRepository('order_item')
         const result = await orderItemRepo.createQueryBuilder('orderItem')
         .select([
-            'course.course_smallimage AS course_smallimage',
+            'course.course_small_imageUrl AS course_small_imageUrl',
             'course.course_name AS course_name',
             'orderItem.price AS price'
         ])
@@ -407,25 +349,10 @@ const cartController = {
         .where('orderItem.order_id = :order_id', { order_id }) // <-- 這裡
         .getRawMany()
 
-        console.log("================newebpayReturn result return==================")
-        console.log(result)
-        console.log("================newebpayReturn result return==================")
-
-        const renderData = {
-            "payway": data.Result.PaymentType,
-            "final_amount": data.Result.Amt,
-            "payment_status": data.Status,
-            "payment_date": data.Result.PayTime,
-            "order_number": data.Result.MerchantOrderNo,
-            "order_items": result,
-            "item_count": result.length
-        }
-
-        console.log("=================================")
         const html = renderOrderHtml(renderData)
         res.send(html)
 
-/*         return res.status(200).json({
+        r/* eturn res.status(200).json({
             status:true,
             message: "結帳成功",
             data: {
@@ -444,10 +371,6 @@ const cartController = {
         const response = req.body
         const data = createAesDecrypt(response.TradeInfo)
 
-        console.log("============newebpay_notify data============")
-        console.log(data)
-        console.log("============newebpay_notify data============")
-
         const thisShaEncrypt = createShaEncrypt(response.TradeInfo)
     
         if(!thisShaEncrypt === response.TradeSha){
@@ -465,14 +388,6 @@ const cartController = {
             pay_rtn_msg: JSON.stringify(data.Result)
             }
         )
-
-        console.log("============newebpay_notify Result============")
-        console.log(data?.Result)
-        console.log("============newebpay_notify Result============")
-
-        console.log("============newebpay_notify 更新 order============")
-        console.log(updateOrder)
-        console.log("============newebpay_notify 更新 order============")
         
         return sendResponse(res, 200, true, '結帳成功', data)
     },

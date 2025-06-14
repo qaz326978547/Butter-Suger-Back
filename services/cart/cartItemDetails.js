@@ -15,7 +15,7 @@ async function getCartItemDetails(cartItemsRepo, cart_id){
 
     // 取出購物車資料
     const cartItemDetails = await cartItemsRepo.createQueryBuilder('cartItems')
-    .select(['cartItems.id AS cart_item_id', 'cartItems.course_id AS course_id', 'course.course_smallimage AS course_smallimage', 'course.course_name AS course_name', 'course.sell_price AS price' ])
+    .select(['cartItems.id AS cart_item_id', 'cartItems.course_id AS course_id', 'course.course_small_imageUrl AS course_small_imageUrl', 'course.course_name AS course_name', 'course.sell_price AS price' ])
     .leftJoin('cartItems.courses', 'course')
     .where({ cart_id:cart_id })
     .getRawMany()

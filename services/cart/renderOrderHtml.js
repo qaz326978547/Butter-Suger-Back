@@ -1,7 +1,7 @@
 function renderOrderHtml(data) {
     const itemsHtml = data.order_items.map(item => `
       <div class="item-card">
-        <img class="item-img" src="${item.course_smallimage}" alt="課程封面">
+        <img class="item-img" src="${item.course_small_imageUrl}" alt="課程封面">
         <div class="item-info">
           <div class="item-name">${item.course_name}</div>
           <div class="item-price">NT$ ${item.price}</div>

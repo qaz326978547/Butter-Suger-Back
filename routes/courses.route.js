@@ -10,7 +10,17 @@ const validateSchema = require('../middleware/validateSchema.middleware')
 
 // 取得所有課程列表
 router.get('/list', courseController.getCourseList)
-// 取得單一課程資料
+
+//取得所有類別
+router.get('/course-category', courseController.getCourseCategory)
+
+//取得所有評價
+router.get('/ratings', courseController.getRatings)
+
+// 取得首頁熱門課程資料
+router.get('/popular', courseController.getPopularCourses)
+
+// 取得單一課程資料，要放後面，其他 /xxx 要放前面
 router.get('/:courseId', courseController.getCourse)
 router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) // 新增課程
 router.post(
@@ -26,17 +36,21 @@ router.post(
 // 取得課程講義
 router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
 
-// 取得首頁熱門課程資料
-// router.get('/popular', courseController.getPopularCourses)
+//新增課程價格
+router.patch(
+  '/:courseId/price',
+  ...handleMiddleware([isAuth], courseController.createCoursePrice)
+)
+
+//新增評價
+router.post('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.postRatings))
+
 
 //取得所有課程, 測試用，塞資料，非正式格式
 // router.get('/', courseController.getCourseList)
 
 // //建立新課程, 測試用，塞資料，非正式格式
 // router.post('/', courseController.postCourse)
-
-// //取得所有類別, 測試用，塞資料，非正式格式
-// router.get('/course-category', courseController.getCategory)
 
 // //建立新類別, 測試用，塞資料，非正式格式
 // router.post('/course-category', courseController.postCategory)

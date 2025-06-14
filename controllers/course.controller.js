@@ -17,9 +17,11 @@ const courseController = {
    * 取得所有課程類別
    * @route GET /api/v1/course/category
    */
-  async getCourseCategory(req, res, next) {
-    const courseCategoryRepo = dataSource.getRepository('course_category')
-    const categories = await courseCategoryRepo.find()
+  getCourseCategory: async (req, res, next) => {
+    const courseCategoryRepo = dataSource.getRepository('course_categories')
+    const categories = await courseCategoryRepo.find({
+      select: ['name']
+    })
     return sendResponse(res, 200, true, '取得課程類別成功', { categories })
   },
 
@@ -27,7 +29,7 @@ const courseController = {
    * 取得所有的課程 不分類別
    * @route GET /api/v1/course/list
    */
-  async getCourseList(req, res, next) {
+  getCourseList: async (req, res, next) => {
     const courseRepo = dataSource.getRepository('courses')
     const courses = await courseRepo.find({ relations: ['handouts', 'category'] })
     if (!courses || courses.length === 0) {
@@ -50,7 +52,7 @@ const courseController = {
    * 取得單一課程
    * @route GET /api/v1/course/:courseId
    */
-  async getCourse(req, res, next) {
+  getCourse: async (req, res, next) => {
     const courseId = req.params.courseId
     if (!courseId) {
       return next(appError(400, '請提供課程 ID'))
@@ -336,6 +338,125 @@ const courseController = {
     return sendResponse(res, 200, true, '取得教材列表成功', { handouts })
   },
 
+
+  /*
+   * 新增課程價格 New
+   * @route POST /api/v1/course/:courseId/price
+   */
+  createCoursePrice: async (req, res, next) => {
+    const { courseId } = req.params
+    const { origin_price } =  req.body 
+
+    const courseRepo = dataSource.getRepository('courses')
+    const course = await courseRepo.findOne({ where: { id: courseId } })
+
+    if (!course) {
+      return next(appError(404, '課程不存在'))
+    }
+
+    const createPriceResult = await courseRepo.update({id: courseId},{origin_price: origin_price, sell_price: origin_price})
+
+    if(createPriceResult.affected==1){
+      const updateCourse = await courseRepo.findOne({where:{id: courseId}})
+      return sendResponse(res, 200, true, '課程價格新增成功', updateCourse)
+    }else{
+      return sendResponse(res, 400, false, '課程價格新增失敗')
+    }
+  },
+
+
+    /*
+   * 新增課程價格 New
+   * @route POST /api/v1/course/:courseId/price
+   */
+    createCoursePrice: async (req, res, next) => {
+      const { courseId } = req.params
+      const { origin_price } =  req.body 
+  
+      const courseRepo = dataSource.getRepository('courses')
+      const course = await courseRepo.findOne({ where: { id: courseId } })
+  
+      if (!course) {
+        return next(appError(404, '課程不存在'))
+      }
+  
+      const createPriceResult = await courseRepo.update({id: courseId},{origin_price: origin_price, sell_price: origin_price})
+  
+      if(createPriceResult.affected==1){
+        const updateCourse = await courseRepo.findOne({where:{id: courseId}})
+        return sendResponse(res, 200, true, '課程價格新增成功', updateCourse)
+      }else{
+        return sendResponse(res, 400, false, '課程價格新增失敗')
+      }
+    },
+
+    // 新增課程評價
+    postRatings: async (req, res, next) => {
+      const user_id = req.user.id
+      const course_id = req.params.courseId
+      const { rating_score, review_text } = req.body
+
+      const courseRepo = dataSource.getRepository('courses')
+      const courseResult = await courseRepo.createQueryBuilder('course')
+      .select([
+          'course.course_name AS course_name',
+          'course.teacher_id AS teacher_id',
+          'teacher.user_id AS user_id',
+      ])
+      .leftJoin('course.teacher', 'teacher')
+      .where('course.id = :course_id', { course_id }) 
+      .getRawMany()
+
+      if(courseResult.user_id === user_id){
+        return sendResponse(res, 400, false, '抱歉，無法評價自己的課程')
+      }
+
+      const ratingsRepo = dataSource.getRepository('ratings')
+      const newRatings = ratingsRepo.create({
+        user_id: user_id,
+        course_id: course_id,
+        rating_score: rating_score,
+        review_text: review_text
+      })
+      const result = await ratingsRepo.save(newRatings)
+
+      updateTeacherRating(course_id)
+
+      return sendResponse(res, 200, true, '更新評價成功', result)
+    },
+
+    // 取得首頁熱門課程資料
+    getPopularCourses: async (req, res, next) => {
+      const ratingsRepo = dataSource.getRepository('ratings')
+      const result = await ratingsRepo.createQueryBuilder('rating')
+      .select(['rating.course_id AS course_id',
+        'ROUND(AVG(rating.rating_score)::numeric, 2) AS course_rating_score',
+        'COUNT(DISTINCT rating.user_id) AS course_total_users',
+        'course.course_banner_imageUrl AS course_image_url',
+        'course.course_name AS course_name',
+        'course.course_description AS course_description'
+      ])
+      .leftJoin('rating.courses', 'course')
+      .orderBy('course_rating_score', 'DESC')
+      .groupBy('rating.course_id')
+      .addGroupBy('course.course_banner_imageUrl')
+      .addGroupBy('course.course_name')
+      .addGroupBy('course.course_description')
+      .limit(10)
+      .getRawMany();
+      
+      return sendResponse(res, 200, true, '取得資料成功', result)
+    },
+
+    // 取得所有課程評價
+    getRatings: async (req, res, next) => {
+      console.log("==========getRatings 1=========")
+      const ratingsRepo = dataSource.getRepository('ratings')
+      console.log("==========getRatings 2=========")
+      const findRatings = await ratingsRepo.find()
+      console.log("==========getRatings 3=========")
+      return sendResponse(res, 200, true, '成功取得資料', findRatings)
+    },
   // 取得首頁熱門課程資料
   // async getPopularCourses(req, res, next) {
   //   const ratingsRepo = dataSource.getRepository('ratings')

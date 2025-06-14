@@ -14,7 +14,7 @@ module.exports = new EntitySchema({
       nullable: true,
     },
     category_id: {
-      type: 'uuid',
+      type: 'int',
       nullable: true,
     },
     course_banner_imageUrl: {
