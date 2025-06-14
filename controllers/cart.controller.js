@@ -15,7 +15,10 @@ const ReturnUrl = config.get('newebpay.ReturnUrl')
 const PayGateWay = config.get('newebpay.PayGateWay')
 
 const cartController = {
-    //取得購物車資料
+    /*
+   * 取得購物車資料
+   * @route GET /api/v1/cart
+   */
     async getCartItems(req, res, next){
         const user_id = req.user.id;
 
@@ -24,7 +27,7 @@ const cartController = {
             const findCart = await cartsRepo.findOne({where: {user_id: user_id}})
             
             if(!findCart){
-                return sendResponse(res, 200, true, '購物車尚未建立')
+                return next(appError(404, '購物車尚未建立'))
             }
         
             const cart_id = findCart.id
@@ -45,7 +48,10 @@ const cartController = {
         }
     },
 
-    //新增購物車資料,需補上課程是否存在資料庫, transaction 版, 只要一個資料表新增出錯，全部都 rollback！
+    /*
+   * 購物車加入課程, transaction 版, 只要一個資料表新增出錯，全部都 rollback！
+   * @route POST /api/v1/cart
+   */
     async postCartItems(req, res, next){
         await dataSource.transaction(async (manager) => {
             const cartsRepo = manager.getRepository('carts');
@@ -189,7 +195,10 @@ const cartController = {
         })
     },
 
-    //刪除購物車資料
+    /*
+   * 刪除購物車資料
+   * @route DELETE /api/v1/cart/:cartItemId
+   */
     async deleteCartItems(req, res, next){
         const user_id = req.user.id;
         const { cartItemId } = req.params
@@ -199,7 +208,7 @@ const cartController = {
             const findCart = await cartsRepo.findOne({where:{user_id:user_id}})
             
             if(!findCart){
-                return sendResponse(res, 200, true, '購物車尚未建立')
+                return next(appError(404, '購物車尚未建立'))
             }
 
             const cart_id = findCart.id
@@ -209,7 +218,7 @@ const cartController = {
             const findCartItem = await cartItemsRepo.findOne({where:{id:cartItemId}})                
 
             if(!findCartItem){
-                return sendResponse(res, 200, true, '找不到該課程項目，可能已被刪除')                  
+                return next(appError(400, '找不到該課程項目，可能已被刪除'))                
             }
             
             const deleteResult = await cartItemsRepo.delete(cartItemId)
@@ -237,7 +246,10 @@ const cartController = {
         }
     },
 
-    //結帳
+    /*
+   * 結帳
+   * @route POST - /api/v1/cart/checkout
+   */
     async checkout(req, res, next){
         const user_id = req.user.id
         const { coupon_id, coupon, discount_amount } = req.body       
@@ -247,7 +259,7 @@ const cartController = {
             const findCart = await cartsRepo.findOne({where:{user_id:user_id}})
             
             if(!findCart){
-                return sendResponse(res, 200, true, '購物車尚未建立')
+                return next(appError(404, '購物車尚未建立'))
             }
             
             const usersRepo = dataSource.getRepository('users')
@@ -324,6 +336,10 @@ const cartController = {
         }
     },
 
+    /*
+   * 收到藍新金流訊息, 傳送給前端
+   * @route POST - /api/v1/payment/newebpay_return
+   */
     async newebpayReturn(req, res, next){
         // #swagger.ignore = true
         const response = req.body
@@ -349,10 +365,11 @@ const cartController = {
         .where('orderItem.order_id = :order_id', { order_id }) // <-- 這裡
         .getRawMany()
 
+        // 二選一，傳送表單或是 json 檔
         const html = renderOrderHtml(renderData)
         res.send(html)
 
-        r/* eturn res.status(200).json({
+        /* return res.status(200).json({
             status:true,
             message: "結帳成功",
             data: {
@@ -366,6 +383,11 @@ const cartController = {
                 }
         }) */
     },
+
+    /*
+   * 收到藍新金流訊息, 後端更新資料庫狀態
+   * @route POST - /api/v1/payment/newebpay_notify
+   */
     async newebpayNotify(req, res, next){
         // #swagger.ignore = true
         const response = req.body
@@ -376,7 +398,7 @@ const cartController = {
         if(!thisShaEncrypt === response.TradeSha){
             console.log('付款失敗：TradeSha 不一致')
 
-            return sendResponse(res, 400, false, '付款失敗')
+            return next(appError(400, '付款失敗'))
         } 
         const payment_status =  data.Status==='SUCCESS'?'paid':'failed'
         const orderRepo = dataSource.getRepository('order')

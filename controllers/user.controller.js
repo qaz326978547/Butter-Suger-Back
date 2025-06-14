@@ -5,7 +5,10 @@ const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const storage = require('../services/storage')
 
 const userController = {
-  // 取得 google 基本資料
+  /*
+  * 取得 google 登入後使用者基本資料
+  * @route GET - /api/v1/users/auth/google/callback
+  */
   async getGoogleProfile(req, res, next) {
     // #swagger.ignore = true
     try {
@@ -81,7 +84,10 @@ const userController = {
     }
   },
 
-  //取得使用者資料
+  /*
+  * 取得使用者資料
+  * @route GET - /api/v1/users/info
+  */
   async getUserData(req, res, next) {
     try {
       const userId = req.user.id
@@ -113,7 +119,10 @@ const userController = {
     }
   },
 
-  // 驗證使用者是否登入
+  /*
+  * 驗證使用者是否登入
+  * @route GET - /api/v1/users/check
+  */
   async getCheck(req, res, next) {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer')) {
@@ -151,7 +160,10 @@ const userController = {
     return sendResponse(res, 200, true, '驗證成功')
   },
 
-  // 更新使用者資料
+  /*
+  * 更新使用者資料
+  * @route PATCH - /api/v1/users/update
+  */
   async updateUserData(req, res, next) {
     try {
       const userId = req.user.id

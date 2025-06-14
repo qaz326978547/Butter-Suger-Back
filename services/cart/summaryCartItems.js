@@ -1,5 +1,6 @@
 const { dataSource } = require('../../db/data-source')
 
+// 計算購物車的數量及金額
 async function summaryCartItems(cartItemsRepo, cart_id){
     return await cartItemsRepo.createQueryBuilder('cartItems')
     .select(['COUNT(*)::int AS item_count', 

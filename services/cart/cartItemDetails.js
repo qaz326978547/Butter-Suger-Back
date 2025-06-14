@@ -1,5 +1,6 @@
 const { dataSource } = require('../../db/data-source')
 
+// 取出購物車資料
 async function getCartItemDetails(cartItemsRepo, cart_id){
     //查詢購物車明細
     const findCartItems = await cartItemsRepo.find({where:{cart_id:cart_id}})                

@@ -750,6 +750,16 @@
 				{
 					"name": "更改課程狀態",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
@@ -762,7 +772,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/e2ec2fc6-f2c9-41a8-9b02-939b3a8ed177/status",
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/95dafe1b-4b65-4c6f-b093-47c041f80f32/status",
 							"protocol": "http",
 							"host": [
 								"butter-sugar-test",
@@ -773,8 +783,128 @@
 								"api",
 								"v1",
 								"course",
-								"e2ec2fc6-f2c9-41a8-9b02-939b3a8ed177",
+								"95dafe1b-4b65-4c6f-b093-47c041f80f32",
 								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "提出課程問題",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"question_text\": \"法式海綿蛋糕製作過程是否有問題？\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/questions",
+							"protocol": "http",
+							"host": [
+								"butter-sugar-test",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "提出課程回答",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"question_id\": \"5f0648d8-fc2d-4a9b-a8c1-d0a09e06f29e\",\r\n  \"answer_text\": \"真的好難喔，失敗好多次。\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/answers",
+							"protocol": "http",
+							"host": [
+								"butter-sugar-test",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"answers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得課程問題列表",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/questions",
+							"protocol": "http",
+							"host": [
+								"butter-sugar-test",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"questions"
 							]
 						}
 					},

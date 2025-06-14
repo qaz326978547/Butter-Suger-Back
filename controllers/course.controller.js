@@ -33,7 +33,7 @@ const courseController = {
     const courseRepo = dataSource.getRepository('courses')
     const courses = await courseRepo.find({ relations: ['handouts', 'category'] })
     if (!courses || courses.length === 0) {
-      return sendResponse(res, 404, false, '沒有找到任何課程')
+      return next(appError(404, '沒有找到任何課程'))
     }
 
     const result = courses.map((course) => {
@@ -358,7 +358,7 @@ const courseController = {
       const updateCourse = await courseRepo.findOne({where:{id: courseId}})
       return sendResponse(res, 200, true, '課程價格新增成功', updateCourse)
     }else{
-      return sendResponse(res, 400, false, '課程價格新增失敗')
+      return next(appError(400, '課程價格新增失敗'))
     }
   },
 
@@ -384,7 +384,7 @@ const courseController = {
       const updateCourse = await courseRepo.findOne({where:{id: courseId}})
       return sendResponse(res, 200, true, '課程狀態更新成功', updateCourse)
     }else{
-      return sendResponse(res, 400, false, '課程狀態更新失敗')
+      return next(appError(400, '課程狀態更新失敗'))
     }
   },
 
@@ -406,7 +406,7 @@ const courseController = {
     .getRawMany()
 
     if(courseResult.user_id === user_id){
-      return sendResponse(res, 400, false, '抱歉，無法評價自己的課程')
+      return next(appError(400, '抱歉，無法評價自己的課程'))
     }
 
     const ratingsRepo = dataSource.getRepository('ratings')
@@ -441,7 +441,7 @@ const courseController = {
     .getRawMany()
 
     if(courseResult.user_id === user_id){
-      return sendResponse(res, 400, false, '抱歉，無法評價自己的課程')
+      return next(appError(400, '抱歉，無法評價自己的課程'))
     }
 
     const ratingsRepo = dataSource.getRepository('ratings')
@@ -457,7 +457,7 @@ const courseController = {
       updateTeacherRating(course_id)
       return sendResponse(res, 200, true, '更新評價成功')
     }else{
-      return sendResponse(res, 400, false, '更新評價失敗')
+      return next(appError(400, '更新評價失敗'))
     }
   },
 

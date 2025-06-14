@@ -1,3 +1,4 @@
+// 結帳 render 頁面
 function renderOrderHtml(data) {
     const itemsHtml = data.order_items.map(item => `
       <div class="item-card">

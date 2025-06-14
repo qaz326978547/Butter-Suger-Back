@@ -3,7 +3,10 @@ const { appError, sendResponse } = require('../utils/responseFormat')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 
 const orderController = {
-    //取得所有訂單
+    /*
+    * 取得所有訂單
+    * @route PATCH - /api/v1/users/orders
+    */
     async getOrderList(req, res, next){
         const user_id = req.user.id
         

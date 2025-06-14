@@ -6,7 +6,10 @@ const updateUserAndTeacher = require('../services/teacher/updateUserAndTeacher')
 
 
 const teacherController = {
-  //取得教師資料
+  /*
+   * 取得教師資料
+   * @route GET - /api/v1/teacher/profile
+   */
   async getTeacherData(req, res, next) {
     try {
       const userId = req.user.id
@@ -52,7 +55,10 @@ const teacherController = {
     }
   },
 
-  // 更新教師資料
+  /*
+  * 更新教師資料
+  * @route PATCH - /api/v1/teacher/profile
+  */
   async updateTeacherData(req, res, next) {
     try {
         const userId = req.user.id
@@ -99,7 +105,10 @@ const teacherController = {
     }
   },
 
-  //取得精選教師
+  /*
+  * 取得精選教師
+  * @route GET - /api/v1/teacher/featured
+  */
   async getTeacherFeatured(req, res, next){
     const coursesRepo = dataSource.getRepository('courses')
 
@@ -140,7 +149,10 @@ const teacherController = {
     return sendResponse(res, 200, true, '取得資料成功', result)
   },
 
-  //取得單一精選教師資料
+  /*
+  * 取得單一精選教師資料
+  * @route GET - /api/v1/teachers/:teacher-id
+  */
   async getSingleFeaturedTeacherData(req, res, next){
     const {teacherId} = req.params
 
