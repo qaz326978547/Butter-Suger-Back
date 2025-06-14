@@ -51,6 +51,20 @@ router.patch(
 //新增評價
 router.post('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.postRatings))
 
+//更新評價
+router.patch('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.patchRatings))
+
+//取得課程問題列表
+router.get('/:courseId/questions', ...handleMiddleware([isAuth], courseController.getQuestions))
+
+//新增問題
+router.post('/:courseId/questions', ...handleMiddleware([isAuth], courseController.postQuestions))
+
+//新增回答
+router.post('/:courseId/answers', ...handleMiddleware([isAuth], courseController.postAnswers))
+
+
+
 
 //取得所有課程, 測試用，塞資料，非正式格式
 // router.get('/', courseController.getCourseList)
