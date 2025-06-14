@@ -325,7 +325,6 @@ const courseController = {
   /*
    * 取得課程教材列表
    */
-
   async getCourseHandOuts(req, res, next) {
     const courseId = req.params.courseId
     if (!courseId) {
@@ -338,40 +337,39 @@ const courseController = {
     return sendResponse(res, 200, true, '取得教材列表成功', { handouts })
   },
 
-
   /*
-   * 新增課程價格 New
-   * @route POST /api/v1/course/:courseId/price
-   */
-  createCoursePrice: async (req, res, next) => {
-    const { courseId } = req.params
-    const { origin_price } =  req.body 
-
-    const courseRepo = dataSource.getRepository('courses')
-    const course = await courseRepo.findOne({ where: { id: courseId } })
-
-    if (!course) {
-      return next(appError(404, '課程不存在'))
-    }
-
-    const createPriceResult = await courseRepo.update({id: courseId},{origin_price: origin_price, sell_price: origin_price})
-
-    if(createPriceResult.affected==1){
-      const updateCourse = await courseRepo.findOne({where:{id: courseId}})
-      return sendResponse(res, 200, true, '課程價格新增成功', updateCourse)
-    }else{
-      return sendResponse(res, 400, false, '課程價格新增失敗')
-    }
-  },
-
-
-    /*
    * 新增課程價格 New
    * @route POST /api/v1/course/:courseId/price
    */
     createCoursePrice: async (req, res, next) => {
       const { courseId } = req.params
       const { origin_price } =  req.body 
+
+      const courseRepo = dataSource.getRepository('courses')
+      const course = await courseRepo.findOne({ where: { id: courseId } })
+
+      if (!course) {
+        return next(appError(404, '課程不存在'))
+      }
+
+      const createPriceResult = await courseRepo.update({id: courseId},{origin_price: origin_price, sell_price: origin_price})
+
+      if(createPriceResult.affected==1){
+        const updateCourse = await courseRepo.findOne({where:{id: courseId}})
+        return sendResponse(res, 200, true, '課程價格新增成功', updateCourse)
+      }else{
+        return sendResponse(res, 400, false, '課程價格新增失敗')
+      }
+    },
+
+
+    /*
+   * 更新課程狀態
+   * @route POST /api/v1/course/:courseId/price
+   */
+    updateCourseStatus: async (req, res, next) => {
+      const { courseId } = req.params
+      const { course_status } =  req.body 
   
       const courseRepo = dataSource.getRepository('courses')
       const course = await courseRepo.findOne({ where: { id: courseId } })
@@ -380,13 +378,13 @@ const courseController = {
         return next(appError(404, '課程不存在'))
       }
   
-      const createPriceResult = await courseRepo.update({id: courseId},{origin_price: origin_price, sell_price: origin_price})
+      const updateCourseStatusResult = await courseRepo.update({id: courseId}, {course_status: course_status})
   
-      if(createPriceResult.affected==1){
+      if(updateCourseStatusResult.affected==1){
         const updateCourse = await courseRepo.findOne({where:{id: courseId}})
-        return sendResponse(res, 200, true, '課程價格新增成功', updateCourse)
+        return sendResponse(res, 200, true, '課程狀態更新成功', updateCourse)
       }else{
-        return sendResponse(res, 400, false, '課程價格新增失敗')
+        return sendResponse(res, 400, false, '課程狀態更新失敗')
       }
     },
 
@@ -450,11 +448,8 @@ const courseController = {
 
     // 取得所有課程評價
     getRatings: async (req, res, next) => {
-      console.log("==========getRatings 1=========")
       const ratingsRepo = dataSource.getRepository('ratings')
-      console.log("==========getRatings 2=========")
       const findRatings = await ratingsRepo.find()
-      console.log("==========getRatings 3=========")
       return sendResponse(res, 200, true, '成功取得資料', findRatings)
     },
   // 取得首頁熱門課程資料

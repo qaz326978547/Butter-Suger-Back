@@ -42,6 +42,12 @@ router.patch(
   ...handleMiddleware([isAuth], courseController.createCoursePrice)
 )
 
+//更新課程狀態, 之後管理者有時間做時改成管理者
+router.patch(
+  '/:courseId/status',
+  ...handleMiddleware([isAuth], courseController.updateCourseStatus)
+)
+
 //新增評價
 router.post('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.postRatings))
 

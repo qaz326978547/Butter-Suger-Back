@@ -145,8 +145,8 @@ const cartController = {
                 //查看課程是否存在資料庫
                 const validCourses = await coursesRepo.find({
                     where: {
-                        id: In(mergeItemIds)/* ,
-                        course_status: '上架' */
+                        id: In(mergeItemIds),
+                        course_status: '上架'
                     }
                 })
 
