@@ -20,7 +20,7 @@ const courseController = {
   getCourseCategory: async (req, res, next) => {
     const courseCategoryRepo = dataSource.getRepository('course_categories')
     const categories = await courseCategoryRepo.find({
-      select: ['name']
+      select: ['id','name']
     })
     return sendResponse(res, 200, true, '取得課程類別成功', { categories })
   },

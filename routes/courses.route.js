@@ -72,7 +72,7 @@ router.get('/:courseId/course-section', ...handleMiddleware([isAuth], courseCont
 //更新課程章節
 router.patch('/course-section/:courseSectionId', ...handleMiddleware([isAuth], courseController.patchCourseSection))
 
-//更新課程章節
+//刪除課程章節
 router.delete('/course-section/:courseSectionId', ...handleMiddleware([isAuth], courseController.deleteCourseSection))
 
 //取得所有課程, 測試用，塞資料，非正式格式
