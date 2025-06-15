@@ -9,6 +9,10 @@ module.exports = new EntitySchema({
             type: 'uuid',
             generated: 'uuid',
         },
+        course_id: {
+            type: 'uuid',
+            nullable: false
+        },
         order_index: {
             type: 'int',
         },

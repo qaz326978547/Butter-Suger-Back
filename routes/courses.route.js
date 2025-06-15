@@ -63,8 +63,17 @@ router.post('/:courseId/questions', ...handleMiddleware([isAuth], courseControll
 //新增回答
 router.post('/:courseId/answers', ...handleMiddleware([isAuth], courseController.postAnswers))
 
+//新增課程章節
+router.post('/:courseId/course-section', ...handleMiddleware([isAuth], courseController.postCourseSection))
 
+//取得課程章節
+router.get('/:courseId/course-section', ...handleMiddleware([isAuth], courseController.getCourseSection))
 
+//更新課程章節
+router.patch('/course-section/:courseSectionId', ...handleMiddleware([isAuth], courseController.patchCourseSection))
+
+//更新課程章節
+router.delete('/course-section/:courseSectionId', ...handleMiddleware([isAuth], courseController.deleteCourseSection))
 
 //取得所有課程, 測試用，塞資料，非正式格式
 // router.get('/', courseController.getCourseList)
