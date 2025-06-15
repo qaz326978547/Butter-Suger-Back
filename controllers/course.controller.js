@@ -48,6 +48,7 @@ const courseController = {
 
     return sendResponse(res, 200, true, '取得課程列表成功', { courses: result })
   },
+
   /*
    * 取得單一課程
    * @route GET /api/v1/course/:courseId
@@ -72,7 +73,6 @@ const courseController = {
    * 新增課程標題
    * @route POST /api/v1/course/create/title
    */
-
   createCourseTitle: wrapAsync(async (req, res, next) => {
     const user_id = req.user?.id
     const { course_name } = req.body
@@ -238,6 +238,7 @@ const courseController = {
 
   /*
    * 上傳課程多個講義
+   * @route POST /api/v1/course/course-id/upload/course-handouts
    */
   uploadCourseHandOuts: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
@@ -324,6 +325,7 @@ const courseController = {
 
   /*
    * 取得課程教材列表
+   * @route GET /api/v1/course/course-id/upload/course-handouts
    */
   getCourseHandOuts: async (req, res, next) => {
     const courseId = req.params.courseId
@@ -388,7 +390,10 @@ const courseController = {
     }
   },
 
-  // 新增課程評價
+  /*
+  * 新增課程評價
+  * @route POST /api/v1/course/:courseId/ratings
+  */
   postRatings: async (req, res, next) => {
     const user_id = req.user.id
     const course_id = req.params.courseId
@@ -423,7 +428,10 @@ const courseController = {
     return sendResponse(res, 200, true, '新增評價成功', result)
   },
 
-  // 修改特定課程評價
+  /*
+  * 修改特定課程評價
+  * @route PATCH /api/v1/course/:courseId/ratings
+  */
   patchRatings: async (req, res, next) => {
     const user_id = req.user.id
     const course_id = req.params.courseId
@@ -461,7 +469,10 @@ const courseController = {
     }
   },
 
-  // 取得首頁熱門課程資料
+  /*
+  * 取得首頁熱門課程資料
+  * @route GET /api/v1/course/popular
+  */
   getPopularCourses: async (req, res, next) => {
     const ratingsRepo = dataSource.getRepository('ratings')
     const result = await ratingsRepo.createQueryBuilder('rating')
@@ -484,14 +495,20 @@ const courseController = {
     return sendResponse(res, 200, true, '取得資料成功', result)
   },
 
-  // 取得所有課程評價
+  /*
+  * 取得所有課程評價
+  * @route GET /api/v1/course/ratings
+  */
   getRatings: async (req, res, next) => {
     const ratingsRepo = dataSource.getRepository('ratings')
     const findRatings = await ratingsRepo.find()
     return sendResponse(res, 200, true, '成功取得資料', findRatings)
   },
 
-  // 提出課程問題
+  /*
+  * 提出課程問題
+  * @route POST /api/v1/course/:courseId/questions
+  */
   postQuestions: async (req, res, next) => {
     const user_id = req.user.id
     const course_id = req.params.courseId
@@ -523,7 +540,10 @@ const courseController = {
     return sendResponse(res, 200, true, '新增問題成功', result)
   },
 
-  // 提出課程問題
+  /*
+  * 提出課程回答
+  * @route POST /api/v1/course/:courseId/answers
+  */
   postAnswers: async (req, res, next) => {
     const user_id = req.user.id
     const course_id = req.params.courseId
@@ -556,7 +576,10 @@ const courseController = {
     return sendResponse(res, 200, true, '新增回答成功', result)
   },
 
-  // 取得課程問題列表
+  /*
+  * 取得課程問題列表 
+  * @route GET /api/v1/course/:courseId/questions
+  */
   getQuestions: async (req, res, next) => {
     const course_id = req.params.courseId
 
@@ -573,10 +596,6 @@ const courseController = {
     .leftJoin('teacher.user', 'user')
     .where('course.id = :course_id', { course_id })
     .getRawOne()
-
-    console.log("=========findUser==========")
-    console.log("findUser: ", findUser)
-    console.log("=========findUser==========")
 
     const answerRepo = dataSource.getRepository('answer')
 

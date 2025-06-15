@@ -311,6 +311,40 @@
 					"response": []
 				},
 				{
+					"name": "取得課程講義",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/handouts",
+							"protocol": "http",
+							"host": [
+								"butter-sugar-test",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"handouts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "新增課程預告片",
 					"request": {
 						"auth": {
@@ -451,7 +485,7 @@
 					"response": []
 				},
 				{
-					"name": "取得單一指定課程列表",
+					"name": "取得單一指定課程",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -785,6 +819,49 @@
 								"course",
 								"95dafe1b-4b65-4c6f-b093-47c041f80f32",
 								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "更新課程評價",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating_score\": 5,\r\n    \"review_text\": \"法式海綿蛋糕好吃，會持續練習！\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/bb3ee665-da44-465a-b6e9-fc84cda3cfb6/ratings",
+							"protocol": "http",
+							"host": [
+								"butter-sugar-test",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"bb3ee665-da44-465a-b6e9-fc84cda3cfb6",
+								"ratings"
 							]
 						}
 					},
