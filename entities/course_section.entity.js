@@ -1,41 +1,51 @@
-const { EntitySchema } = require('typeorm');
+const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
-    name: 'course_sections',
-    tableName: 'course_sections',
-    columns: {
-        id: {
-            primary: true,
-            type: 'uuid',
-            generated: 'uuid',
-        },
-        order_index: {
-            type: 'int',
-        },
-        main_section_title: {
-            type: 'varchar',
-            length: 255,
-        },
-        created_at: {
-            type: 'timestamp',
-            createDate: true,
-        },
-        updated_at: {
-            type: 'timestamp',
-            updateDate: true,
-        },
+  name: 'course_section',
+  tableName: 'course_section',
+  columns: {
+    id: {
+      primary: true,
+      type: 'uuid',
+      generated: 'uuid',
     },
-    relations: {
-        course: {
-            type: 'many-to-one', // 多個章節對應一個課程
-            target: 'courses',
-            joinColumn: { name: 'course_id' },
-            onDelete: 'CASCADE', // 當課程被刪除時，相關的章節也會被刪除
-        },
-        subsections: {
-            type: 'one-to-many',
-            target: 'course_subsections',
-            inverseSide: 'section', // 反向關聯 
-        },
+    course_id: {
+      type: 'uuid',
     },
-});
+    order_index: {
+      type: 'int',
+      default: 0,
+    },
+    main_section_title: {
+      type: 'varchar',
+      length: 255,
+      default: '第一章:準備工作',
+    },
+    created_at: {
+      type: 'timestamp',
+      createDate: true,
+    },
+    updated_at: {
+      type: 'timestamp',
+      updateDate: true,
+    },
+  },
+  relations: {
+    course: {
+      target: 'courses',
+      type: 'many-to-one',
+      joinColumn: {
+        name: 'course_id',
+        referencedColumnName: 'id',
+        foreignKeyConstraintName: 'course_section_course_id_fk',
+      },
+      onDelete: 'CASCADE',
+    },
+    subsections: {
+      target: 'course_subsection',
+      type: 'one-to-many',
+      inverseSide: 'section',
+      cascade: true,
+    },
+  },
+})

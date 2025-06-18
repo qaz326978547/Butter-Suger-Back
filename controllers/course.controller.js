@@ -14,22 +14,23 @@ const MediaField = require('../services/updateCourseMedia/updateCourseMedia.inte
 
 const courseController = {
   /*
-   * 取得所有課程類別
-   * @route GET /api/v1/course/category
+   * 取得特定類別課程
+   * @route GET /api/v1/course/category/:categoryId
+   * @param {string} categoryId - 課程類別 ID
+   * @returns {object} - 課程列表
    */
   async getCourseCategory(req, res, next) {
-    const courseCategoryRepo = dataSource.getRepository('course_category')
-    const categories = await courseCategoryRepo.find()
-    return sendResponse(res, 200, true, '取得課程類別成功', { categories })
-  },
+    const categoryId = req.params.categoryId
+    if (!categoryId) {
+      return next(appError(400, '請提供課程類別 ID'))
+    }
 
-  /*
-   * 取得所有的課程 不分類別
-   * @route GET /api/v1/course/list
-   */
-  async getCourseList(req, res, next) {
     const courseRepo = dataSource.getRepository('courses')
-    const courses = await courseRepo.find({ relations: ['handouts', 'category'] })
+    const courses = await courseRepo.find({
+      where: { category_id: categoryId },
+      relations: ['category'],
+    })
+
     if (!courses || courses.length === 0) {
       return sendResponse(res, 404, false, '沒有找到任何課程')
     }
@@ -40,7 +41,55 @@ const courseController = {
         ...rest,
         category_id: course.category_id,
         category_name: category ? category.name : null,
+      }
+    })
+
+    return sendResponse(res, 200, true, '取得課程列表成功', { courses: result })
+  },
+
+  /*
+   * 取得所有課程分類別
+   * @route GET /api/v1/course/category
+   */
+  getCourseCategoryList: wrapAsync(async (req, res, next) => {
+    const categoryRepo = dataSource.getRepository('course_categories')
+    const categories = await categoryRepo.find()
+
+    if (!categories || categories.length === 0) {
+      return sendResponse(res, 404, false, '沒有找到任何課程類別')
+    }
+
+    return sendResponse(res, 200, true, '取得課程類別列表成功', { categories })
+  }),
+
+  /*
+   * 取得所有的課程 不分類別
+   * @route GET /api/v1/course/list
+   */
+  async getCourseList(req, res, next) {
+    const courseRepo = dataSource.getRepository('courses')
+    const courses = await courseRepo.find({
+      relations: ['handouts', 'category', 'teacher', 'teacher.user'],
+    })
+
+    if (!courses || courses.length === 0) {
+      return sendResponse(res, 404, false, '沒有找到任何課程')
+    }
+
+    const result = courses.map((course) => {
+      const { category, teacher, ...rest } = course
+
+      return {
+        ...rest,
+        category_id: course.category_id,
+        category_name: category ? category.name : null,
         handouts: course.handouts,
+        teacher: teacher?.user
+          ? {
+              name: teacher.user.name,
+              nickname: teacher.user.nickname,
+            }
+          : null,
       }
     })
 

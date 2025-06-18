@@ -1,63 +1,67 @@
-const { EntitySchema } = require('typeorm');
+const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
-    name: 'course_subsections',
-    tableName: 'course_subsections',
-    columns: {
-        id: {
-            primary: true,
-            type: 'uuid',
-            generated: 'uuid',
-        },
-        order_index: {
-            type: 'int',
-        },
-        subsection_title: {
-            type: 'varchar',
-            length: 255,
-        },
-        video_file_id: {
-            type: 'varchar',
-            length: 255,
-        },
-        video_file_url: {
-            type: 'varchar',
-            length: 255,
-        },
-        video_file_name: {
-            type: 'varchar',
-            length: 255,
-        },
-        video_duration: {
-            type: 'int',
-        },
-        uploaded_at: {
-            type: 'timestamp',
-        },
-        video_status: {
-            type: 'enum',
-            enum: ['processing', 'ready', 'failed'],
-            default: 'processing',
-        },
-        is_preview_available: {
-            type: 'boolean',
-            default: false,
-        },
-        created_at: {
-            type: 'timestamp',
-            createDate: true,
-        },
-        updated_at: {
-            type: 'timestamp',
-            updateDate: true,
-        },
+  name: 'course_subsection',
+  tableName: 'course_subsection',
+  columns: {
+    id: {
+      primary: true,
+      type: 'uuid',
+      generated: 'uuid',
     },
-    relations: {
-        section: {
-            type: 'many-to-one', // 多個小節對應一個章節
-            target: 'course_sections', 
-            joinColumn: { name: 'section_id' }, //對應章節的外建
-            onDelete: 'CASCADE',
-        },
+    section_id: {
+      type: 'uuid',
     },
-});
+    order_index: {
+      type: 'int',
+      default: 0,
+    },
+    subsection_title: {
+      type: 'varchar',
+      length: 255,
+      nullable: false,
+    },
+    video_file_url: {
+      type: 'varchar',
+      length: 255,
+      nullable: true,
+    },
+    video_duration: {
+      type: 'int',
+      nullable: true,
+    },
+    uploaded_at: {
+      type: 'timestamp',
+      nullable: true,
+    },
+    status: {
+      type: 'enum',
+      enum: ['available', 'processing'],
+      default: 'processing',
+    },
+    is_preview_available: {
+      type: 'boolean',
+      default: false,
+    },
+    created_at: {
+      type: 'timestamp',
+      createDate: true,
+    },
+    updated_at: {
+      type: 'timestamp',
+      updateDate: true,
+    },
+  },
+  relations: {
+    section: {
+      target: 'course_section',
+      type: 'many-to-one',
+      joinColumn: {
+        name: 'section_id',
+        referencedColumnName: 'id',
+        foreignKeyConstraintName: 'course_subsection_section_id_fk',
+      },
+      onDelete: 'CASCADE',
+    },
+  },
+})

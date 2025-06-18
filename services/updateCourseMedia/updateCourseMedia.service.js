@@ -200,10 +200,67 @@ const deleteHandout = async ({ handoutId }) => {
   return { message: '講義已成功刪除' }
 }
 
+const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
+  if (!subsectionId || !file) {
+    throw appError(400, '缺少小節 ID 或影片')
+  }
+
+  const subsectionRepo = dataSource.getRepository('course_subsections')
+  const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
+  if (!subsection) {
+    throw appError(404, '小節不存在')
+  }
+
+  const allowedTypes = ALLOWED_MIME_TYPES.video
+  if (!allowedTypes.includes(file.mimetype)) {
+    throw appError(400, '僅允許上傳影片格式')
+  }
+
+  // 狀態更新
+  subsection.video_status = 'processing'
+  await subsectionRepo.save(subsection)
+
+  const videoUrl = await storage.upload(file, folderName)
+
+  subsection.video_url = videoUrl
+  subsection.video_name = file.originalname || '未命名影片'
+  subsection.video_size = formatFileSize(file.size || 0)
+  subsection.video_type = file.mimetype || 'video/mp4'
+  subsection.video_status = 'ready'
+  await subsectionRepo.save(subsection)
+
+  return videoUrl
+}
+
+const deleteSubsectionVideo = async ({ subsectionId }) => {
+  const subsectionRepo = dataSource.getRepository('course_subsections')
+  const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
+  if (!subsection) {
+    throw appError(404, '小節不存在')
+  }
+
+  if (!subsection.video_url) {
+    throw appError(400, '小節尚未上傳影片')
+  }
+
+  await storage.delete(subsection.video_url)
+
+  subsection.video_url = null
+  subsection.video_name = null
+  subsection.video_size = null
+  subsection.video_type = null
+  subsection.video_status = 'processing' // 重置狀態
+  await subsectionRepo.save(subsection)
+
+  return true
+}
+
 module.exports = {
   updateCourseMediaService,
   uploadHandoutService,
   deleteHandout,
+  uploadSubsectionVideo,
+  deleteSubsectionVideo,
   deleteCourseMedia,
   deleteVideo,
 }
