@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "84e0f84d-7cb2-4199-85c8-3a5a6046a318",
-		"name": "butter-sugar project Server",
+		"_postman_id": "28d3f76a-c076-4c86-8d63-ca07e7a15094",
+		"name": "butter-sugar project Server 619",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "27891534"
 	},
@@ -15,10 +15,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/popular",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/popular",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -38,10 +38,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/course-category",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/course-category",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -61,10 +61,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/list",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/list",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -95,7 +95,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"course_name\":\"酥脆可可！巧克力燕麥餅乾全攻略\"\r\n}",
+							"raw": "{\r\n    \"course_name\":\"健康升級！全麥雜糧堅果麵包實作課\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -103,10 +103,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/create/title",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/create/title",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -138,7 +138,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"category_id\":3\r\n}",
+							"raw": "{\r\n    \"category_id\":2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -146,10 +146,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/category",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/category",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -157,7 +157,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"category"
 							]
 						}
@@ -185,15 +185,15 @@
 								{
 									"key": "banner",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/bread/1.png"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/08aa88ed-448d-4ef6-9c2c-f1a47893e6c5.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/upload/course-banner-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/upload/course-banner-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -201,7 +201,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"upload",
 								"course-banner-image"
 							]
@@ -230,15 +230,15 @@
 								{
 									"key": "course-small-image",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/bread/3.jpg"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/08aa88ed-448d-4ef6-9c2c-f1a47893e6c5.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/upload/small-image?course-small-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/upload/small-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -246,15 +246,9 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"upload",
 								"small-image"
-							],
-							"query": [
-								{
-									"key": "course-small-image",
-									"value": null
-								}
 							]
 						}
 					},
@@ -281,20 +275,20 @@
 								{
 									"key": "handout",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/bread/星糖的甜蜜開張日記.pdf"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/星糖的甜蜜開張日記.pdf"
 								},
 								{
 									"key": "handout",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/bread/星糖的甜蜜開張日記.pdf"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/星糖的甜蜜開張日記.pdf"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/upload/course-handouts",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/upload/course-handouts",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -302,7 +296,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"upload",
 								"course-handouts"
 							]
@@ -326,10 +320,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/handouts",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/handouts",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -337,7 +331,7 @@
 								"api",
 								"v1",
 								"course",
-								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"handouts"
 							]
 						}
@@ -365,15 +359,15 @@
 								{
 									"key": "trailer",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/bread/bread.mp4"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/20250615_1637_Little Baker's Craft_simple_compose_01jxsbr062eqnb58z2r5tsxa43.mp4"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/upload/course-trailer",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/upload/course-trailer",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -381,7 +375,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"upload",
 								"course-trailer"
 							]
@@ -410,15 +404,15 @@
 								{
 									"key": "course-description-image",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/bread/5.jpg"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/2432224c-fee8-46c5-854a-fe56093c99c0.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/upload/description-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/upload/description-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -426,7 +420,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"upload",
 								"description-image"
 							],
@@ -458,7 +452,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"suitable_for\":\"巧克力控、甜點愛好者\",\r\n    \"course_goal\":\"掌握多款巧克力燕麥餅乾配方與質地調整技巧，做出專業級酥脆美味\",\r\n    \"course_description\":\"課程從可可粉挑選到巧克力比例調整，帶你掌握燕麥餅乾與苦甜巧克力完美融合的秘訣。進階單元示範榛果可可、橙香可可、辣味可可三款創意變化，並解析脆度與化口度的控制技巧。\",\r\n    \"course_banner_description\":\"結合濃郁可可與天然燕麥，教你做出口感酥脆、風味層次豐富的巧克力燕麥餅乾！\"\r\n}",
+							"raw": "{\r\n    \"suitable_for\":\"健康飲食者、全麥雜糧愛好者\",\r\n    \"course_goal\":\"熟練全麥雜糧堅果麵包配方與技巧，做出高纖維健康美味麵包\",\r\n    \"course_description\":\"專為注重飲食健康設計，課程包含全麥雜糧麵包、核桃蔓越莓雜糧麵包、南瓜子燕麥麵包三大主題。深入講解高含水量麵糰操作、雜糧與堅果均勻分佈訣竅，以及冷藏發酵提升風味的小技巧。\",\r\n    \"course_banner_description\":\"高纖全麥結合營養堅果與雜糧，兼顧健康與美味的日常能量麵包。\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -466,10 +460,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/save",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895/save",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -477,7 +471,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"3a555761-b481-4a4f-aa1e-2673af738895",
 								"save"
 							]
 						}
@@ -490,10 +484,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/3a555761-b481-4a4f-aa1e-2673af738895",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -501,73 +495,7 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "新增課程評價",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"rating_score\": 4,\r\n    \"review_text\": \"巧克力燕麥餅乾\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/ratings",
-							"protocol": "http",
-							"host": [
-								"butter-sugar-test",
-								"zeabur",
-								"app"
-							],
-							"path": [
-								"api",
-								"v1",
-								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
-								"ratings"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "取得所有課程評價",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/ratings",
-							"protocol": "http",
-							"host": [
-								"butter-sugar-test",
-								"zeabur",
-								"app"
-							],
-							"path": [
-								"api",
-								"v1",
-								"course",
-								"ratings"
+								"3a555761-b481-4a4f-aa1e-2673af738895"
 							]
 						}
 					},
@@ -590,7 +518,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"origin_price\": 1600\r\n}",
+							"raw": "{\r\n    \"origin_price\": 2400\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -598,10 +526,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/db818d05-e100-4882-8afa-3ff5df59455d/price",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/e3f679e7-0f18-4e2c-bd8c-8cdf36383a2a/price",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -609,8 +537,117 @@
 								"api",
 								"v1",
 								"course",
-								"db818d05-e100-4882-8afa-3ff5df59455d",
+								"e3f679e7-0f18-4e2c-bd8c-8cdf36383a2a",
 								"price"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "更改課程狀態",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"course_status\": \"上架\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ae173372-551d-4b14-9abb-1da51913a8fb/status",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"ae173372-551d-4b14-9abb-1da51913a8fb",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增課程評價",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating_score\": 4,\r\n    \"review_text\": \"戚風蛋糕好吃，持續練習\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ae173372-551d-4b14-9abb-1da51913a8fb/ratings",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"ae173372-551d-4b14-9abb-1da51913a8fb",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得所有課程評價",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ratings",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"ratings"
 							]
 						}
 					},
@@ -632,10 +669,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -667,10 +704,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -702,10 +739,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -727,10 +764,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/small-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/small-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -762,10 +799,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/ba1512ce-389d-45a4-8766-68824dd9ffed/upload/course-banner-image",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -776,49 +813,6 @@
 								"ba1512ce-389d-45a4-8766-68824dd9ffed",
 								"upload",
 								"course-banner-image"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "更改課程狀態",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\t\"course_status\": \"上架\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/95dafe1b-4b65-4c6f-b093-47c041f80f32/status",
-							"protocol": "http",
-							"host": [
-								"butter-sugar-test",
-								"zeabur",
-								"app"
-							],
-							"path": [
-								"api",
-								"v1",
-								"course",
-								"95dafe1b-4b65-4c6f-b093-47c041f80f32",
-								"status"
 							]
 						}
 					},
@@ -849,10 +843,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/bb3ee665-da44-465a-b6e9-fc84cda3cfb6/ratings",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/bb3ee665-da44-465a-b6e9-fc84cda3cfb6/ratings",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -884,7 +878,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"question_text\": \"法式海綿蛋糕製作過程是否有問題？\"\r\n}",
+							"raw": "{\r\n  \"question_text\": \"使用的水果有哪些？可以替換成其他水果嗎？\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -892,10 +886,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/questions",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/651368e2-2626-41bd-874c-90f33722c95e/questions",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -903,7 +897,7 @@
 								"api",
 								"v1",
 								"course",
-								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"651368e2-2626-41bd-874c-90f33722c95e",
 								"questions"
 							]
 						}
@@ -927,7 +921,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"question_id\": \"5f0648d8-fc2d-4a9b-a8c1-d0a09e06f29e\",\r\n  \"answer_text\": \"真的好難喔，失敗好多次。\"\r\n}",
+							"raw": "{\r\n  \"question_id\": \"008385b1-75af-41de-8017-dc0f233fb8bf\",\r\n  \"answer_text\": \"課程中示範使用的是當季新鮮水果，如草莓、奇異果、藍莓、芒果等，也會教你如何根據季節與個人喜好替換成其他水果，包含水果處理與保存小技巧。\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -935,10 +929,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/answers",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/651368e2-2626-41bd-874c-90f33722c95e/answers",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -946,7 +940,7 @@
 								"api",
 								"v1",
 								"course",
-								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"651368e2-2626-41bd-874c-90f33722c95e",
 								"answers"
 							]
 						}
@@ -969,10 +963,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/course/fa716711-8baa-4568-9d07-0dd2b6b0dbfd/questions",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/651368e2-2626-41bd-874c-90f33722c95e/questions",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -980,8 +974,195 @@
 								"api",
 								"v1",
 								"course",
-								"fa716711-8baa-4568-9d07-0dd2b6b0dbfd",
+								"651368e2-2626-41bd-874c-90f33722c95e",
 								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增課程章節",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"main_section_title\": \"準備工作\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/06585aaa-bb4d-4503-ba42-6f66adb836f0/course-section",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"06585aaa-bb4d-4503-ba42-6f66adb836f0",
+								"course-section"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得課程章節",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/06585aaa-bb4d-4503-ba42-6f66adb836f0/course-section",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"06585aaa-bb4d-4503-ba42-6f66adb836f0",
+								"course-section"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "修改課程章節",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"main_section_title\": \"準備工作2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/course-section/52daacf9-802a-42f4-a369-e4697eb1d0ab",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"course-section",
+								"52daacf9-802a-42f4-a369-e4697eb1d0ab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除課程章節",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/course-section/52daacf9-802a-42f4-a369-e4697eb1d0ab",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"course-section",
+								"52daacf9-802a-42f4-a369-e4697eb1d0ab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得我的課程列表",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/my-courses",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"my-courses"
 							]
 						}
 					},
@@ -1009,16 +1190,16 @@
 						"header": [
 							{
 								"key": "authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjMzg3YjM1LWMyYjEtNGJkOC1hMTY4LWVhZDg4YzZkZjRmNCIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ3NTEwMzIyLCJleHAiOjE3NTAxMDIzMjJ9.F3z-JIRI7PWzsqho5odV_40mRvgUvKIc23Ks_CsMhK0",
+								"value": "",
 								"type": "text",
 								"disabled": true
 							}
 						],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/users/info",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/users/info",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1048,10 +1229,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/users/check",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/users/check",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1116,10 +1297,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/users/update",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/users/update",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1154,10 +1335,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/teacher/profile",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/teacher/profile",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1202,7 +1383,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/2025_images-main/9.jpg"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/2025_images-main/20.jpg"
 								},
 								{
 									"key": "phone",
@@ -1247,10 +1428,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/teacher/profile",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/teacher/profile",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1270,10 +1451,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/teacher/featured",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/teacher/featured",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1293,10 +1474,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/teacher/0d5bc027-1feb-436a-b002-278e955e6c6b",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/teacher/5fea6457-3576-4372-8006-4f812cc0ea77",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1304,7 +1485,7 @@
 								"api",
 								"v1",
 								"teacher",
-								"0d5bc027-1feb-436a-b002-278e955e6c6b"
+								"5fea6457-3576-4372-8006-4f812cc0ea77"
 							]
 						}
 					},
@@ -1332,7 +1513,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"course_id\": \"95dafe1b-4b65-4c6f-b093-47c041f80f32\"\r\n}",
+							"raw": "{\r\n  \"course_id\": \"ae173372-551d-4b14-9abb-1da51913a8fb\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1340,10 +1521,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/cart",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/cart",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1372,10 +1553,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/cart",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/cart",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1404,10 +1585,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/cart/61bc2d53-bee8-43b9-aa09-57e02f695ef9",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/cart/389cc3d5-5158-47e8-8e69-6e877ddfc359",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1415,7 +1596,7 @@
 								"api",
 								"v1",
 								"cart",
-								"61bc2d53-bee8-43b9-aa09-57e02f695ef9"
+								"389cc3d5-5158-47e8-8e69-6e877ddfc359"
 							]
 						}
 					},
@@ -1438,7 +1619,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"course_ids\": [\r\n\t\t\t\"bb3ee665-da44-465a-b6e9-fc84cda3cfb6\"\r\n\t  ]\r\n}",
+							"raw": "{\r\n\t\"course_ids\": [\r\n\t\t\t\"92df5589-27b4-4736-8ccc-3d7d4a5e3c48\"\r\n\t  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1446,10 +1627,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/cart/merge",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/cart/merge",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],
@@ -1484,10 +1665,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://butter-sugar-test.zeabur.app/api/v1/users/orders",
-							"protocol": "http",
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/users/orders",
+							"protocol": "https",
 							"host": [
-								"butter-sugar-test",
+								"buttersugar-backend",
 								"zeabur",
 								"app"
 							],

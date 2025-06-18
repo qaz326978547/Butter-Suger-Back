@@ -11,6 +11,9 @@ const validateSchema = require('../middleware/validateSchema.middleware')
 // 取得所有課程列表
 router.get('/list', courseController.getCourseList)
 
+// 取得我的課程列表
+router.get('/my-courses', ...handleMiddleware([isAuth], courseController.getMyCourse))
+
 //取得所有類別
 router.get('/course-category', courseController.getCourseCategory)
 
@@ -72,25 +75,7 @@ router.get('/:courseId/course-section', ...handleMiddleware([isAuth], courseCont
 //更新課程章節
 router.patch('/course-section/:courseSectionId', ...handleMiddleware([isAuth], courseController.patchCourseSection))
 
-//刪除課程章節
+//更新課程章節
 router.delete('/course-section/:courseSectionId', ...handleMiddleware([isAuth], courseController.deleteCourseSection))
-
-//取得所有課程, 測試用，塞資料，非正式格式
-// router.get('/', courseController.getCourseList)
-
-// //建立新課程, 測試用，塞資料，非正式格式
-// router.post('/', courseController.postCourse)
-
-// //建立新類別, 測試用，塞資料，非正式格式
-// router.post('/course-category', courseController.postCategory)
-
-// //取得所有評價, 測試用，塞資料，非正式格式
-// router.get('/ratings', courseController.getRatings)
-
-// //新增評價, 測試用，塞資料，非正式格式
-// router.post('/:courseId/ratings', ...handleMiddleware([isAuth], courseController.postRatings))
-
-// //取得單一課程, 測試用，塞資料，非正式格式
-// router.get('/:courseId', courseController.getCourse)
 
 module.exports = router

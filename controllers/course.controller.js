@@ -670,6 +670,73 @@ const courseController = {
   },
 
 
+  /*
+  * 取得我的課程列表
+  * @route GET - /api/v1/course/my-course 
+  */
+/*   getMyCourse: async (req, res, next) => {
+    const user_id = req.user.id
+
+    const studentCourseRepo = dataSource.getRepository('student_course')
+    const findStudentCourse = await studentCourseRepo.find({ where:{user_id: user_id} })
+
+    return sendResponse(res, 200, true, '成功取得我的課程', findStudentCourse)
+  }, */
+
+  getMyCourse: async (req, res, next) => {
+    const user_id = req.user.id
+
+    //取得我的課程表資料
+    const studentCourseRepo = dataSource.getRepository('student_course')
+    const findStudentCourse = await studentCourseRepo.createQueryBuilder('student_course')
+    .select(['course.id AS course_id', 'teacher.id AS teacher_id', 'user.name AS teacher_name','course.course_small_imageUrl AS course_small_imageUrl', 'course.course_name AS course_name', 'student_course.purchase_date AS purchase_date', 'student_course.last_accessed_at AS last_accessed_at', 'student_course.last_subsection_id AS last_subsection_id', 'student_course.completion_percentage AS completion_percentage'])
+    .leftJoin('student_course.user', 'user')
+    .leftJoin('student_course.course', 'course')
+    .leftJoin('course.teacher', 'teacher')
+    .where('student_course.user_id=:user_id', {user_id: user_id})
+    .getRawMany()
+
+    const ratingRepo = dataSource.getRepository('ratings')
+
+    //每門課的平均評價分數
+    const avgRatings = await ratingRepo.createQueryBuilder('rating')
+    .select(['rating.course_id AS course_id', 
+            'ROUND(AVG(rating.rating_score)::numeric, 2) AS avg_rating_score'])
+    .groupBy('rating.course_id')
+    .getRawMany()
+
+    //每門課的我的評價分數
+    const myRatings = await ratingRepo.createQueryBuilder('rating')
+    .select(['rating.course_id AS course_id', 
+            'rating.rating_score AS rating_score'])
+    .where('rating.user_id=:user_id', {user_id: user_id})
+    .getRawMany()
+
+    //轉成物件
+    const avgRatingMap = Object.fromEntries(avgRatings.map(r => [r.course_id, r.avg_rating_score]))
+    const myRatingMap = Object.fromEntries(myRatings.map(r => [r.course_id, r.rating_score]))
+
+    const result = findStudentCourse.map(studentCourse => ({
+        id: studentCourse.course_id,
+        teacher_id: studentCourse.teacher_id,
+        teacher_name: studentCourse.teacher_name,
+        course_small_imageUrl: studentCourse.course_small_imageUrl,
+        course_name: studentCourse.course_name,
+        course_ratings: {
+          rating_score: myRatingMap[studentCourse.course_id] || '',
+          avg_rating_score:  avgRatingMap[studentCourse.course_id] || ''
+        },
+        student_course: {
+          purchase_date: studentCourse.purchase_date,
+          last_accessed_at: studentCourse.last_accessed_at,
+          last_subsection_id: studentCourse.last_subsection_id,
+          completion_percentage: studentCourse.completion_percentage
+        }
+    }))
+
+    return sendResponse(res, 200, true, '成功取得我的課程', result)
+  },
+
     /*
   * 修改課程章節
   * @route PATCH - /api/v1/course/course-section/:courseSectionId
@@ -719,243 +786,7 @@ const courseController = {
     }else{
       return next(appError(404, '課程章節刪除失敗'))
     }
-  },
-    
-  // 取得首頁熱門課程資料
-  // async getPopularCourses(req, res, next) {
-  //   const ratingsRepo = dataSource.getRepository('ratings')
-  //   const result = await ratingsRepo
-  //     .createQueryBuilder('rating')
-  //     .select([
-  //       'rating.course_id AS course_id',
-  //       'ROUND(AVG(rating.rating_score)::numeric, 2) AS course_rating_score',
-  //       'COUNT(DISTINCT rating.user_id) AS course_total_users',
-  //       'course.course_banner_imageUrl AS course_image_url',
-  //       'course.course_name AS course_name',
-  //       'course.course_description AS course_description',
-  //     ])
-  //     .leftJoin('rating.courses', 'course')
-  //     .orderBy('course_rating_score', 'DESC')
-  //     .groupBy('rating.course_id')
-  //     .addGroupBy('course.course_banner_imageUrl')
-  //     .addGroupBy('course.course_name')
-  //     .addGroupBy('course.course_description')
-  //     .limit(10)
-  //     .getRawMany()
-
-  //   return sendResponse(res, 200, true, '取得資料成功', result)
-  // },
-
-  // // 測試用，塞類別資料，非正式格式
-  // async getCategory(req, res, next) {
-  //   const categoryRepo = dataSource.getRepository('course_category')
-
-  //   const findCategory = await categoryRepo.find({
-  //     select: ['name'],
-  //   })
-
-  //   res.status(200).json({
-  //     status: true,
-  //     data: findCategory,
-  //   })
-  //   return
-  // },
-
-  // // 測試用，塞類別資料，非正式格式
-  // async postCategory(req, res, next) {
-  //   const { name } = req.body
-  //   const categoryRepo = dataSource.getRepository('course_category')
-  //   const newCategory = categoryRepo.create({
-  //     name: name,
-  //   })
-  //   await categoryRepo.save(newCategory)
-
-  //   return sendResponse(res, 200, true, '新增類別成功')
-  // },
-
-  // // 測試用，塞評價資料，非正式格式
-  // async getRatings(req, res, next) {
-  //   const ratingsRepo = dataSource.getRepository('ratings')
-
-  //   const findRatings = await ratingsRepo.find({
-  //     select: ['name'],
-  //   })
-
-  //   return sendResponse(res, 200, true, '成功取得資料', findRatings)
-  // },
-
-  // // 測試用，塞評價資料，帳號太少沒 check 是否是本人評價跟重複評價，非正式格式
-  // async postRatings(req, res, next) {
-  //   const user_id = req.user.id
-  //   const course_id = req.params.courseId
-  //   const { rating_score, review_text } = req.body
-
-  //   const ratingsRepo = dataSource.getRepository('ratings')
-  //   const newRatings = ratingsRepo.create({
-  //     user_id: user_id,
-  //     course_id: course_id,
-  //     rating_score: rating_score,
-  //     review_text: review_text,
-  //   })
-  //   const result = await ratingsRepo.save(newRatings)
-
-  //   updateTeacherRating(course_id)
-
-  //   return sendResponse(res, 200, true, '更新評價成功', result)
-  // },
-
-  // // // 測試用，塞課程資料，非正式格式
-  // // async getCourse(req, res, next) {
-  // //   const { courseId } = req.params
-
-  // //   const courseRepo = dataSource.getRepository('courses')
-  // //   const findCourse = await courseRepo.findOne({
-  // //     where: { id: courseId },
-  // //     select: [
-  // //       'teacher_id',
-  // //       'category_id',
-  // //       'course_banner_imageUrl',
-  // //       'course_name',
-  // //       'course_banner_description',
-  // //       'course_description',
-  // //       'course_description_image',
-  // //       'course_hours',
-  // //       'course_smallimage',
-  // //       'total_users',
-  // //       'trailer_vimeo_id',
-  // //       'trailer_name',
-  // //       'trailer_url',
-  // //       'trailer_status',
-  // //       'handout_name',
-  // //       'handout_url',
-  // //       'suitable_for',
-  // //       'course_goal',
-  // //       'origin_price',
-  // //       'sell_price',
-  // //       'course_status',
-  // //     ],
-  // //   })
-
-  // //   return sendResponse(res, 200, true, '取得資料成功', findCourse)
-  // // },
-
-  // // 測試用，塞課程資料，非正式格式
-  // // async getCourseList(req, res, next) {
-  // //   const courseRepo = dataSource.getRepository('courses')
-  // //   const findCourseList = await courseRepo.find({
-  // //     select: [
-  // //       'teacher_id',
-  // //       'category_id',
-  // //       'course_name',
-  // //       'course_banner_imageUrl',
-  // //       'course_banner_description',
-  // //       'course_description',
-  // //       'course_description_image',
-  // //       'course_smallimage',
-  // //       'course_hours',
-  // //       'total_users',
-  // //       'trailer_vimeo_id',
-  // //       'trailer_name',
-  // //       'trailer_url',
-  // //       'trailer_status',
-  // //       'handout_name',
-  // //       'handout_url',
-  // //       'suitable_for',
-  // //       'course_goal',
-  // //       'origin_price',
-  // //       'sell_price',
-  // //       'course_status',
-  // //     ],
-  // //   })
-
-  // //   return sendResponse(res, 200, true, '取得資料成功', findCourseList)
-  // // },
-
-  // // 測試用，塞課程資料，非正式格式
-  // async postCourse(req, res, next) {
-  //   const {
-  //     teacher_id,
-  //     category_id,
-  //     course_name,
-  //     course_banner_imageUrl,
-  //     course_banner_description,
-  //     course_description,
-  //     course_description_image,
-  //     course_smallimage,
-  //     course_hours,
-  //     total_users,
-  //     trailer_vimeo_id,
-  //     trailer_name,
-  //     trailer_url,
-  //     trailer_status,
-  //     handout_name,
-  //     handout_url,
-  //     suitable_for,
-  //     course_goal,
-  //     origin_price,
-  //     sell_price,
-  //     course_status,
-  //   } = req.body
-
-  //   const courseRepo = dataSource.getRepository('courses')
-  //   const newCourse = courseRepo.create({
-  //     teacher_id: teacher_id,
-  //     category_id: category_id,
-  //     course_name: course_name,
-  //     course_banner_imageUrl: course_banner_imageUrl,
-  //     course_banner_description: course_banner_description,
-  //     course_description: course_description,
-  //     course_description_image: course_description_image,
-  //     course_smallimage: course_smallimage,
-  //     course_hours: course_hours,
-  //     total_users: total_users,
-  //     trailer_vimeo_id: trailer_vimeo_id,
-  //     trailer_name: trailer_name,
-  //     trailer_url: trailer_url,
-  //     trailer_status: trailer_status,
-  //     handout_name: handout_name,
-  //     handout_url: handout_url,
-  //     suitable_for: suitable_for,
-  //     course_goal: course_goal,
-  //     origin_price: origin_price,
-  //     sell_price: sell_price,
-  //     course_status: course_status,
-  //   })
-  //   const result = await courseRepo.save(newCourse)
-
-  //   return sendResponse(res, 200, true, '新增課程成功', result)
-  // },
-
-  // uploadCourseHandOut: wrapAsync(async (req, res, next) => {
-  //   const courseId = req.params.courseId
-
-  //   if (!req.file || !courseId) {
-  //     return next(appError(400, '請上傳檔案與課程 ID'))
-  //   }
-
-  //   const courseRepo = dataSource.getRepository('courses')
-  //   const course = await courseRepo.findOne({ where: { id: courseId } })
-
-  //   if (!course) {
-  //     return next(appError(404, '課程不存在'))
-  //   }
-
-  //   // 上傳講義檔案到儲存空間，取得 URL
-  //   const handOutUrl = await storage.upload(req.file, 'course-handouts')
-
-  //   // 建立並儲存講義紀錄到 course_handouts 表
-  //   const handoutRepo = dataSource.getRepository('course_handouts')
-  //   const savedHandout = await handoutRepo.save({
-  //     course_id: courseId,
-  //     name: req.file.originalname,
-  //     url: handOutUrl,
-  //     size: req.file.size,
-  //     type: req.file.mimetype,
-  //     uploaded_at: new Date(), // 可加上上傳時間
-  //   })
-
-  //   return sendResponse(res, 200, true, '檔案上傳成功', { handout: savedHandout })
-  // }),
+  }
 }
 
 module.exports = courseController

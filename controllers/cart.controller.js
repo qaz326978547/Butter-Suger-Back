@@ -8,6 +8,7 @@ const { createAesEncrypt, createShaEncrypt, createAesDecrypt } = require('../ser
 const { In } = require('typeorm')
 const escapeHtml = require('he')  //防止 html 注入攻擊，最後再補上
 const config = require('../config/index')
+const { database } = require('../config/db')
 const MerchantID = config.get('newebpay.MerchantID')
 const Version = config.get('newebpay.Version')
 const NotifyUrl = config.get('newebpay.NotifyUrl')
@@ -56,9 +57,16 @@ const cartController = {
         await dataSource.transaction(async (manager) => {
             const cartsRepo = manager.getRepository('carts');
             const cartItemsRepo = manager.getRepository('cart_items');
+            const courseRepo = manager.getRepository('courses');
 
             const user_id = req.user.id;
             const { course_id } = req.body;
+
+            //檢查課程是否存在且狀態為上架
+            const findCourse = await courseRepo.findOne({where:{ id: course_id,  course_status: '上架'}})
+            if(!findCourse){
+                return next(appError(404, "課程不存在或未上架"))
+            }
 
             try {
                 // 查看此使用者是否建立購物車
@@ -313,21 +321,35 @@ const cartController = {
             
             await cartItemsRepo.delete({cart_id: cart_id})   
             await cartsRepo.delete({id: cart_id})
+/*          //正式用，不顯示藍新金流顯示表單 
+            const html = `<form action="${PayGateWay}" method="post" style:"display:none">
+                        <input type="hidden" name="MerchantID" value="${MerchantID}" />
+                        <input type="hidden" name="TradeSha" value="${shaEncrypt}" />
+                        <input type="hidden" name="TradeInfo" value="${aesEncrypt}" />
+                        <input type="hidden" name="TimeStamp" value="${TimeStamp}" />
+                        <input type="hidden" name="Version" value="${Version}" />
+                        <input type="hidden" name="NotifyUrl" value="${NotifyUrl}" />
+                        <input type="hidden" name="ReturnUrl" value="${ReturnUrl}" />
+                        <input type="hidden" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
+                        <input type="hidden" name="Amt" value="${order.Amt}" />
+                        <input type="hidden" name="ItemDesc" value="${order.ItemDesc}" />
+                        <input type="hidden" name="Email" value="${email}" />
+                    </form>` */
 
-            const html = `<form action="${PayGateWay}" method="post">
-                        <input type="text" name="MerchantID" value="${MerchantID}" />
-                        <input type="text" name="TradeSha" value="${shaEncrypt}" />
-                        <input type="text" name="TradeInfo" value="${aesEncrypt}" />
-                        <input type="text" name="TimeStamp" value="${TimeStamp}" />
-                        <input type="text" name="Version" value="${Version}" />
-                        <input type="text" name="NotifyUrl" value="${NotifyUrl}" />
-                        <input type="text" name="ReturnUrl" value="${ReturnUrl}" />
-                        <input type="text" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
-                        <input type="text" name="Amt" value="${order.Amt}" />
-                        <input type="text" name="ItemDesc" value="${order.ItemDesc}" />
-                        <input type="email" name="Email" value="${email}" />
-                        <button type="submit">送出訂單</button>
-                    </form>`
+                //目前開發階段測試用，前端會藍新金流顯示表單
+                const html = `<form action="${PayGateWay}" method="post">
+                    <input type="text" name="MerchantID" value="${MerchantID}" />
+                    <input type="text" name="TradeSha" value="${shaEncrypt}" />
+                    <input type="text" name="TradeInfo" value="${aesEncrypt}" />
+                    <input type="text" name="TimeStamp" value="${TimeStamp}" />
+                    <input type="text" name="Version" value="${Version}" />
+                    <input type="text" name="NotifyUrl" value="${NotifyUrl}" />
+                    <input type="text" name="ReturnUrl" value="${ReturnUrl}" />
+                    <input type="text" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
+                    <input type="text" name="Amt" value="${order.Amt}" />
+                    <input type="text" name="ItemDesc" value="${order.ItemDesc}" />
+                    <input type="email" name="Email" value="${email}" />
+                </form>`
 
             res.send(html)
 
@@ -362,8 +384,18 @@ const cartController = {
             'orderItem.price AS price'
         ])
         .leftJoin('orderItem.courses', 'course')
-        .where('orderItem.order_id = :order_id', { order_id }) // <-- 這裡
+        .where('orderItem.order_id = :order_id', { order_id })
         .getRawMany()
+
+        const renderData = {
+            "payway": data.Result.PaymentType,
+            "final_amount": data.Result.Amt,
+            "payment_status": data.Status,
+            "payment_date": data.Result.PayTime,
+            "order_number": data.Result.MerchantOrderNo,
+            "order_items": result,
+            "item_count": result.length
+        }
 
         // 二選一，傳送表單或是 json 檔
         const html = renderOrderHtml(renderData)
@@ -400,6 +432,7 @@ const cartController = {
 
             return next(appError(400, '付款失敗'))
         } 
+
         const payment_status =  data.Status==='SUCCESS'?'paid':'failed'
         const orderRepo = dataSource.getRepository('order')
         const updateOrder = await orderRepo.update({order_number: data.Result.MerchantOrderNo}, {
@@ -411,6 +444,39 @@ const cartController = {
             }
         )
         
+        //取得訂單
+        const findOrder = await orderRepo.findOne({where: {order_number: data.Result.MerchantOrderNo}})
+
+        const user_id = findOrder.user_id
+        const order_id = findOrder.id
+        const purchase_date = findOrder.PayTime
+
+        // 取得訂單詳細項目
+        const orderItemRepo = dataSource.getRepository('order_item')
+        const orderCourse = await orderItemRepo.find({where:{order_id:order_id}})
+
+        //新增學生課程表課程
+        const studentCourseRepo = dataSource.getRepository('student_course')
+        const courseRepo = dataSource.getRepository('courses')
+
+        let newStudentCourse, findCourse, total_users, updateCourse
+        for(const course of orderCourse){
+            newStudentCourse = studentCourseRepo.create({
+                user_id: user_id,
+                course_id: course.course_id,
+                last_accessed_at: purchase_date
+            })
+            await studentCourseRepo.save(newStudentCourse)
+            findCourse = await courseRepo.findOne({where:{id:course.course_id}})
+
+            // 新增課程人數
+            if(findCourse){
+                total_users = findCourse?.total_users?findCourse?.total_users+1:1
+                updateCourse = await courseRepo.update({id:course.course_id},{total_users: total_users})
+            }
+
+        }
+
         return sendResponse(res, 200, true, '結帳成功', data)
     },
 
