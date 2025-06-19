@@ -205,7 +205,7 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
     throw appError(400, '缺少小節 ID 或影片')
   }
 
-  const subsectionRepo = dataSource.getRepository('course_subsections')
+  const subsectionRepo = dataSource.getRepository('course_subsection')
   const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
   if (!subsection) {
     throw appError(404, '小節不存在')
@@ -233,7 +233,7 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
 }
 
 const deleteSubsectionVideo = async ({ subsectionId }) => {
-  const subsectionRepo = dataSource.getRepository('course_subsections')
+  const subsectionRepo = dataSource.getRepository('course_subsection')
   const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
   if (!subsection) {
     throw appError(404, '小節不存在')

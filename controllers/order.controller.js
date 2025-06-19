@@ -3,7 +3,10 @@ const { appError, sendResponse } = require('../utils/responseFormat')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 
 const orderController = {
-    //取得所有訂單
+    /*
+    * 取得所有訂單
+    * @route PATCH - /api/v1/users/orders
+    */
     async getOrderList(req, res, next){
         const user_id = req.user.id
         
@@ -16,7 +19,7 @@ const orderController = {
             'order.created_at AS created_at'])
         .leftJoin('orderItem.order', 'order')
         .leftJoin('orderItem.courses', 'course')
-        .where('order.user_id = :user_id', {user_id})
+        .where('order.user_id = :user_id AND order.payment_status = :status', {user_id: user_id, status: 'paid'})
         .groupBy('order.order_number')
         .addGroupBy('order.final_amount')
         .addGroupBy('order.created_at')
