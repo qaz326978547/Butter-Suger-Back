@@ -21,6 +21,7 @@ module.exports = (app) => {
   app.use('/api/v1/subsection', subsectionRouter)
   app.use('/api/v1/subsection/upload', subsectionUploadRouter)
   app.use('/api/v1/order', orderRouter)
+  app.use('/api/v1/orders', orderRouter)
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
   app.use('/api/v1/admin/queues', bullBoardRouter)
 }
