@@ -7,10 +7,8 @@ const { createSubsectionSchema, updateSubsectionSchema } = require('../schema/su
 
 const router = express.Router()
 
-// 取得某章節的小節列表
 router.get('/section/:sectionId', subsectionController.getSubsectionsBySectionId)
 
-// 新增小節
 router.post(
   '/',
   ...handleMiddleware(
@@ -19,16 +17,16 @@ router.post(
   )
 )
 
-// 更新小節
-router.patch(
-  '/:id',
+// ❗️將 PATCH 改為 POST 並保留 ID 更新功能
+router.post(
+  '/:id/update',
   ...handleMiddleware(
     [isAuth, validateSchema(updateSubsectionSchema)],
     subsectionController.updateSubsection
   )
 )
 
-// 刪除小節
+// 刪除小節 (包含影片)
 router.delete('/:id', ...handleMiddleware([isAuth], subsectionController.deleteSubsection))
 
 module.exports = router

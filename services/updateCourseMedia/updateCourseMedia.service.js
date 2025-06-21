@@ -226,7 +226,7 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
   subsection.video_name = file.originalname || '未命名影片'
   subsection.video_size = formatFileSize(file.size || 0)
   subsection.video_type = file.mimetype || 'video/mp4'
-  subsection.video_status = 'ready'
+  subsection.video_status = 'available'
   await subsectionRepo.save(subsection)
 
   return videoUrl
@@ -255,6 +255,21 @@ const deleteSubsectionVideo = async ({ subsectionId }) => {
   return true
 }
 
+async function saveVideoInfoToDB({ subsectionId, videoUrl, videoName, videoSize, videoType }) {
+  const repo = dataSource.getRepository('course_subsection')
+  const subsection = await repo.findOne({ where: { id: subsectionId } })
+  if (!subsection) throw new Error('小節不存在')
+
+  subsection.video_file_url = videoUrl // ✅ 修正這裡
+  subsection.video_name = videoName
+  subsection.video_size = formatFileSize(videoSize || 0)
+  subsection.video_type = videoType
+  subsection.status = 'available'
+  await repo.save(subsection)
+
+  return { status: 'updated', subsectionId }
+}
+
 module.exports = {
   updateCourseMediaService,
   uploadHandoutService,
@@ -263,4 +278,5 @@ module.exports = {
   deleteSubsectionVideo,
   deleteCourseMedia,
   deleteVideo,
+  saveVideoInfoToDB,
 }

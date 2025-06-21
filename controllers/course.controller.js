@@ -282,6 +282,25 @@ const courseController = {
 
     return sendResponse(res, 200, true, '預告影片已刪除')
   }),
+  /*
+   * 取得課程講義
+   * @route GET /api/v1/course/:courseId/handouts
+   */
+  getCourseHandOuts: wrapAsync(async (req, res, next) => {
+    const { courseId } = req.params
+
+    // 確認課程是否存在
+    const courseRepo = dataSource.getRepository('courses')
+    const course = await courseRepo.findOne({ where: { id: courseId } })
+    if (!course) {
+      return next(appError(404, '課程不存在'))
+    }
+
+    const handoutRepo = dataSource.getRepository('course_handouts')
+    const handouts = await handoutRepo.find({ where: { course_id: courseId } })
+
+    return sendResponse(res, 200, true, '取得課程講義成功', { handouts })
+  }),
 
   /*
    * 上傳課程多個講義

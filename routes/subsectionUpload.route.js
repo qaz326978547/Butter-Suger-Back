@@ -1,4 +1,3 @@
-// routes/subsectionUpload.route.js
 const express = require('express')
 const multer = require('multer')
 const subsectionController = require('../controllers/subsection.controller')
@@ -10,14 +9,14 @@ const upload = multer({ storage: multer.memoryStorage() })
 
 // 上傳小節影片
 router.post(
-  '/:subsectionId/upload/video',
+  '/:subsectionId/upload-video',
   upload.single('video'),
   ...handleMiddleware([isAuth], subsectionController.uploadSubsectionVideo)
 )
 
-// 刪除小節影片
+// ✅ 刪除小節影片（不是刪整個小節！）
 router.delete(
-  '/:subsectionId/upload/video',
+  '/:subsectionId/upload-video',
   ...handleMiddleware([isAuth], subsectionController.deleteSubsectionVideo)
 )
 

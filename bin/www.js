@@ -4,7 +4,7 @@ const app = require('../app')
 const logger = require('../utils/logger')('www')
 // const { dataSource } = require('./db/data-source')
 const seedCourseCategories = require('../db/seed/createCourseCategoriesSeed')
-
+require('../workers/videoUpload.worker')
 const { dataSource } = require('../db/data-source')
 
 const port = config.get('web.port')
@@ -60,10 +60,10 @@ server.listen(port, async () => {
     await dataSource.initialize()
 
     // 2. 清空整個資料庫（開發用）
-    await dataSource.dropDatabase()
+    // await dataSource.dropDatabase()
 
     // 3. 同步 schema（重建表）
-    await dataSource.synchronize()
+    // await dataSource.synchronize()
     await seedCourseCategories()
     logger.info('Seed course categories 完成')
     logger.info('資料庫連線成功')

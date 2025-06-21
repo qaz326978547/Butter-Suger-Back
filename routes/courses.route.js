@@ -13,6 +13,8 @@ router.get('/category', courseController.getCourseCategoryList)
 router.get('/category/:categoryId', courseController.getCourseCategory)
 router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
 
+//取得課程講義/api/v1/course/:courseId/handouts
+router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
 // 取得我的課程列表
 router.get('/my-courses', ...handleMiddleware([isAuth], courseController.getMyCourse))
 
