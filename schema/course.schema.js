@@ -32,5 +32,18 @@ const courseCategorySchema = Joi.object({
     'any.only': '課程類別必須是 all、bread、cookie 或 cake',
   }),
 })
+//origin_price, sell_price
+const updateCoursePrice = Joi.object({
+  origin_price: Joi.number().required().messages({
+    'number.base': '原價必須是數字格式',
+    'any.required': '請填寫原價',
+    'number.empty': '原價不能為空',
+  }),
+  sell_price: Joi.number().required().messages({
+    'number.base': '售價必須是數字格式',
+    'any.required': '請填寫售價',
+    'number.empty': '售價不能為空',
+  }),
+})
 
-module.exports = { saveCourseSchema, courseCategorySchema }
+module.exports = { saveCourseSchema, courseCategorySchema, updateCoursePrice }

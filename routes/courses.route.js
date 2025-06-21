@@ -4,7 +4,7 @@ const multer = require('multer')
 const courseController = require('../controllers/course.controller')
 const isAuth = require('../middleware/isAuth.middleware')
 const handleMiddleware = require('../utils/handleMiddleware')
-const { saveCourseSchema } = require('../schema/course.schema')
+const { saveCourseSchema, updateCoursePrice } = require('../schema/course.schema')
 const router = express.Router()
 const validateSchema = require('../middleware/validateSchema.middleware')
 
@@ -14,7 +14,19 @@ router.get('/category/:categoryId', courseController.getCourseCategory)
 router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
 
 //取得課程講義/api/v1/course/:courseId/handouts
-router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
+router.get(
+  '/:courseId/handouts',
+  ...handleMiddleware([isAuth], courseController.getCourseHandOuts())
+)
+
+//更新課程價格
+router.post(
+  '/:courseId/price',
+  ...handleMiddleware(
+    [isAuth, validateSchema(updateCoursePrice)],
+    courseController.updateCoursePrice
+  )
+)
 // 取得我的課程列表
 router.get('/my-courses', ...handleMiddleware([isAuth], courseController.getMyCourse))
 
@@ -37,19 +49,22 @@ router.post('/favorites', ...handleMiddleware([isAuth], courseController.postFav
 router.get('/favorites/list', ...handleMiddleware([isAuth], courseController.getFavoriteCourse))
 
 // 取消收藏課程
-router.delete('/favorites/:favoriteId', ...handleMiddleware([isAuth], courseController.deleteFavoriteCourse))
+router.delete(
+  '/favorites/:favoriteId',
+  ...handleMiddleware([isAuth], courseController.deleteFavoriteCourse)
+)
 
 // 取得單一課程資料，要放後面，其他 /xxx 要放前面
 router.get('/:courseId', courseController.getCourse)
 
 // 新增標題
-router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) 
+router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle))
 
 // 儲存課程資訊
 router.post(
   '/:courseId/save',
   ...handleMiddleware([isAuth, validateSchema(saveCourseSchema)], courseController.saveCourse)
-) 
+)
 
 //新增課程類別
 router.post(
@@ -57,7 +72,7 @@ router.post(
   ...handleMiddleware([isAuth], courseController.createCourseCategory)
 )
 
-// 儲存課程資訊, 重覆 
+// 儲存課程資訊, 重覆
 /* router.post(
   '/:courseId/save',
   ...handleMiddleware([isAuth, validateSchema(saveCourseSchema)], courseController.saveCourse)
