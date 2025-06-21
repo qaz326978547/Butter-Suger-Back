@@ -1,5 +1,6 @@
 const { dataSource } = require('../db/data-source')
 const { appError, sendResponse } = require('../utils/responseFormat')
+const wrapAsync = require('../utils/wrapAsync')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const getCartItemDetails = require('../services/cart/cartItemDetails')
 const summaryCartItems = require('../services/cart/summaryCartItems')
@@ -20,7 +21,7 @@ const cartController = {
    * 取得購物車資料
    * @route GET /api/v1/cart
    */
-    async getCartItems(req, res, next){
+    getCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
 
         try{
@@ -47,13 +48,13 @@ const cartController = {
         }catch(error){
             next(error)
         }
-    },
+    }),
 
     /*
    * 購物車加入課程, transaction 版, 只要一個資料表新增出錯，全部都 rollback！
    * @route POST /api/v1/cart
    */
-    async postCartItems(req, res, next){
+    postCartItems: wrapAsync(async (req, res, next) => {
         await dataSource.transaction(async (manager) => {
             const cartsRepo = manager.getRepository('carts');
             const cartItemsRepo = manager.getRepository('cart_items');
@@ -66,6 +67,21 @@ const cartController = {
             const findCourse = await courseRepo.findOne({where:{ id: course_id,  course_status: '上架'}})
             if(!findCourse){
                 return next(appError(404, "課程不存在或未上架"))
+            }
+
+            //取得我的課程資訊
+            const studentCourseRepo = dataSource.getRepository('student_course')
+            const findCourseIds = await studentCourseRepo.find({
+                select:['course_id'],
+                where: {user_id:user_id}
+            })
+
+            //取出課程 id
+            const course_Ids = findCourseIds.map(item => item.course_id)
+
+            //判斷是否有買過此課程
+            if(course_Ids.includes(course_id)){
+                return next(appError(400, "您已購買過此課程"))
             }
 
             try {
@@ -109,7 +125,7 @@ const cartController = {
                 next(error)
             }                
         })
-    },
+    }),
 
     //
     /**
@@ -121,9 +137,19 @@ const cartController = {
     *    (2) 沒有： 批次新增 
     * 4. isInvalid 給 user 錯誤顯示        
     */
-    async mergeCartItems(req, res, next){
+    mergeCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
         const { course_ids } = req.body;
+
+        //取得我的課程資訊
+        const studentCourseRepo = dataSource.getRepository('student_course')
+        const findCourseIds = await studentCourseRepo.find({
+            select:['course_id'],
+            where: {user_id:user_id}
+        })
+
+        //取出課程 id
+        const course_Ids = findCourseIds.map(item => item.course_id)
 
         await dataSource.transaction(async (manager) => {
             const cartsRepo = manager.getRepository('carts');
@@ -168,12 +194,19 @@ const cartController = {
                     return next(appError(404, "課程不存在或已下架"))
                 }
 
-                //只取出 course 的 id
-                const isValidIds = validCourses.map(item => item.id)
-                const isInvalids = mergeItemIds.filter(id => !isValidIds.includes(id))
+                //先判斷是否存在資料庫且為上架狀態
+                let isValidIds = validCourses.map(item => item.id)
+                //不存在購物車或非上架狀態的課程
+                let isInvalids = mergeItemIds.filter(id => !isValidIds.includes(id))
                 
-                //只取出未存在原購物車的 id
-                const insertIds = isValidIds.filter(id => !cartItemIds.includes(id))
+                //只取出未存在原購物車的 id，加入購物車
+                let insertIds = isValidIds.filter(id => !cartItemIds.includes(id))
+                
+                //判斷是否有買過此課程
+                // 已購買
+                let myCourseIds = insertIds.filter(id => course_Ids.includes(id))
+                // 未購買
+                insertIds = insertIds.filter(id => !course_Ids.includes(id))
 
                 //批次建立購物車物件 & 新增
                 let result
@@ -185,6 +218,8 @@ const cartController = {
                     result = await cartItemsRepo.save(newItems)
                 }
 
+                isInvalids = Array.from(new Set([...(isInvalids || []), ...myCourseIds]))
+
                 //回傳購物車課程數量跟總金額
                 const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
@@ -192,8 +227,8 @@ const cartController = {
                     item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
                     total_price: summaryItems?.total_price ?? 0,
                     errors: isInvalids.length > 0 ? {
-                        reason: "課程不存在或已下架",
-                        course_ids: isInvalids
+                        reason: "課程不存在、課程已下架或課程已購買",
+                        isInvalids: isInvalids
                     }: null
                 })   
 
@@ -201,13 +236,13 @@ const cartController = {
                 next(error)
             }                
         })
-    },
+    }),
 
     /*
    * 刪除購物車資料
    * @route DELETE /api/v1/cart/:cartItemId
    */
-    async deleteCartItems(req, res, next){
+    deleteCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
         const { cartItemId } = req.params
 
@@ -252,13 +287,13 @@ const cartController = {
         }catch(error){
             next(error)
         }
-    },
+    }),
 
     /*
    * 結帳
    * @route POST - /api/v1/cart/checkout
    */
-    async checkout(req, res, next){
+    checkout: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id
         const { coupon_id, coupon, discount_amount } = req.body       
 
@@ -281,6 +316,24 @@ const cartController = {
             const cartItemDetails = await getCartItemDetails(cartItemsRepo, cart_id)
             const course_ids = cartItemDetails.map(item =>item.course_id)
 
+            //取得我的課程資訊
+            const studentCourseRepo = dataSource.getRepository('student_course')
+            const findCourseIds = await studentCourseRepo.find({
+                select:['course_id'],
+                where: {user_id:user_id}
+            })
+
+            //取出課程 id
+            const studentCourseIds = findCourseIds.map(item => item.course_id)
+
+            //判斷課程是否購買
+            const alreadyBoughtIds = course_ids.filter( id => studentCourseIds.includes(id))
+
+            //判斷是否有買過此課程
+            if(alreadyBoughtIds.length){
+                return next(appError(400, `您已購買過這些課程 ${alreadyBoughtIds}`))
+            }
+
             //回傳購物車課程數量跟總金額
             const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
@@ -298,6 +351,11 @@ const cartController = {
             const shaEncrypt = createShaEncrypt(aesEncrypt)
 
             const orderRepo = dataSource.getRepository('order')
+
+            if(summaryItems.total_price - Number(discount_amount)<0){
+                return next(appError(404, '折扣金額有誤'))
+            }
+
             const newOrder = orderRepo.create({
                 user_id: user_id,
                 coupon_id: coupon_id, //escapeHtml.escape(coupon_id)
@@ -321,7 +379,7 @@ const cartController = {
             
             await cartItemsRepo.delete({cart_id: cart_id})   
             await cartsRepo.delete({id: cart_id})
-/*          //正式用，不顯示藍新金流顯示表單 
+/*          //正式用，不顯示表單  
             const html = `<form action="${PayGateWay}" method="post" style:"display:none">
                         <input type="hidden" name="MerchantID" value="${MerchantID}" />
                         <input type="hidden" name="TradeSha" value="${shaEncrypt}" />
@@ -336,7 +394,7 @@ const cartController = {
                         <input type="hidden" name="Email" value="${email}" />
                     </form>` */
 
-                //目前開發階段測試用，前端會藍新金流顯示表單
+                //測試用，顯示表單
                 const html = `<form action="${PayGateWay}" method="post">
                     <input type="text" name="MerchantID" value="${MerchantID}" />
                     <input type="text" name="TradeSha" value="${shaEncrypt}" />
@@ -356,13 +414,13 @@ const cartController = {
         }catch(error){
             next(error)
         }
-    },
+    }),
 
     /*
    * 收到藍新金流訊息, 傳送給前端
    * @route POST - /api/v1/payment/newebpay_return
    */
-    async newebpayReturn(req, res, next){
+    newebpayReturn: wrapAsync(async (req, res, next) => {
         // #swagger.ignore = true
         const response = req.body
         const data = createAesDecrypt(response.TradeInfo)
@@ -397,6 +455,14 @@ const cartController = {
             "item_count": result.length
         }
 
+              // 傳回 JSON 給前端，token= 測試用(暫不考慮安全性)
+        return res.redirect(
+            `${process.env.FRONTEND_URL}/home/cart-flow/order-success?renderData=${encodeURIComponent(JSON.stringify(renderData))}`
+        )
+
+/*         return res.redirect(
+            `/index.html?renderData=${encodeURIComponent(JSON.stringify(renderData))}`
+        ) */
         // 二選一，傳送表單或是 json 檔
         const html = renderOrderHtml(renderData)
         res.send(html)
@@ -414,13 +480,13 @@ const cartController = {
                     "item_count": result.length
                 }
         }) */
-    },
+    }),
 
     /*
    * 收到藍新金流訊息, 後端更新資料庫狀態
    * @route POST - /api/v1/payment/newebpay_notify
    */
-    async newebpayNotify(req, res, next){
+    newebpayNotify: wrapAsync(async (req, res, next) => {
         // #swagger.ignore = true
         const response = req.body
         const data = createAesDecrypt(response.TradeInfo)
@@ -467,6 +533,7 @@ const cartController = {
                 last_accessed_at: purchase_date
             })
             await studentCourseRepo.save(newStudentCourse)
+
             findCourse = await courseRepo.findOne({where:{id:course.course_id}})
 
             // 新增課程人數
@@ -478,7 +545,7 @@ const cartController = {
         }
 
         return sendResponse(res, 200, true, '結帳成功', data)
-    },
+    }),
 
 }
 module.exports = cartController

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "28d3f76a-c076-4c86-8d63-ca07e7a15094",
-		"name": "butter-sugar project Server 619",
+		"name": "butter-sugar project Server 620",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "27891534"
 	},
@@ -1167,6 +1167,108 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "收藏課程",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/favorites/3a555761-b481-4a4f-aa1e-2673af738895",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"favorites",
+								"3a555761-b481-4a4f-aa1e-2673af738895"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取消收藏課程",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/favorites/course-id",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"favorites",
+								"course-id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得收藏課程",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/course/favorites/list",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"favorites",
+								"list"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1513,7 +1615,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"course_id\": \"ae173372-551d-4b14-9abb-1da51913a8fb\"\r\n}",
+							"raw": "{\r\n  \"course_id\": \"3a555761-b481-4a4f-aa1e-2673af738895\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1677,6 +1779,40 @@
 								"v1",
 								"users",
 								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得單筆訂單",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar-backend.zeabur.app/api/v1/users/orders/1750205201",
+							"protocol": "https",
+							"host": [
+								"buttersugar-backend",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"orders",
+								"1750205201"
 							]
 						}
 					},

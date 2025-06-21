@@ -16,6 +16,9 @@ router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController
 // 取得我的課程列表
 router.get('/my-courses', ...handleMiddleware([isAuth], courseController.getMyCourse))
 
+// 取得已購買的課程列表
+router.get('/purchased', ...handleMiddleware([isAuth], courseController.getPurchased))
+
 //取得所有類別
 router.get('/course-category', courseController.getCourseCategory)
 
@@ -25,24 +28,39 @@ router.get('/ratings', courseController.getRatings)
 // 取得首頁熱門課程資料
 router.get('/popular', courseController.getPopularCourses)
 
+// 收藏課程
+router.post('/favorites', ...handleMiddleware([isAuth], courseController.postFavoriteCourse))
+
+// 取得收藏課程
+router.get('/favorites/list', ...handleMiddleware([isAuth], courseController.getFavoriteCourse))
+
+// 取消收藏課程
+router.delete('/favorites/:favoriteId', ...handleMiddleware([isAuth], courseController.deleteFavoriteCourse))
+
 // 取得單一課程資料，要放後面，其他 /xxx 要放前面
 router.get('/:courseId', courseController.getCourse)
-router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) // 新增課程
+
+// 新增標題
+router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) 
+
+// 儲存課程資訊
 router.post(
   '/:courseId/save',
   ...handleMiddleware([isAuth, validateSchema(saveCourseSchema)], courseController.saveCourse)
-) // 儲存課程資訊
+) 
 
 //新增課程類別
 router.post(
   '/:courseId/category',
   ...handleMiddleware([isAuth], courseController.createCourseCategory)
 )
-router.post(
+
+// 儲存課程資訊, 重覆 
+/* router.post(
   '/:courseId/save',
   ...handleMiddleware([isAuth, validateSchema(saveCourseSchema)], courseController.saveCourse)
 )
-router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle))
+router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) */
 
 // ❗️這一行放最後！
 router.get('/:courseId', courseController.getCourse)
@@ -88,7 +106,7 @@ router.patch(
   ...handleMiddleware([isAuth], courseController.patchCourseSection)
 )
 
-//更新課程章節
+//刪除課程章節
 router.delete(
   '/course-section/:courseSectionId',
   ...handleMiddleware([isAuth], courseController.deleteCourseSection)

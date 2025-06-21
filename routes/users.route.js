@@ -50,5 +50,7 @@ router.get('/check', ...handleMiddleware([isAuth], userController.getCheck))
 
 // 取得所有訂單
 router.get('/orders', ...handleMiddleware([isAuth], orderController.getOrderList))
+// 取得所有訂單
+router.get('/orders/:orderNumber', ...handleMiddleware([isAuth], orderController.getOrder))
 
 module.exports = router
