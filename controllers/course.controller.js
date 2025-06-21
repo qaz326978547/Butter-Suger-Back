@@ -596,7 +596,7 @@ const courseController = {
         'course.course_description AS course_description',
       ])
       .leftJoin('rating.courses', 'course')
-      .orderBy('course_rating_score', 'DESC')
+      .orderBy('course_rating_score', 'DESC', 'NULLS LAST')
       .groupBy('rating.course_id')
       .addGroupBy('course.course_banner_imageUrl')
       .addGroupBy('course.course_name')
