@@ -38,7 +38,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://sugerbutter-test.zeabur.app/api/v1/course/course-category",
+							"raw": "https://sugerbutter-test.zeabur.app/api/v1/course/category",
 							"protocol": "https",
 							"host": [
 								"sugerbutter-test",
@@ -49,7 +49,7 @@
 								"api",
 								"v1",
 								"course",
-								"course-category"
+								"category"
 							]
 						}
 					},
@@ -557,7 +557,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"course_status\": \"下架\"\r\n}",
+							"raw": "{\r\n\t\"course_status\": \"上架\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -565,14 +565,14 @@
 							}
 						},
 						"url": {
-							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/e0ed5992-2977-49d6-a036-c36455614048/status",
+							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/441edd32-986a-46c6-8769-86ea3994b57b/status",
 							"protocol": "https",
 							"path": [
 								"sugerbutter-test.zeabur.app",
 								"api",
 								"v1",
 								"course",
-								"e0ed5992-2977-49d6-a036-c36455614048",
+								"441edd32-986a-46c6-8769-86ea3994b57b",
 								"status"
 							]
 						}
@@ -1140,16 +1140,24 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"course_id\": \"3095694c-34eb-4320-bb4b-053c3ca02644\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/favorites/3a555761-b481-4a4f-aa1e-2673af738895",
+							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/favorites",
 							"protocol": "https",
 							"path": [
 								"sugerbutter-test.zeabur.app",
 								"api",
 								"v1",
 								"course",
-								"favorites",
-								"3a555761-b481-4a4f-aa1e-2673af738895"
+								"favorites"
 							]
 						}
 					},
@@ -1171,7 +1179,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/favorites/course-id",
+							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/favorites/0fd25763-a102-46a0-bf49-67f92ec7eb5d",
 							"protocol": "https",
 							"path": [
 								"sugerbutter-test.zeabur.app",
@@ -1179,7 +1187,7 @@
 								"v1",
 								"course",
 								"favorites",
-								"course-id"
+								"0fd25763-a102-46a0-bf49-67f92ec7eb5d"
 							]
 						}
 					},
@@ -1497,14 +1505,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/teacher/5fea6457-3576-4372-8006-4f812cc0ea77",
+							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/teacher/3f82588c-5c60-4e28-8e95-5f89b7568deb",
 							"protocol": "https",
 							"path": [
 								"sugerbutter-test.zeabur.app",
 								"api",
 								"v1",
 								"teacher",
-								"5fea6457-3576-4372-8006-4f812cc0ea77"
+								"3f82588c-5c60-4e28-8e95-5f89b7568deb"
 							]
 						}
 					},
