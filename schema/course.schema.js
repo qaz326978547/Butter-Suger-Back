@@ -45,5 +45,18 @@ const updateCoursePrice = Joi.object({
     'number.empty': '售價不能為空',
   }),
 })
+// course_status: {
+//   type: 'enum',
+//   enum: ['審核中', '上架', '下架'],
+//   default: '審核中',
+// },
+const updateCourseStatus = Joi.object({
+  course_status: Joi.string().valid('審核中', '上架', '下架').required().messages({
+    'string.base': '課程狀態必須是文字格式',
+    'any.required': '請選擇課程狀態',
+    'string.empty': '課程狀態不能為空',
+    'any.only': '課程狀態必須是審核中、上架或下架',
+  }),
+})
 
-module.exports = { saveCourseSchema, courseCategorySchema, updateCoursePrice }
+module.exports = { saveCourseSchema, courseCategorySchema, updateCoursePrice, updateCourseStatus }

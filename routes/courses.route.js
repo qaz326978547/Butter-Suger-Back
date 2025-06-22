@@ -4,7 +4,11 @@ const multer = require('multer')
 const courseController = require('../controllers/course.controller')
 const isAuth = require('../middleware/isAuth.middleware')
 const handleMiddleware = require('../utils/handleMiddleware')
-const { saveCourseSchema, updateCoursePrice } = require('../schema/course.schema')
+const {
+  saveCourseSchema,
+  updateCoursePrice,
+  updateCourseStatus,
+} = require('../schema/course.schema')
 const router = express.Router()
 const validateSchema = require('../middleware/validateSchema.middleware')
 
@@ -79,9 +83,12 @@ router.get('/:courseId', courseController.getCourse)
 router.patch('/:courseId/price', ...handleMiddleware([isAuth], courseController.createCoursePrice))
 
 //更新課程狀態, 之後管理者有時間做時改成管理者
-router.patch(
+router.post(
   '/:courseId/status',
-  ...handleMiddleware([isAuth], courseController.updateCourseStatus)
+  ...handleMiddleware(
+    [isAuth, validateSchema(updateCourseStatus)],
+    courseController.updateCourseStatus
+  )
 )
 
 //新增評價
