@@ -222,7 +222,7 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
 
   const videoUrl = await storage.upload(file, folderName)
 
-  subsection.video_url = videoUrl
+  subsection.video_file_url = videoUrl
   subsection.video_name = file.originalname || '未命名影片'
   subsection.video_size = formatFileSize(file.size || 0)
   subsection.video_type = file.mimetype || 'video/mp4'
@@ -238,14 +238,13 @@ const deleteSubsectionVideo = async ({ subsectionId }) => {
   if (!subsection) {
     throw appError(404, '小節不存在')
   }
-
-  if (!subsection.video_url) {
+  if (!subsection.video_file_url) {
     throw appError(400, '小節尚未上傳影片')
   }
 
-  await storage.delete(subsection.video_url)
+  await storage.delete(subsection.video_file_url)
 
-  subsection.video_url = null
+  subsection.video_file_url = null
   subsection.video_name = null
   subsection.video_size = null
   subsection.video_type = null
