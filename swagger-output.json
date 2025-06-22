@@ -5,7 +5,7 @@
     "description": "Description",
     "version": "1.0.0"
   },
-  "host": "sugerbutter-test.zeabur.app", 
+  "host": "localhost:8080", 
   "basePath": "/",
   "schemes": [
     "https"
@@ -565,42 +565,37 @@
           {
             "name": "courseId",
             "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
             "required": true,
             "schema": {
-              "type": "string"
-            },
-            "description": "課程ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "origin_price": {
-                    "type": "integer",
-                    "example": 2400
-                  },
-                  "sell_price": {
-                    "type": "integer",
-                    "example": 2200
-                  }
+              "type": "object",
+              "properties": {
+                "origin_price": {
+                  "type": "integer",
+                  "example": 2400
                 },
-                "required": ["origin_price", "sell_price"]
-              }
+                "sell_price": {
+                  "type": "integer",
+                  "example": 2200
+                }
+              },
+              "required": ["origin_price", "sell_price"]
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "成功新增課程價格"
           }
         }
       }
-    }
-    ,
+    },
     "/api/v1/course/{courseId}/status": {
       "patch": {
         "tags": ["Courses"],
