@@ -18,7 +18,7 @@ router.get('/category/:categoryId', courseController.getCourseCategory)
 router.get('/:courseId/handouts', ...handleMiddleware([isAuth], courseController.getCourseHandOuts))
 
 //更新課程價格
-router.post(
+router.patch(
   '/:courseId/price',
   ...handleMiddleware(
     [isAuth, validateSchema(updateCoursePrice)],
@@ -79,11 +79,10 @@ router.post('/create/title', ...handleMiddleware([isAuth], courseController.crea
 
 // ❗️這一行放最後！
 router.get('/:courseId', courseController.getCourse)
-//新增課程價格
-router.patch('/:courseId/price', ...handleMiddleware([isAuth], courseController.createCoursePrice))
+
 
 //更新課程狀態, 之後管理者有時間做時改成管理者
-router.post(
+router.patch(
   '/:courseId/status',
   ...handleMiddleware(
     [isAuth, validateSchema(updateCourseStatus)],
