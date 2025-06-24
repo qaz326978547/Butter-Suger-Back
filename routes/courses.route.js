@@ -3,6 +3,7 @@ const express = require('express')
 const multer = require('multer')
 const courseController = require('../controllers/course.controller')
 const isAuth = require('../middleware/isAuth.middleware')
+const isAdmin = require('../middleware/isAdmin.middleware')
 const handleMiddleware = require('../utils/handleMiddleware')
 const {
   saveCourseSchema,
@@ -56,18 +57,18 @@ router.delete(
 router.get('/:courseId', courseController.getCourse)
 
 // 新增標題
-router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle))
+router.post('/create/title', ...handleMiddleware([isAuth, isTeacher], courseController.createCourseTitle))
 
 // 儲存課程資訊
 router.post(
   '/:courseId/save',
-  ...handleMiddleware([isAuth, validateSchema(saveCourseSchema)], courseController.saveCourse)
+  ...handleMiddleware([isAuth, isTeacher, validateSchema(saveCourseSchema)], courseController.saveCourse)
 )
 
 //新增課程類別
 router.post(
   '/:courseId/category',
-  ...handleMiddleware([isAuth], courseController.createCourseCategory)
+  ...handleMiddleware([isAuth, isTeacher], courseController.createCourseCategory)
 )
 
 // 儲存課程資訊, 重覆
@@ -85,7 +86,7 @@ router.get('/:courseId', courseController.getCourse)
 router.patch(
   '/:courseId/status',
   ...handleMiddleware(
-    [isAuth, validateSchema(updateCourseStatus)],
+    [isAuth, isAdmin, validateSchema(updateCourseStatus)],
     courseController.updateCourseStatus
   )
 )
@@ -108,7 +109,7 @@ router.post('/:courseId/answers', ...handleMiddleware([isAuth], courseController
 //新增課程章節
 router.post(
   '/:courseId/course-section',
-  ...handleMiddleware([isAuth], courseController.postCourseSection)
+  ...handleMiddleware([isAuth, isTeacher], courseController.postCourseSection)
 )
 
 //取得課程章節
@@ -120,13 +121,13 @@ router.get(
 //更新課程章節
 router.patch(
   '/course-section/:courseSectionId',
-  ...handleMiddleware([isAuth], courseController.patchCourseSection)
+  ...handleMiddleware([isAuth, isTeacher], courseController.patchCourseSection)
 )
 
 //刪除課程章節
 router.delete(
   '/course-section/:courseSectionId',
-  ...handleMiddleware([isAuth], courseController.deleteCourseSection)
+  ...handleMiddleware([isAuth, isTeacher], courseController.deleteCourseSection)
 )
 
 module.exports = router

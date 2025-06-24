@@ -18,7 +18,7 @@ const isAuth = async (req, res, next) => {
     const decoded = await verifyJWT(token)
     // 尋找對應 id 的使用者
     const currentUser = await dataSource.getRepository('users').findOne({
-      select: ['id', 'role'],
+      select: ['id', 'role', 'teacher_status'],
       where: {
         id: decoded.id,
       },
@@ -30,6 +30,7 @@ const isAuth = async (req, res, next) => {
     }
     req.user = currentUser
 
+    console.log("req.user", req.user)
     next()
   } catch (error) {
     logger.error(error.message)

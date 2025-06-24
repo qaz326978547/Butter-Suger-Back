@@ -67,8 +67,17 @@ const courseController = {
    * @route GET /api/v1/course/list
    */
   getCourseList: wrapAsync(async (req, res, next) => {
+    let pageNum = req.query.pageNum || 1
+    let perNum = 12;
+
+    if(pageNum<=0){
+      pageNum = 1
+    }
+/*     let pageNum = 2; */
     const courseRepo = dataSource.getRepository('courses')
     const courses = await courseRepo.find({
+      take: perNum,
+      skip: (pageNum-1)*perNum,
       relations: ['handouts', 'category', 'teacher', 'teacher.user'],
     })
 
@@ -584,8 +593,32 @@ const courseController = {
    * @route GET /api/v1/course/popular
    */
   getPopularCourses: wrapAsync(async (req, res, next) => {
+    let pageNum = req.query.pageNum || 1
+    let perNum = 12;
+
+    if(pageNum<=0){
+      pageNum = 1
+    }
+
     const ratingsRepo = dataSource.getRepository('ratings')
-    const result = await ratingsRepo
+    const result = await ratingsRepo.query(`
+        SELECT * FROM (
+          SELECT rating.course_id AS course_id,
+          ROUND(AVG(rating.rating_score)::numeric, 2) AS course_rating_score,
+          COUNT(DISTINCT rating.user_id) AS course_total_users,
+          course."course_banner_imageUrl" AS course_image_url,  
+          course.course_name AS course_name,
+          course.course_description AS course_description
+          FROM ratings rating
+          LEFT JOIN courses course ON course.id = rating.course_id 
+          GROUP BY rating.course_id, course."course_banner_imageUrl", course.course_name, course.course_description 
+          ORDER BY course_rating_score DESC NULLS LAST
+        ) grouped
+        LIMIT $1 OFFSET $2
+      `, [perNum, pageNum])
+
+    /* 不會自動跳頁 
+      const result = await ratingsRepo
       .createQueryBuilder('rating')
       .select([
         'rating.course_id AS course_id',
@@ -601,8 +634,10 @@ const courseController = {
       .addGroupBy('course.course_banner_imageUrl')
       .addGroupBy('course.course_name')
       .addGroupBy('course.course_description')
-      .limit(10)
-      .getRawMany()
+      .take(perNum)
+      .skip((pageNum-1)*perNum)
+      .getRawMany() 
+      */
 
     return sendResponse(res, 200, true, '取得資料成功', result)
   }),

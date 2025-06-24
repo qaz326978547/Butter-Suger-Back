@@ -58,6 +58,11 @@ module.exports = new EntitySchema({
       type: 'boolean',
       default: true, // 預設為 true
     },
+    teacher_status: {
+      type: 'enum',
+      enum: ['none', 'pending', 'approved'],
+      default: 'none', // 預設為 none
+    },
     login_count: {
       type: 'integer',
       default: 0, // 預設為 0
