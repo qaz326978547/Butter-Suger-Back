@@ -18,7 +18,7 @@ router.get('/profile', ...handleMiddleware([isAuth], teacherController.getTeache
 router.patch('/profile', ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateTeacherSchema), teacherController.updateTeacherData]))
 
 //更新教師狀態
-router.get('/teacherStatus/:studentId', ...handleMiddleware([isAuth, isAdmin], teacherController.updateTeacherStatus))
+router.patch('/teacherStatus/:studentId', ...handleMiddleware([isAuth, isAdmin], teacherController.updateTeacherStatus))
 
 // 取得教師精選資料(評價分數前 10 個)
 router.get('/featured', teacherController.getTeacherFeatured)
