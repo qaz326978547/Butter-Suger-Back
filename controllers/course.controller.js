@@ -469,7 +469,7 @@ const courseController = {
 
   /*
    * 更新課程狀態
-   * @route POST /api/v1/course/:courseId/price
+   * @route POST /api/v1/course/:courseId/status
    */
   updateCourseStatus: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
@@ -613,17 +613,19 @@ const courseController = {
    */
   getRatings: wrapAsync(async (req, res, next) => {
     const ratingsRepo = dataSource.getRepository('ratings')
-    const findRatings = await ratingsRepo.createQueryBuilder('rating')
-    .select(['rating.id AS id',
-            'user.id AS user_id',
-            'user.name AS user_name',
-            'user.profile_image_url AS profile_image_url',
-            'rating.rating_score AS rating_score',
-            'rating.review_text AS review_text',
-            'rating.created_at AS created_at'
-            ])
-    .leftJoin('rating.users', 'user')
-    .getRawMany()
+    const findRatings = await ratingsRepo
+      .createQueryBuilder('rating')
+      .select([
+        'rating.id AS id',
+        'user.id AS user_id',
+        'user.name AS user_name',
+        'user.profile_image_url AS profile_image_url',
+        'rating.rating_score AS rating_score',
+        'rating.review_text AS review_text',
+        'rating.created_at AS created_at',
+      ])
+      .leftJoin('rating.users', 'user')
+      .getRawMany()
     return sendResponse(res, 200, true, '成功取得資料', findRatings)
   }),
 

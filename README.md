@@ -67,14 +67,17 @@ JWT_SECRET=hexschool666
 - `npm run dev`
 
 ### 前端網址
+
 - `https://buttersuger-frontend.zeabur.app/Home`
 
 ### swagger 文件
-- `https://sugerbutter-test.zeabur.app/api-docs/`
+
+- `https://sugarbutter-test.zeabur.app/api-docs/`
 
 ### 前端專案
+
 - `https://github.com/HatchiX8/Butter-Sugar-Frontend`
 
 ### 後端專案
-- `https://github.com/qaz326978547/Butter-Suger-Back`
 
+- `https://github.com/qaz326978547/Butter-Suger-Back`

@@ -1,27 +1,27 @@
-const swaggerAutogen = require('swagger-autogen')();
+const swaggerAutogen = require('swagger-autogen')()
 
 const doc = {
   info: {
     title: 'Butter & Sugar',
-    description: 'Description'
+    description: 'Description',
   },
-  host: 'sugerbutter-test.zeabur.app',  //host: 'butter-sugar.zeabur.app',
+  host: 'sugarbutter-test.zeabur.app', //host: 'butter-sugar.zeabur.app',
   schemes: ['https'],
   securityDefinitions: {
     BearerAuth: {
       type: 'apiKey',
       name: 'Authorization',
       in: 'header',
-      description: '請填寫 Bearer token，例如: Bearer {token}'
-    }
+      description: '請填寫 Bearer token，例如: Bearer {token}',
+    },
   },
   security: [{ BearerAuth: [] }],
-};
+}
 
-const outputFile = './swagger-output.json';
-const routes = ['./app.js'];
+const outputFile = './swagger-output.json'
+const routes = ['./app.js']
 
 /* NOTE: If you are using the express Router, you must pass in the 'routes' only the 
 root file where the route starts, such as index.js, app.js, routes.js, etc ... */
 
-swaggerAutogen(outputFile, routes, doc);
+swaggerAutogen(outputFile, routes, doc)

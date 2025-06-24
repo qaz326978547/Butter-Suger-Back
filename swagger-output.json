@@ -5,11 +5,9 @@
     "description": "Description",
     "version": "1.0.0"
   },
-  "host": "sugerbutter-test.zeabur.app", 
+  "host": "sugarbutter-test.zeabur.app",
   "basePath": "/",
-  "schemes": [
-    "https"
-  ],
+  "schemes": ["https"],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
@@ -58,9 +56,7 @@
       "patch": {
         "tags": ["User"],
         "summary": "更新使用者資料",
-        "consumes": [
-          "multipart/form-data"
-        ],
+        "consumes": ["multipart/form-data"],
         "parameters": [
           { "name": "name", "in": "formData", "type": "string", "description": "使用者姓名" },
           { "name": "nickname", "in": "formData", "type": "string", "description": "暱稱" },
@@ -78,65 +74,64 @@
       }
     },
     "/api/v1/course/favorites/list": {
-        "get": {
-          "tags": ["User"],
-          "summary": "取得收藏課程列表",
-          "description": "取得目前使用者所有收藏的課程",
-          "responses": {
-            "200": {
-              "description": "成功取得收藏課程列表"
-            }
-          }
-        }
-      },
-      "/api/v1/course/favorites": {
-        "post": {
-          "tags": ["User"],
-          "summary": "新增收藏課程",
-          "description": "將指定課程加入收藏",
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "required": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "course_id": { "type": "string", "example": "97ff5cbd-7cbd-4e47-ab8b-b5da0e0be89f" }
-                },
-                "required": ["course_id"]
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "成功加入收藏"
-            }
-          }
-        }
-      },
-      "/api/v1/course/favorites/{favoriteId}": {
-        "delete": {
-          "tags": ["User"],
-          "summary": "刪除收藏課程",
-          "description": "依 favoriteId 刪除指定收藏",
-          "parameters": [
-            {
-              "name": "favoriteId",
-              "in": "path",
-              "type": "string",
-              "required": true,
-              "description": "收藏記錄ID"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "成功刪除收藏課程"
-            }
+      "get": {
+        "tags": ["User"],
+        "summary": "取得收藏課程列表",
+        "description": "取得目前使用者所有收藏的課程",
+        "responses": {
+          "200": {
+            "description": "成功取得收藏課程列表"
           }
         }
       }
-    ,
+    },
+    "/api/v1/course/favorites": {
+      "post": {
+        "tags": ["User"],
+        "summary": "新增收藏課程",
+        "description": "將指定課程加入收藏",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_id": { "type": "string", "example": "97ff5cbd-7cbd-4e47-ab8b-b5da0e0be89f" }
+              },
+              "required": ["course_id"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功加入收藏"
+          }
+        }
+      }
+    },
+    "/api/v1/course/favorites/{favoriteId}": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "刪除收藏課程",
+        "description": "依 favoriteId 刪除指定收藏",
+        "parameters": [
+          {
+            "name": "favoriteId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "收藏記錄ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功刪除收藏課程"
+          }
+        }
+      }
+    },
     "/api/v1/users/orders": {
       "get": {
         "tags": ["User"],
@@ -152,9 +147,7 @@
         "tags": ["User"],
         "summary": "取得單一訂單",
         "description": "",
-        "parameters": [
-          { "name": "orderNumber", "in": "path", "required": true, "type": "string" }
-        ],
+        "parameters": [{ "name": "orderNumber", "in": "path", "required": true, "type": "string" }],
         "responses": {
           "200": { "description": "OK" }
         }
@@ -209,9 +202,7 @@
         "tags": ["Teacher"],
         "summary": "取得單一精選教師",
         "description": "",
-        "parameters": [
-          { "name": "teacherId", "in": "path", "required": true, "type": "string" }
-        ],
+        "parameters": [{ "name": "teacherId", "in": "path", "required": true, "type": "string" }],
         "responses": {
           "default": { "description": "" }
         }
@@ -271,7 +262,13 @@
         "summary": "新增評價",
         "description": "新增一筆評價到指定課程。",
         "parameters": [
-          { "name": "courseId", "in": "path", "required": true, "type": "string", "description": "課程 ID" },
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "課程 ID"
+          },
           {
             "name": "body",
             "in": "body",
@@ -281,7 +278,11 @@
               "required": ["rating_score", "review_text"],
               "properties": {
                 "rating_score": { "type": "integer", "example": 5, "description": "評分（1~5）" },
-                "review_text": { "type": "string", "example": "手工餅乾很好吃，會持續練習！", "description": "評論文字" }
+                "review_text": {
+                  "type": "string",
+                  "example": "手工餅乾很好吃，會持續練習！",
+                  "description": "評論文字"
+                }
               }
             }
           }
@@ -297,12 +298,22 @@
                 "data": {
                   "type": "object",
                   "properties": {
-                    "user_id": { "type": "string", "example": "ee0756a2-0add-4092-9b04-14a32183e8f6" },
-                    "course_id": { "type": "string", "example": "1c733528-e70f-42f6-948a-ea21abe9e36d" },
+                    "user_id": {
+                      "type": "string",
+                      "example": "ee0756a2-0add-4092-9b04-14a32183e8f6"
+                    },
+                    "course_id": {
+                      "type": "string",
+                      "example": "1c733528-e70f-42f6-948a-ea21abe9e36d"
+                    },
                     "rating_score": { "type": "integer", "example": 5 },
                     "review_text": { "type": "string", "example": "手工餅乾很好吃，會持續練習！" },
                     "id": { "type": "string", "example": "d1d98cd0-0917-46fd-88f1-a689b1543541" },
-                    "created_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" }
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-04T11:48:24.206Z"
+                    }
                   }
                 }
               }
@@ -340,9 +351,7 @@
         "tags": ["Courses"],
         "summary": "取得單一課程資料",
         "description": "",
-        "parameters": [
-          { "name": "courseId", "in": "path", "required": true, "type": "string" }
-        ],
+        "parameters": [{ "name": "courseId", "in": "path", "required": true, "type": "string" }],
         "responses": {
           "default": { "description": "" }
         }
@@ -378,7 +387,13 @@
         "tags": ["Courses"],
         "summary": "新增課程類別",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
           {
             "in": "body",
             "name": "body",
@@ -404,7 +419,13 @@
         "summary": "新增banner圖片",
         "consumes": ["multipart/form-data"],
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
           { "name": "banner", "in": "formData", "type": "file", "description": "banner圖片" }
         ],
         "responses": {
@@ -415,7 +436,13 @@
         "tags": ["Courses"],
         "summary": "刪除banner圖片",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
         ],
         "responses": {
           "200": { "description": "成功刪除banner圖片" }
@@ -428,8 +455,19 @@
         "summary": "新增課程封面小圖",
         "consumes": ["multipart/form-data"],
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
-          { "name": "course-small-image", "in": "formData", "type": "file", "description": "課程小圖" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "name": "course-small-image",
+            "in": "formData",
+            "type": "file",
+            "description": "課程小圖"
+          }
         ],
         "responses": {
           "200": { "description": "成功上傳課程封面小圖" }
@@ -439,7 +477,13 @@
         "tags": ["Courses"],
         "summary": "刪除課程封面小圖",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
         ],
         "responses": {
           "200": { "description": "成功刪除課程封面小圖" }
@@ -452,8 +496,20 @@
         "summary": "新增課程講義",
         "consumes": ["multipart/form-data"],
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
-          { "name": "handout", "in": "formData", "type": "file", "description": "課程講義檔案，可多檔", "required": true }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "name": "handout",
+            "in": "formData",
+            "type": "file",
+            "description": "課程講義檔案，可多檔",
+            "required": true
+          }
         ],
         "responses": {
           "200": { "description": "成功上傳課程講義" }
@@ -463,7 +519,13 @@
         "tags": ["Courses"],
         "summary": "刪除課程講義",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
         ],
         "responses": {
           "200": { "description": "成功刪除課程講義" }
@@ -475,7 +537,13 @@
         "tags": ["Courses"],
         "summary": "取得課程講義",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
         ],
         "responses": {
           "200": { "description": "成功取得課程講義" }
@@ -488,7 +556,13 @@
         "summary": "新增課程預告片",
         "consumes": ["multipart/form-data"],
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
           { "name": "trailer", "in": "formData", "type": "file", "description": "課程預告片影片" }
         ],
         "responses": {
@@ -499,7 +573,13 @@
         "tags": ["Courses"],
         "summary": "刪除課程預告片",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
         ],
         "responses": {
           "200": { "description": "成功刪除課程預告片" }
@@ -512,8 +592,19 @@
         "summary": "新增課程描述圖片",
         "consumes": ["multipart/form-data"],
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
-          { "name": "course-description-image", "in": "formData", "type": "file", "description": "課程描述圖片" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "name": "course-description-image",
+            "in": "formData",
+            "type": "file",
+            "description": "課程描述圖片"
+          }
         ],
         "responses": {
           "200": { "description": "成功上傳課程描述圖片" }
@@ -523,7 +614,13 @@
         "tags": ["Courses"],
         "summary": "刪除課程描述圖片",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" }
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
         ],
         "responses": {
           "200": { "description": "成功刪除課程描述圖片" }
@@ -535,7 +632,13 @@
         "tags": ["Courses"],
         "summary": "儲存課程內容資訊",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
           {
             "in": "body",
             "name": "body",
@@ -548,7 +651,12 @@
                 "course_description": { "type": "string" },
                 "course_banner_description": { "type": "string" }
               },
-              "required": ["suitable_for", "course_goal", "course_description", "course_banner_description"]
+              "required": [
+                "suitable_for",
+                "course_goal",
+                "course_description",
+                "course_banner_description"
+              ]
             }
           }
         ],
@@ -601,7 +709,13 @@
         "tags": ["Courses"],
         "summary": "更改課程狀態",
         "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true, "description": "課程ID" },
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
           {
             "in": "body",
             "name": "body",
@@ -642,7 +756,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "question_text": { "type": "string", "example": "使用的水果有哪些？可以替換成其他水果嗎？" }
+                "question_text": {
+                  "type": "string",
+                  "example": "使用的水果有哪些？可以替換成其他水果嗎？"
+                }
               },
               "required": ["question_text"]
             }
@@ -655,9 +772,7 @@
       "get": {
         "tags": ["Courses"],
         "summary": "取得課程問題列表",
-        "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true }
-        ],
+        "parameters": [{ "name": "courseId", "in": "path", "type": "string", "required": true }],
         "responses": {
           "200": { "description": "成功取得課程問題列表" }
         }
@@ -676,7 +791,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "question_id": { "type": "string", "example": "008385b1-75af-41de-8017-dc0f233fb8bf" },
+                "question_id": {
+                  "type": "string",
+                  "example": "008385b1-75af-41de-8017-dc0f233fb8bf"
+                },
                 "answer_text": { "type": "string", "example": "課程中示範使用的是..." }
               },
               "required": ["question_id", "answer_text"]
@@ -723,9 +841,7 @@
       "get": {
         "tags": ["Courses"],
         "summary": "取得課程章節",
-        "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true }
-        ],
+        "parameters": [{ "name": "courseId", "in": "path", "type": "string", "required": true }],
         "responses": {
           "200": { "description": "成功取得課程章節" }
         }
@@ -757,9 +873,7 @@
       "delete": {
         "tags": ["Courses"],
         "summary": "刪除課程章節",
-        "parameters": [
-          { "name": "courseId", "in": "path", "type": "string", "required": true }
-        ],
+        "parameters": [{ "name": "courseId", "in": "path", "type": "string", "required": true }],
         "responses": {
           "200": { "description": "成功刪除課程章節" }
         }
@@ -894,7 +1008,15 @@
         "description": "依 cartItemId 刪除指定購物車項目",
         "tags": ["Cart"],
         "parameters": [
-          { "name": "cartItemId", "in": "path", "description": "購物車項目 ID", "required": true, "type": "string", "format": "uuid", "example": "c6158377-a49c-4a60-8802-5e19fe2057b7" }
+          {
+            "name": "cartItemId",
+            "in": "path",
+            "description": "購物車項目 ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "example": "c6158377-a49c-4a60-8802-5e19fe2057b7"
+          }
         ],
         "responses": {
           "200": {
