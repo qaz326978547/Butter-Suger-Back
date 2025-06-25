@@ -2,6 +2,7 @@
 const express = require('express')
 const sectionController = require('../controllers/section.controller')
 const isAuth = require('../middleware/isAuth.middleware')
+const isTeacher = require('../middleware/isTeacher.middleware')
 const handleMiddleware = require('../utils/handleMiddleware')
 const validateSchema = require('../middleware/validateSchema.middleware')
 const { createSectionSchema, updateSectionSchema } = require('../schema/section.schema')
@@ -15,7 +16,7 @@ router.get('/course/:courseId', sectionController.getSectionsByCourseId)
 router.post(
   '/',
   ...handleMiddleware(
-    [isAuth, validateSchema(createSectionSchema)],
+    [isAuth, isTeacher, validateSchema(createSectionSchema)],
     sectionController.createSection
   )
 )
@@ -24,12 +25,12 @@ router.post(
 router.post(
   '/:id/update',
   ...handleMiddleware(
-    [isAuth, validateSchema(updateSectionSchema)],
+    [isAuth, isTeacher, validateSchema(updateSectionSchema)],
     sectionController.updateSection
   )
 )
 
 // 刪除章節
-router.delete('/:id', ...handleMiddleware([isAuth], sectionController.deleteSection))
+router.delete('/:id', ...handleMiddleware([isAuth, isTeacher], sectionController.deleteSection))
 
 module.exports = router

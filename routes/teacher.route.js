@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const teacherController = require('../controllers/teacher.controller')
 const isAuth = require('../middleware/isAuth.middleware')
+const isTeacher = require('../middleware/isTeacher.middleware')
+const isAdmin = require('../middleware/isAdmin.middleware')
 const validateSchema = require('../middleware/validateSchema.middleware')
 const { updateTeacherSchema } = require('../schema/teacher.schema')
 const handleMiddleware = require('../utils/handleMiddleware')
@@ -14,6 +16,9 @@ router.get('/profile', ...handleMiddleware([isAuth], teacherController.getTeache
 
 //更新教師資料
 router.patch('/profile', ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateTeacherSchema), teacherController.updateTeacherData]))
+
+//更新教師狀態
+router.patch('/teacherStatus/:studentId', ...handleMiddleware([isAuth, isAdmin], teacherController.updateTeacherStatus))
 
 // 取得教師精選資料(評價分數前 10 個)
 router.get('/featured', teacherController.getTeacherFeatured)

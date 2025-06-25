@@ -103,7 +103,7 @@ module.exports = new EntitySchema({
     },
     course_status: {
       type: 'enum',
-      enum: ['審核中', '上架', '下架'],
+      enum: ['審核中', '編輯中', '上架', '下架'],
       default: '審核中',
     },
     created_at: {

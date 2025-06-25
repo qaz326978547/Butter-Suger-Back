@@ -7,7 +7,7 @@ module.exports = new EntitySchema({
     id: {
       primary: true,
       type: 'uuid',
-      generated: 'uuid', // 或 true，視是否與 user_id 相同而定
+      generated: 'uuid', 
     },
     user_id: {
       type: 'uuid',

@@ -12,47 +12,43 @@ const teacherController = {
    * @route GET - /api/v1/teacher/profile
    */
   getTeacherData: wrapAsync(async (req, res, next) => {
-    try {
-      const userId = req.user.id
-      const teacherRepo = dataSource.getRepository('teacher')
+    const userId = req.user.id
+    const teacherRepo = dataSource.getRepository('teacher')
 
-      // 確認教師是否存在
-      const findTeacher = await teacherRepo.findOne({
-        select: [
-          'id',
-          'user_id',
-          'bank_name',
-          'bank_account',
-          'slogan',
-          'description',
-          'specialization'
-        ],
-        where: { user_id: userId },
-        relations: ['user']
-      })
+    // 確認教師是否存在
+    const findTeacher = await teacherRepo.findOne({
+      select: [
+        'id',
+        'user_id',
+        'bank_name',
+        'bank_account',
+        'slogan',
+        'description',
+        'specialization'
+      ],
+      where: { user_id: userId },
+      relations: ['user']
+    })
 
-      if (!findTeacher) {
-        return next(appError(404, '查無教師資料'))
-      }
-
-      // 回傳教師資料
-      sendResponse(res, 200, true, '取得教師資料成功', {
-            name: findTeacher.user.name,
-            nickname: findTeacher.user.nickname,
-            phone: findTeacher.user.phone,
-            birthday: findTeacher.user.birthday,
-            sex: findTeacher.user.sex,
-            address: findTeacher.user.address,
-            profile_image_url: findTeacher.user.profile_image_url,
-            bank_name: findTeacher.bank_name,
-            bank_account: findTeacher.bank_account,
-            slogan: findTeacher.slogan,
-            description: findTeacher.description,
-            specialization: findTeacher.specialization,
-        })
-    } catch (error) {
-      next(error)
+    if (!findTeacher) {
+      return next(appError(404, '查無教師資料'))
     }
+
+    // 回傳教師資料
+    sendResponse(res, 200, true, '取得教師資料成功', {
+          name: findTeacher.user.name,
+          nickname: findTeacher.user.nickname,
+          phone: findTeacher.user.phone,
+          birthday: findTeacher.user.birthday,
+          sex: findTeacher.user.sex,
+          address: findTeacher.user.address,
+          profile_image_url: findTeacher.user.profile_image_url,
+          bank_name: findTeacher.bank_name,
+          bank_account: findTeacher.bank_account,
+          slogan: findTeacher.slogan,
+          description: findTeacher.description,
+          specialization: findTeacher.specialization,
+      })
   }),
 
   /*
@@ -60,49 +56,72 @@ const teacherController = {
   * @route PATCH - /api/v1/teacher/profile
   */
   updateTeacherData: wrapAsync(async (req, res, next) => {
-    try {
-        const userId = req.user.id
-        const {name, nickname, phone, birthday, sex, address, bank_name, bank_account, slogan, description, specialization} = req.body
+    const userId = req.user.id
+    const {name, nickname, phone, birthday, sex, address, bank_name, bank_account, slogan, description, specialization} = req.body
 
-        const teacherRepo = dataSource.getRepository('teacher')
-        // 確認教師是否存在
-        const findTeacher = await teacherRepo.findOne({
-            select: ['id'],
-            where: { user_id: userId },
-            relations: ['user']
-        })
+    const teacherRepo = dataSource.getRepository('teacher')
+    // 確認教師是否存在
+    const findTeacher = await teacherRepo.findOne({
+        select: ['id'],
+        where: { user_id: userId },
+        relations: ['user']
+    })
 
-      // 清理未定義的欄位
-        const updateUserData = cleanUndefinedFields({
-            name, 
-            nickname, 
-            phone, 
-            birthday, 
-            sex, 
-            address,
-            profile_image_url: findTeacher?.user?.profile_image_url || '',
-            role: 'teacher',
-        })
+  // 清理未定義的欄位
+    const updateUserData = cleanUndefinedFields({
+        name, 
+        nickname, 
+        phone, 
+        birthday, 
+        sex, 
+        address,
+        profile_image_url: findTeacher?.user?.profile_image_url || '',
+        teacher_status: 'pending'
+    })
 
-        // 清理未定義的欄位
-        const updateTeacherData = cleanUndefinedFields({
-            bank_name, 
-            bank_account, 
-            slogan, 
-            description, 
-            specialization
-        })
+    // 清理未定義的欄位
+    const updateTeacherData = cleanUndefinedFields({
+        bank_name, 
+        bank_account, 
+        slogan, 
+        description, 
+        specialization
+    })
 
-        if(req.file){
-            updateUserData.profile_image_url = await storage.upload(req.file, 'users')
-        }
-
-        await updateUserAndTeacher(userId, updateUserData, updateTeacherData)
-        
-        return sendResponse(res, 200, true, '更新教師資料成功')
-    } catch (error) {
-      next(error)
+    if(req.file){
+        updateUserData.profile_image_url = await storage.upload(req.file, 'users')
     }
+
+    await updateUserAndTeacher(userId, updateUserData, updateTeacherData)
+    
+    return sendResponse(res, 200, true, '更新教師資料成功')
+  }),
+
+  /*
+  * 更新是否為教師的狀態
+  * @route PATCH - /api/v1/teacher/teacherStatus
+  */
+  updateTeacherStatus: wrapAsync(async (req, res, next) => {
+    const studentId = req.params.studentId
+    const studentRepo = dataSource.getRepository('users')
+    
+    // 確認學生是否存在
+    const findStudent = await studentRepo.findOne({
+        select: ['id'],
+        where: { id: studentId }
+    })
+
+    if(!findStudent){
+      return next(appError(res, 400, false, 'ID 錯誤'))
+    }
+
+    const updateStudent = await studentRepo.update({id: studentId},{role: 'teacher', teacher_status: 'approved'})
+
+    if(!updateStudent.affected){
+      return next(appError(res, 400, false, '審核教師失敗'))
+    }
+
+    return sendResponse(res, 200, true, '審核教師成功')
   }),
 
   /*

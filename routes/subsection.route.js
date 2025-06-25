@@ -1,6 +1,7 @@
 const express = require('express')
 const subsectionController = require('../controllers/subsection.controller')
 const isAuth = require('../middleware/isAuth.middleware')
+const isTeacher = require('../middleware/isTeacher.middleware')
 const handleMiddleware = require('../utils/handleMiddleware')
 const validateSchema = require('../middleware/validateSchema.middleware')
 const { createSubsectionSchema, updateSubsectionSchema } = require('../schema/subsection.schema')
@@ -12,7 +13,7 @@ router.get('/section/:sectionId', subsectionController.getSubsectionsBySectionId
 router.post(
   '/',
   ...handleMiddleware(
-    [isAuth, validateSchema(createSubsectionSchema)],
+    [isAuth, isTeacher, validateSchema(createSubsectionSchema)],
     subsectionController.createSubsection
   )
 )
@@ -21,12 +22,12 @@ router.post(
 router.post(
   '/:id/update',
   ...handleMiddleware(
-    [isAuth, validateSchema(updateSubsectionSchema)],
+    [isAuth, isTeacher, validateSchema(updateSubsectionSchema)],
     subsectionController.updateSubsection
   )
 )
 
 // 刪除小節 (包含影片)
-router.delete('/:id', ...handleMiddleware([isAuth], subsectionController.deleteSubsection))
+router.delete('/:id', ...handleMiddleware([isAuth, isTeacher], subsectionController.deleteSubsection))
 
 module.exports = router
