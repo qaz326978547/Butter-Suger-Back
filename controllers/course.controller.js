@@ -1126,7 +1126,12 @@ const courseController = {
 
   getMyCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
+    let pageNum = req.query.pageNum || 1
+    let perNum = 12;
 
+    if(pageNum<=0){
+      pageNum = 1
+    }
     //取得我的課程表資料
     const studentCourseRepo = dataSource.getRepository('student_course')
     const findStudentCourse = await studentCourseRepo
@@ -1165,6 +1170,8 @@ const courseController = {
       .createQueryBuilder('rating')
       .select(['rating.course_id AS course_id', 'rating.rating_score AS rating_score'])
       .where('rating.user_id=:user_id', { user_id: user_id })
+      .take(perNum)
+      .skip(pageNum)
       .getRawMany()
 
     //轉成物件
