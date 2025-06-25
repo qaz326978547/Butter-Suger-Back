@@ -1151,6 +1151,8 @@ const courseController = {
       .leftJoin('student_course.course', 'course')
       .leftJoin('course.teacher', 'teacher')
       .where('student_course.user_id=:user_id', { user_id: user_id })
+      .take(perNum)
+      .skip(pageNum)
       .getRawMany()
 
     const ratingRepo = dataSource.getRepository('ratings')
@@ -1170,8 +1172,6 @@ const courseController = {
       .createQueryBuilder('rating')
       .select(['rating.course_id AS course_id', 'rating.rating_score AS rating_score'])
       .where('rating.user_id=:user_id', { user_id: user_id })
-      .take(perNum)
-      .skip(pageNum)
       .getRawMany()
 
     //轉成物件
