@@ -3,6 +3,7 @@ const express = require('express')
 const multer = require('multer')
 const courseController = require('../controllers/course.controller')
 const isAuth = require('../middleware/isAuth.middleware')
+const isTeacher = require('../middleware/isTeacher.middleware')
 const isAdmin = require('../middleware/isAdmin.middleware')
 const handleMiddleware = require('../utils/handleMiddleware')
 const {
