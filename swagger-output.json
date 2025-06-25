@@ -5,7 +5,7 @@
     "description": "Description",
     "version": "1.0.0"
   },
-  "host": "sugarbutter-test.zeabur.app",
+  "host": "sugerbutter-test.zeabur.app",
   "basePath": "/",
   "schemes": ["https"],
   "securityDefinitions": {
