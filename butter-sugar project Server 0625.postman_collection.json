@@ -1095,7 +1095,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/my-courses",
+							"raw": "https:///sugerbutter-test.zeabur.app/api/v1/course/my-courses?pageNum=1",
 							"protocol": "https",
 							"path": [
 								"sugerbutter-test.zeabur.app",
@@ -1103,6 +1103,12 @@
 								"v1",
 								"course",
 								"my-courses"
+							],
+							"query": [
+								{
+									"key": "pageNum",
+									"value": "1"
+								}
 							]
 						}
 					},
