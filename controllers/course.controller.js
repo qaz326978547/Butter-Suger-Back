@@ -600,6 +600,8 @@ const courseController = {
       pageNum = 1
     }
 
+    const offset = (pageNum - 1) * perNum;
+
     const ratingsRepo = dataSource.getRepository('ratings')
     const result = await ratingsRepo.query(`
         SELECT * FROM (
@@ -615,7 +617,7 @@ const courseController = {
           ORDER BY course_rating_score DESC NULLS LAST
         ) grouped
         LIMIT $1 OFFSET $2
-      `, [perNum, pageNum])
+      `, [perNum, offset])
 
     /* 不會自動跳頁 
       const result = await ratingsRepo
@@ -1132,6 +1134,9 @@ const courseController = {
     if(pageNum<=0){
       pageNum = 1
     }
+
+    const offset = (pageNum - 1) * perNum;
+
     //取得我的課程表資料
     const studentCourseRepo = dataSource.getRepository('student_course')
     const findStudentCourse = await studentCourseRepo
@@ -1152,7 +1157,7 @@ const courseController = {
       .leftJoin('course.teacher', 'teacher')
       .where('student_course.user_id=:user_id', { user_id: user_id })
       .take(perNum)
-      .skip(pageNum)
+      .skip(offset)
       .getRawMany()
 
     const ratingRepo = dataSource.getRepository('ratings')
