@@ -72,7 +72,7 @@ JWT_SECRET=hexschool666
 
 ### swagger 文件
 
-- `https://sugarbutter-test.zeabur.app/api-docs/`
+- `https://sugerbutter-test.zeabur.app/api-docs/`
 
 ### 前端專案
 
