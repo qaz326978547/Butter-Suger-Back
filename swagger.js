@@ -5,7 +5,7 @@ const doc = {
     title: 'Butter & Sugar',
     description: 'Description',
   },
-  host: 'buttersugar.zeabur.app', //host: 'butter-sugar.zeabur.app',
+  host: 'buttersugar.zeabur.app', //host: 'buttersugar.zeabur.app',
   schemes: ['https'],
   securityDefinitions: {
     BearerAuth: {

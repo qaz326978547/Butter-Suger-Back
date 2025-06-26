@@ -98,6 +98,104 @@ const teacherController = {
   }),
 
   /*
+   * 取得教師課程
+   * @route GET - /api/v1/teacher/profile
+   */
+  getTeacherCourse: wrapAsync(async (req, res, next) => {
+    const user_id = req.user.id
+    let pageNum = req.query.pageNum || 1
+    let perNum = 12;
+
+    if(pageNum<=0){
+      pageNum = 1
+    }
+
+    const offset = (pageNum - 1) * perNum;
+
+    const teacherCourseRepo = dataSource.getRepository('courses')
+    //先查出分頁 course.id
+    /* ids:  [
+      { id: 'd0f981a2-2069-4f72-a027-66cf2a542ef9' },
+      { id: '97464bde-ba8a-4dbf-8369-25e2656315aa' }
+    ] */
+    const ids = await teacherCourseRepo.createQueryBuilder('course')
+    .select(['course.id'])
+    .leftJoin('course.teacher', 'teacher')
+    .leftJoin('teacher.user', 'user') 
+    .where('user.id=:user_id', {user_id: user_id})
+    .take(perNum)
+    .skip(offset)
+    .getMany() 
+
+    const courseIds = ids.map(row=>row.id)
+    
+    //再查詳細資料
+    const findTeacherCourse = await teacherCourseRepo.createQueryBuilder('course')
+    .leftJoinAndSelect('course.teacher', 'teacher')
+    .leftJoinAndSelect('teacher.user', 'user')
+    .whereInIds(courseIds)
+    .getMany()
+
+    //.take() .skip() 沒有生效,  select 不是 entity 內建的 column, TypeORM 有時候直接不處理 take/skip。
+    /* const findTeacherCourse = await teacherCourseRepo
+      .createQueryBuilder('course')
+      .select([
+        'course.id AS course_id',
+        'teacher.id AS teacher_id',
+        'user.name AS teacher_name',
+        'course.course_small_imageUrl AS course_small_imageUrl',
+        'course.course_name AS course_name'
+      ])
+      .leftJoin('course.teacher', 'teacher')
+      .leftJoin('teacher.user', 'user')
+      .where('user.id=:user_id', { user_id: user_id })
+      .take(perNum)
+      .skip(offset)
+      .getRawMany() */
+
+
+    const ratingRepo = dataSource.getRepository('ratings')
+
+    //每門課的平均評價分數
+    const avgRatings = await ratingRepo
+      .createQueryBuilder('rating')
+      .select([
+        'rating.course_id AS course_id',
+        'ROUND(AVG(rating.rating_score)::numeric, 2) AS avg_rating_score',
+      ])
+      .groupBy('rating.course_id')
+      .getRawMany()
+
+    //每門課的我的評價分數
+    const myRatings = await ratingRepo
+      .createQueryBuilder('rating')
+      .select(['rating.course_id AS course_id', 'rating.rating_score AS rating_score'])
+      .where('rating.user_id=:user_id', { user_id: user_id })
+      .getRawMany()
+
+    //轉成物件
+    const avgRatingMap = Object.fromEntries(
+      avgRatings.map((r) => [r.course_id, r.avg_rating_score])
+    )
+    const myRatingMap = Object.fromEntries(myRatings.map((r) => [r.course_id, r.rating_score]))
+
+    const result = findTeacherCourse.map((teacherCourse) => ({
+      id: teacherCourse.id,
+      teacher_id: teacherCourse.teacher_id,
+      teacher_name: teacherCourse.teacher?.user?.name,
+      course_small_imageUrl: teacherCourse.teacher?.user?.course_small_imageurl,
+      course_name: teacherCourse.course_name,
+      course_ratings: {
+        rating_score: myRatingMap[teacherCourse.id] || '',
+        avg_rating_score: avgRatingMap[teacherCourse.id] || '',
+      }
+    }))
+
+    // 回傳教師資料
+    sendResponse(res, 200, true, '取得教師課程成功', result)
+  }),
+
+  /*
   * 更新是否為教師的狀態
   * @route PATCH - /api/v1/teacher/teacherStatus
   */

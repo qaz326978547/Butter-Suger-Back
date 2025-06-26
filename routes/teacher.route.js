@@ -12,7 +12,10 @@ const upload = multer();
 
 // 老師權限最後再加
 // 取得教師資料
-router.get('/profile', ...handleMiddleware([isAuth], teacherController.getTeacherData))
+router.get('/profile', ...handleMiddleware([isAuth, isTeacher], teacherController.getTeacherData))
+
+// 取得教師課程
+router.get('/teacherCourse', ...handleMiddleware([isAuth, isTeacher], teacherController.getTeacherCourse))
 
 //更新教師資料
 router.patch('/profile', ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateTeacherSchema), teacherController.updateTeacherData]))

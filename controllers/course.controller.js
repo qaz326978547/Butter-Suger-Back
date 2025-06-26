@@ -603,6 +603,7 @@ const courseController = {
     const offset = (pageNum - 1) * perNum;
 
     const ratingsRepo = dataSource.getRepository('ratings')
+    //因效能問題, 改成原生寫法
     const result = await ratingsRepo.query(`
         SELECT * FROM (
           SELECT rating.course_id AS course_id,

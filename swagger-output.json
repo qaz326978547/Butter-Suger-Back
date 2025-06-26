@@ -208,13 +208,62 @@
         }
       }
     },
+    "/api/v1/teacher/teacherCourse": {
+      "get": {
+        "tags": ["Teacher"],
+        "summary": "取得教師開設的課程列表",
+        "description": "取得目前登入教師所開設的課程，支援分頁",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "分頁的頁碼，預設為 1",
+            "required": false,
+            "type": "integer",
+            "default": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得教師課程列表",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/course/popular": {
       "get": {
         "tags": ["Courses"],
         "summary": "取得首頁熱門課程資料",
-        "description": "",
+        "description": "取得依熱門程度排序的課程列表，支援分頁",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "分頁的頁碼，預設為 1",
+            "required": false,
+            "type": "integer",
+            "default": 1
+          }
+        ],
         "responses": {
-          "default": { "description": "" }
+          "200": {
+            "description": "成功取得熱門課程資料",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "default": {
+            "description": "其他錯誤"
+          }
         }
       }
     },
@@ -223,12 +272,24 @@
         "tags": ["Courses"],
         "summary": "取得課程",
         "description": "取得所有課程",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "分頁的頁碼，預設為 1",
+            "required": false,
+            "type": "integer",
+            "default": 1
+          }
+        ],
         "responses": {
           "200": {
             "description": "取得課程列表成功",
             "schema": {
               "type": "array",
-              "items": { "type": "object" }
+              "items": {
+                "type": "object"
+              }
             }
           }
         }
@@ -810,8 +871,27 @@
       "get": {
         "tags": ["Courses"],
         "summary": "取得我的課程列表",
+        "description": "取得目前使用者已購買或擁有的課程列表",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "分頁的頁碼，預設為 1",
+            "required": false,
+            "type": "integer",
+            "default": 1
+          }
+        ],
         "responses": {
-          "200": { "description": "成功取得我的課程列表" }
+          "200": {
+            "description": "成功取得我的課程列表",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
         }
       }
     },
