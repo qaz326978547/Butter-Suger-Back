@@ -8,6 +8,7 @@ const router = express.Router()
 const upload = multer({ storage: multer.memoryStorage() })
 
 // 上傳小節影片
+//{{host}}/api/v1/subsection/upload/{{subSection_id}}/upload-video
 router.post(
   '/:subsectionId/upload-video',
   upload.single('video'),

@@ -44,25 +44,40 @@ const subsectionController = {
 
   // 上傳小節影片（推送到 Bull 佇列）
   uploadSubsectionVideo: wrapAsync(async (req, res, next) => {
+    if (!req.user || !req.user.id) {
+      return next(appError(401, '請先登入'))
+    }
     const { subsectionId } = req.params
     const file = req.file
-  
+
     if (!file || !subsectionId) {
       return next(appError(400, '缺少影片檔案或小節 ID'))
     }
-  
+
     // ✅ 上傳影片至 S3，取得 URL
-    const videoUrl = await storage.upload(file, 'course-subsection-videos')
-  
+    let videoUrl
+    try {
+      videoUrl = await storage.upload(file, 'course-subsection-videos')
+    } catch (err) {
+      console.error('⛔ S3 上傳失敗:', err)
+      return next(appError(500, '影片上傳失敗，請稍後再試'))
+    }
+
     // ✅ 推送 job 到 queue，只傳基本資訊（避免傳遞 Buffer）
-    await videoUploadQueue.add({
-      subsectionId,
-      videoUrl,
-      videoName: file.originalname,
-      videoSize: file.size,
-      videoType: file.mimetype,
-    })
-  
+    try {
+      await videoUploadQueue.add({
+        subsectionId,
+        videoUrl,
+        videoName: file.originalname,
+        videoSize: file.size,
+        videoType: file.mimetype,
+        userId: req.user.id, // 這是 Passport 驗證後的登入者 ID
+      })
+    } catch (err) {
+      console.error('⛔ 推送到佇列失敗:', err)
+      return next(appError(500, '影片處理失敗，請稍後再試'))
+    }
+
     return sendResponse(res, 202, true, '影片已提交處理中')
   }),
 

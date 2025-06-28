@@ -1,33 +1,34 @@
 const http = require('http')
+const { Server } = require('socket.io') // ✅ 新增
 const config = require('../config/index')
 const app = require('../app')
 const logger = require('../utils/logger')('www')
-// const { dataSource } = require('./db/data-source')
 const seedCourseCategories = require('../db/seed/createCourseCategoriesSeed')
-require('../workers/videoUpload.worker')
 const { dataSource } = require('../db/data-source')
 
 const port = config.get('web.port')
 
-// 印出環境變數和設定的 port，方便確認
-console.log('--- Startup Info ---')
-console.log('process.env.PORT:', process.env.PORT)
-console.log('config.web.port:', port)
-console.log('NODE_ENV:', process.env.NODE_ENV)
-console.log('SESSION_SECRET:', process.env.SESSION_SECRET ? 'set' : 'NOT SET')
-console.log(
-  'Database config:',
-  JSON.stringify({
-    type: process.env.DB_TYPE,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-  })
-)
-
-app.set('port', port)
-
+// ✅ 建立 HTTP Server 並初始化 Socket.IO
 const server = http.createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: '*', // 記得正式環境換成特定網域
+    methods: ['GET', 'POST'],
+  },
+})
+
+// ✅ 將 io 設定進 app，讓其他模組可以使用 app.get('io')
+app.set('io', io)
+
+io.on('connection', (socket) => {
+  console.log('[Socket.IO] 使用者連線:', socket.id)
+
+  // 客戶端登入後呼叫 socket.emit('join', userId)
+  socket.on('join', (userId) => {
+    socket.join(userId)
+    console.log(`[Socket.IO] 使用者 ${userId} 加入房間`)
+  })
+})
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -56,14 +57,7 @@ server.listen(port, async () => {
   try {
     logger.info(`Server starting on port ${port}...`)
 
-    // 1. 初始化資料庫連線
     await dataSource.initialize()
-
-    // 2. 清空整個資料庫（開發用）
-    // await dataSource.dropDatabase()
-
-    // 3. 同步 schema（重建表）
-    // await dataSource.synchronize()
     await seedCourseCategories()
     logger.info('Seed course categories 完成')
     logger.info('資料庫連線成功')
