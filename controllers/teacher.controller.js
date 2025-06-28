@@ -180,7 +180,8 @@ const teacherController = {
     const myRatingMap = Object.fromEntries(myRatings.map((r) => [r.course_id, r.rating_score]))
 
     const result = findTeacherCourse.map((teacherCourse) => ({
-      id: teacherCourse.id,
+      course_id: teacherCourse.id,
+      course_status: teacherCourse.course_status,
       teacher_id: teacherCourse.teacher_id,
       teacher_name: teacherCourse.teacher?.user?.name,
       course_small_imageUrl: teacherCourse.teacher?.user?.course_small_imageurl,
