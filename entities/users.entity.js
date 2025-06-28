@@ -40,11 +40,6 @@ module.exports = new EntitySchema({
       type: 'date',
       nullable: true, // 可以為 null
     },
-    sex: {
-      type: 'enum',
-      enum: ['male', 'female'],
-      nullable: true, // 可以為 null
-    },
     address: {
       type: 'text',
       nullable: true, // 可以為 null

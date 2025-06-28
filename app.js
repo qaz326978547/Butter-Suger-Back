@@ -5,11 +5,6 @@ const path = require('path')
 const pinoHttp = require('pino-http')
 const AWS        = require('aws-sdk')                   // ← 新增
 const logger = require('./utils/logger')('App')
-const userRouter = require('./routes/users.route')
-const teacherRouter = require('./routes/teacher.route')
-const courseRoutes = require('./routes/courses.route')
-const coursesRouter = require('./routes/courses.route')
-const cartRouter = require('./routes/cart.route')
 const videoRoutes    = require('./routes/videos.route')
 const errorHandler = require('./middleware/errorHandler.middleware') // 引入錯誤處理
 
@@ -26,7 +21,7 @@ app.use(cors({
 }));
 
 
-// Passport 設定
+/* app.use(cors()) */
 // ─── 1. AWS SDK 全域設定 ───────────────────────────────────
 AWS.config.update({
   region: process.env.AWS_REGION,
@@ -38,6 +33,7 @@ AWS.config.update({
 // ─── 2. CORS ────────────────────────────────────────────────
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5500',
   'http://localhost:8080',
   'https://buttersuger-frontend.zeabur.app',
   'https://buttersuger-test.zeabur.app',
@@ -93,6 +89,8 @@ app.use('/api/v1/course', courseRoutes)
 app.use('/api/v1/courses', coursesRouter)
 app.use('/api/v1/cart', cartRouter)
 app.use('/api/v1/videos', videoRoutes)
+//統一路由
+require('./routes')(app)
 
 // 健康檢查路由
 app.get('/healthcheck', (req, res) => {
@@ -101,5 +99,20 @@ app.get('/healthcheck', (req, res) => {
 
 // 讓錯誤處理 middleware 做全域錯誤處理
 app.use(errorHandler)
+const { dataSource } = require('./db/data-source')
+const seedCourseCategories = require('./db/seed/createCourseCategoriesSeed')
 
+dataSource
+  .initialize()
+  .then(async () => {
+    await seedCourseCategories()
+    // 這裡可以加上啟動 server 的程式碼
+    // 例如:
+    // app.listen(process.env.PORT || 8080, () => {
+    //   console.log('Server is running...')
+    // })
+  })
+  .catch((err) => {
+    console.error('資料庫連線失敗:', err)
+  })
 module.exports = app

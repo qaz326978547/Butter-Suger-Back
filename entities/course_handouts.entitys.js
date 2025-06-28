@@ -1,8 +1,8 @@
 const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
-  name: 'course_section',
-  tableName: 'course_section',
+  name: 'course_handouts',
+  tableName: 'course_handouts',
   columns: {
     id: {
       primary: true,
@@ -12,14 +12,24 @@ module.exports = new EntitySchema({
     course_id: {
       type: 'uuid',
     },
-    order_index: {
-      type: 'int',
-      default: 0,
-    },
-    main_section_title: {
+    name: {
       type: 'varchar',
       length: 255,
-      default: '第一章:準備工作',
+      nullable: true,
+    },
+    url: {
+      type: 'varchar',
+      length: 2048,
+    },
+    size: {
+      type: 'varchar',
+      length: 50,
+      nullable: true,
+    },
+    type: {
+      type: 'varchar',
+      length: 100,
+      nullable: true,
     },
     created_at: {
       type: 'timestamp',
@@ -37,15 +47,9 @@ module.exports = new EntitySchema({
       joinColumn: {
         name: 'course_id',
         referencedColumnName: 'id',
-        foreignKeyConstraintName: 'course_section_course_id_fk',
+        foreignKeyConstraintName: 'course_handouts_course_id_fk',
       },
-      onDelete: 'CASCADE',
-    },
-    subsections: {
-      target: 'course_subsection',
-      type: 'one-to-many',
-      inverseSide: 'section',
-      cascade: true,
+      onDelete: 'CASCADE', // 課程刪除時，自動刪除 handouts
     },
   },
 })

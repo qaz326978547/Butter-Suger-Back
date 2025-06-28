@@ -6,6 +6,7 @@
     "start": "node ./bin/www",
     "envcheck": "node env-check.js",
     "start:prod": "docker compose --env-file .env up -d --build",
+    "swagger": "node ./swagger.js",
     "restart": "docker compose --env-file .env up --force-recreate --build -d",
     "stop": "docker compose --env-file .env stop",
     "clean": "docker compose --env-file .env down -v",
@@ -18,13 +19,13 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.812.0",
-    "@vimeo/vimeo": "^3.0.3",
-    "aws-sdk": "^2.1692.0",
+    "bull": "^4.16.5",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "he": "^1.2.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
@@ -36,7 +37,8 @@
     "pino-http": "^10.3.0",
     "pino-pretty": "^13.0.0",
     "reflect-metadata": "^0.2.1",
-    "sequelize": "^6.37.7",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

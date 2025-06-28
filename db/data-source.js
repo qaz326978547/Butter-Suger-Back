@@ -1,12 +1,5 @@
 const { DataSource } = require('typeorm')
 const config = require('../config/index')
-
-const users = require('../entities/users.entity')
-const courses = require('../entities/courses.entity')
-const courseCategory = require('../entities/course_category.entity')
-const courseSection = require('../entities/course_section.entity')
-const courseSubsection = require('../entities/course_subsection.entity')
-const teacher = require('../entities/teacher.entity')
 const dataSource = new DataSource({
   type: 'postgres',
   host: config.get('db.host'),
@@ -16,7 +9,14 @@ const dataSource = new DataSource({
   database: config.get('db.database'),
   synchronize: config.get('db.synchronize'),
   poolSize: 10,
-  entities: [ users, courses , courseCategory , courseSection, courseSubsection, teacher],
+  synchronize: true, // migration 下通常要關閉自動同步 
+  logging: true,
+  entities: [__dirname + '/../entities/**/*.js'],
+  // migrations: [__dirname + '/../migration/**/*.js'],
+  // cli: {
+  //   migrationsDir: './migration', // migration 資料夾位置
+  //   migrationsExtension: 'js',
+  // },
   ssl: config.get('db.ssl'),
 })
 

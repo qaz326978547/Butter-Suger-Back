@@ -1,0 +1,914 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Butter & Sugar",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "butter-sugar.zeabur.app",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "請填寫 Bearer token，例如: Bearer {token}"
+    }
+  },
+  "paths": {
+    "/api/v1/users/auth/google": {
+      "get": {
+        "tags": ["User"],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/users/info": {
+      "get": {
+        "tags": ["User"],
+        "summary": "取得使用者資料",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/users/check": {
+      "get": {
+        "tags": ["User"],
+        "summary": "驗證使用者是否登入",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/users/update": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "更新使用者資料",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "type": "string",
+            "description": "使用者姓名"
+          },
+          {
+            "name": "nickname",
+            "in": "formData",
+            "type": "string",
+            "description": "暱稱"
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "type": "string",
+            "description": "手機"
+          },
+          {
+            "name": "birthday",
+            "in": "formData",
+            "type": "string",
+            "description": "生日"
+          },
+          {
+            "name": "sex",
+            "in": "formData",
+            "type": "string",
+            "description": "性別"
+          },
+          {
+            "name": "address",
+            "in": "formData",
+            "type": "string",
+            "description": "地址"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "description": "頭像上傳（檔案）"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功更新使用者資料"
+          },
+          "400": {
+            "description": "更新失敗，請稍後再試"
+          },
+          "404": {
+            "description": "查無個人資料，請重新登入"
+          }
+        }
+      }
+    },
+    "/api/v1/users/orders": {
+      "get": {
+        "tags": ["User"],
+        "summary": "取得所有訂單",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/teacher/profile": {
+      "get": {
+        "tags": ["Teacher"],
+        "summary": "取得教師資料",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Teacher"],
+        "summary": "更新教師資料",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "type": "string",
+            "description": "姓名"
+          },
+          {
+            "name": "nickname",
+            "in": "formData",
+            "type": "string",
+            "description": "暱稱"
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "type": "string",
+            "description": "手機"
+          },
+          {
+            "name": "birthday",
+            "in": "formData",
+            "type": "string",
+            "description": "生日"
+          },
+          {
+            "name": "sex",
+            "in": "formData",
+            "type": "string",
+            "description": "性別"
+          },
+          {
+            "name": "address",
+            "in": "formData",
+            "type": "string",
+            "description": "地址"
+          },
+          {
+            "name": "bank_name",
+            "in": "formData",
+            "type": "string",
+            "description": "銀行名稱"
+          },
+          {
+            "name": "bank_account",
+            "in": "formData",
+            "type": "string",
+            "description": "銀行帳號"
+          },
+          {
+            "name": "slogan",
+            "in": "formData",
+            "type": "string",
+            "description": "標語"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "type": "string",
+            "description": "自我介紹"
+          },
+          {
+            "name": "specialization",
+            "in": "formData",
+            "type": "string",
+            "description": "專長"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "description": "頭像上傳（檔案）"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功更新老師資料"
+          },
+          "400": {
+            "description": "更新失敗，請稍後再試"
+          },
+          "404": {
+            "description": "查無資料，請重新登入"
+          }
+        }
+      }
+    },
+    "/api/v1/teacher/featured": {
+      "get": {
+        "tags": ["Teacher"],
+        "summary": "取得精選教師資料",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/teacher/{teacherId}": {
+      "get": {
+        "tags": ["Teacher"],
+        "summary": "取得單一精選教師",
+        "description": "",
+        "parameters": [
+          {
+            "name": "teacherId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/courses/popular": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得首頁熱門課程資料",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/courses": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得課程(測試用)",
+        "description": "取得所有課程",
+        "responses": {
+          "200": {
+            "description": "取得課程列表成功",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程(測試用)",
+        "description": "新增一筆課程資料",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "課程資料",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "teacher_id": {
+                  "type": "string",
+                  "example": "d02366a9-0c2d-480a-9685-bce659a2e079"
+                },
+                "category_id": {
+                  "type": "string",
+                  "example": "0e07a888-40a4-4338-9aed-4c38d6921ceb"
+                },
+                "course_name": {
+                  "type": "string",
+                  "example": "健康滿分！穀物燕麥餅乾入門與進階技巧"
+                },
+                "course_banner_imageUrl": {
+                  "type": "string",
+                  "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
+                },
+                "course_banner_description": {
+                  "type": "string",
+                  "example": "一次學會低糖、無添加的健康燕麥餅乾，從基礎營養配方到創意穀物變化，讓美味和健康兼得！"
+                },
+                "course_description": {
+                  "type": "string",
+                  "example": "本課程專為注重健康的你設計，完整教學燕麥餅乾、堅果能量棒、全麥果乾餅乾等多種穀物點心。包含食材選擇、減糖配比、烘烤溫控及口感優化技巧，讓你做出低負擔、營養豐富又美味的家庭手作餅乾。"
+                },
+                "course_description_image": {
+                  "type": "array",
+                  "example": []
+                },
+                "course_smallimage": {
+                  "type": "string",
+                  "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
+                },
+                "course_hours": {
+                  "type": "integer",
+                  "example": 8
+                },
+                "total_users": {
+                  "type": "integer",
+                  "example": 740
+                },
+                "trailer_vimeo_id": {
+                  "type": "string",
+                  "example": "butterSugar-00000002"
+                },
+                "trailer_name": {
+                  "type": "string",
+                  "example": "課程導覽"
+                },
+                "trailer_url": {
+                  "type": "string",
+                  "example": "https://vimeo.com/xyz9876abdc3.mp4"
+                },
+                "trailer_status": {
+                  "type": "string",
+                  "example": "ready"
+                },
+                "handout_name": {
+                  "type": "string",
+                  "example": "穀物燕麥餅乾講義"
+                },
+                "handout_url": {
+                  "type": "string",
+                  "example": "https://butterandsugar.com/handouts/handout2.pdf"
+                },
+                "suitable_for": {
+                  "type": "string",
+                  "example": "烘焙新手、健康飲食愛好者"
+                },
+                "course_goal": {
+                  "type": "string",
+                  "example": "學會健康燕麥餅乾的實用配方與多樣變化，輕鬆做出營養均衡的點心分享全家"
+                },
+                "origin_price": {
+                  "type": "integer",
+                  "example": 1000
+                },
+                "sell_price": {
+                  "type": "integer",
+                  "example": 850
+                },
+                "course_status": {
+                  "type": "string",
+                  "example": "上架"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新增課程成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "新增課程成功"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "teacher_id": {
+                      "type": "string",
+                      "example": "d02366a9-0c2d-480a-9685-bce659a2e079"
+                    },
+                    "category_id": {
+                      "type": "string",
+                      "example": "0e07a888-40a4-4338-9aed-4c38d6921ceb"
+                    },
+                    "course_banner_imageUrl": {
+                      "type": "string",
+                      "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
+                    },
+                    "course_name": {
+                      "type": "string",
+                      "example": "健康滿分！穀物燕麥餅乾入門與進階技巧"
+                    },
+                    "course_banner_description": {
+                      "type": "string",
+                      "example": "一次學會低糖、無添加的健康燕麥餅乾，從基礎營養配方到創意穀物變化，讓美味和健康兼得！"
+                    },
+                    "course_description": {
+                      "type": "string",
+                      "example": "本課程專為注重健康的你設計，完整教學燕麥餅乾、堅果能量棒、全麥果乾餅乾等多種穀物點心。包含食材選擇、減糖配比、烘烤溫控及口感優化技巧，讓你做出低負擔、營養豐富又美味的家庭手作餅乾。"
+                    },
+                    "course_description_image": {
+                      "type": "array",
+                      "example": []
+                    },
+                    "course_hours": {
+                      "type": "integer",
+                      "example": 8
+                    },
+                    "course_smallimage": {
+                      "type": "string",
+                      "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
+                    },
+                    "total_users": {
+                      "type": "integer",
+                      "example": 740
+                    },
+                    "trailer_vimeo_id": {
+                      "type": "string",
+                      "example": "butterSugar-00000002"
+                    },
+                    "trailer_name": {
+                      "type": "string",
+                      "example": "課程導覽"
+                    },
+                    "trailer_url": {
+                      "type": "string",
+                      "example": "https://vimeo.com/xyz9876abdc3.mp4"
+                    },
+                    "trailer_status": {
+                      "type": "string",
+                      "example": "ready"
+                    },
+                    "handout_name": {
+                      "type": "string",
+                      "example": "穀物燕麥餅乾講義"
+                    },
+                    "handout_url": {
+                      "type": "string",
+                      "example": "https://butterandsugar.com/handouts/handout2.pdf"
+                    },
+                    "suitable_for": {
+                      "type": "string",
+                      "example": "烘焙新手、健康飲食愛好者"
+                    },
+                    "course_goal": {
+                      "type": "string",
+                      "example": "學會健康燕麥餅乾的實用配方與多樣變化，輕鬆做出營養均衡的點心分享全家"
+                    },
+                    "origin_price": {
+                      "type": "integer",
+                      "example": 1000
+                    },
+                    "sell_price": {
+                      "type": "integer",
+                      "example": 850
+                    },
+                    "course_status": {
+                      "type": "string",
+                      "example": "上架"
+                    },
+                    "id": {
+                      "type": "string",
+                      "example": "88d36f8d-fcea-4723-ad3f-5f959cfacc1a"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-04T12:00:17.404Z"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-04T12:00:17.404Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      },
+    "/api/v1/courses/course-category": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得課程分類列表(測試用)",
+        "description": "取得所有課程分類（如麵包、蛋糕、餅乾等）",
+          "responses": {
+            "200": {
+              "description": "成功取得分類清單",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "example": "aabbccdd-1122-3344-5566-77889900" },
+                    "name": { "type": "string", "example": "麵包" }
+                  }
+                }
+              }
+            }
+          }
+      },
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程分類(測試用)",
+        "description": "新增一個課程分類（如麵包、蛋糕、餅乾等）",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "課程分類資料",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "example": "麵包" }
+              },
+              "required": ["name"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新增成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean", "example": true },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "新增類別成功"
+                    },
+                    "data": {
+                      "type": ["object", "null"],   
+                      "nullable": true,
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "新增類別失敗"
+          }
+        }
+      }
+    },
+    "/api/v1/courses/{courseId}/ratings": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增評價（測試用）",
+        "description": "新增一筆評價到指定課程。測試用 API，塞資料。",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "課程 ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["rating_score", "review_text"],
+              "properties": {
+                "rating_score": {
+                  "type": "integer",
+                  "example": 5,
+                  "description": "評分（1~5）"
+                },
+                "review_text": {
+                  "type": "string",
+                  "example": "手工餅乾很好吃，會持續練習！",
+                  "description": "評論文字"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新評價成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "boolean", "example": true },
+                "message": { "type": "string", "example": "更新評價成功" },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": { "type": "string", "example": "ee0756a2-0add-4092-9b04-14a32183e8f6" },
+                    "course_id": { "type": "string", "example": "1c733528-e70f-42f6-948a-ea21abe9e36d" },
+                    "rating_score": { "type": "integer", "example": 5 },
+                    "review_text": { "type": "string", "example": "手工餅乾很好吃，會持續練習！" },
+                    "id": { "type": "string", "example": "d1d98cd0-0917-46fd-88f1-a689b1543541" },
+                    "created_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "新增失敗"
+          }
+        }
+      }
+    },
+    "/api/v1/courses/{courseId}": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得單一課程資料",
+        "description": "",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/cart/": {
+      "get": {
+        "tags": ["Cart"],
+        "summary": "取得購物車內容",
+        "description": "取得購物車內容",
+        "responses": {
+          "200": {
+            "description": "取得購物車成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Cart"],
+        "summary": "加入課程到購物車",
+        "description": "將指定課程加入購物車",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_id": {
+                  "type": "string",
+                  "example": "1c733528-e70f-42f6-948a-ea21abe9e36d"
+                }
+              },
+              "required": ["course_id"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功加入課程到購物車",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "成功加入課程到購物車"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "item_count": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "total_price": {
+                      "type": "integer",
+                      "example": 1200
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cart/merge": {
+      "post": {
+        "summary": "登入後整合購物車",
+        "description": "將多個課程加入購物車（登入後）",
+        "tags": ["Cart"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "example": [
+                    "16b4b875-e65f-46c5-b6db-bb5a0145c9e5",
+                    "8ce78c0a-7c9c-4e47-a3b1-00a1ca832587"
+                  ]
+                }
+              },
+              "required": ["course_ids"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功加入課程到購物車",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "成功加入課程到購物車"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "item_count": {
+                      "type": "integer",
+                      "example": 3
+                    },
+                    "total_price": {
+                      "type": "integer",
+                      "example": 3600
+                    },
+                    "errors": {
+                      "type": ["string", "null"],
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cart/checkout": {
+      "post": {
+        "tags": ["Cart"],
+        "summary": "結帳(請使用網頁執行結帳，因會跳轉頁面)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "coupon_id": {
+                  "example": "d8fdfcbe-7e78-48e9-9797-6788775c679e"
+                },
+                "coupon": {
+                  "example": "buttersugar2025"
+                },
+                "discount_amount": {
+                  "example": "100"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/cart/{cartItemId}": {
+      "delete": {
+        "summary": "刪除購物車中的課程",
+        "description": "依 cartItemId 刪除指定購物車項目",
+        "tags": ["Cart"],
+        "parameters": [
+          {
+            "name": "cartItemId",
+            "in": "path",
+            "description": "購物車項目 ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "example": "c6158377-a49c-4a60-8802-5e19fe2057b7"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功刪除課程",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "成功刪除課程"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "item_count": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "total_price": {
+                      "type": "integer",
+                      "example": 2400
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/order/": {
+      "get": {
+        "tags": ["User"],
+        "summary": "取得所有訂單",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
+}

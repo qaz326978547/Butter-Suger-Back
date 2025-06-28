@@ -20,7 +20,7 @@ module.exports = new EntitySchema({
         updated_at: {
             type: 'timestamp',
             updateDate: true,
-        },
+        }
     },
     relations: {
         users: {
