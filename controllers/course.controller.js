@@ -317,11 +317,18 @@ const courseController = {
    */
   uploadCourseHandOuts: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
-    const files = req.files // 注意 multer 設定要用 `.array()` 或 `.fields()` 才會有 req.files
+    let files = req.files || []
 
     if (!files || files.length === 0) {
       return res.status(400).json({ status: 'error', message: '請上傳檔案' })
     }
+
+    files = req.files.map(file=>{
+      return {
+        ...file,
+        originalname: Buffer.from(file.originalname, 'latin1').toString('utf8')
+      }
+    })
 
     // 用 Promise.all 同時處理多個檔案上傳
     const handouts = await Promise.all(
@@ -816,7 +823,7 @@ const courseController = {
       return next(appError(404, '課程不存在'))
     }
 
-    const courseSectionRepo = dataSource.getRepository('course_sections')
+    const courseSectionRepo = dataSource.getRepository('course_section')
     const lastSection = await courseSectionRepo
       .createQueryBuilder('section')
       .select('MAX(section.order_index)', 'max')
@@ -842,7 +849,7 @@ const courseController = {
   getCourseSection: wrapAsync(async (req, res, next) => {
     const course_id = req.params.courseId
 
-    const courseSectionRepo = dataSource.getRepository('course_sections')
+    const courseSectionRepo = dataSource.getRepository('course_section')
     const findCourseSection = await courseSectionRepo.find({ where: { course_id: course_id } })
 
     return sendResponse(res, 200, true, '取得課程章節成功', findCourseSection)

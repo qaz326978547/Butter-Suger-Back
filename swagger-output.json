@@ -5,9 +5,9 @@
     "description": "Description",
     "version": "1.0.0"
   },
-  "host": "buttersugar.zeabur.app",
+  "host": "localhost:8080",
   "basePath": "/",
-  "schemes": ["https"],
+  "schemes": ["http"],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
