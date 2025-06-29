@@ -5,8 +5,8 @@ const doc = {
     title: 'Butter & Sugar',
     description: 'Description',
   },
-  host: 'localhost:8080', //host: 'buttersugar.zeabur.app',
-  schemes: ['http'],
+  host: 'buttersugar.zeabur.app', //host: 'buttersugar.zeabur.app',
+  schemes: ['https'],
   securityDefinitions: {
     BearerAuth: {
       type: 'apiKey',
