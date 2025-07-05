@@ -1,7 +1,8 @@
 const path = require('path')
 const storage = require('../storage/index')
 const { dataSource } = require('../../db/data-source')
-const { appError } = require('../../utils/responseFormat')
+const { appError, sendResponse } = require('../../utils/responseFormat')
+const { getVideoDurationInSeconds } = require('get-video-duration')
 
 const ALLOWED_MIME_TYPES = {
   image: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
@@ -201,65 +202,97 @@ const deleteHandout = async ({ handoutId }) => {
 }
 
 const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
-  if (!subsectionId || !file) {
-    throw appError(400, '缺少小節 ID 或影片')
-  }
+  await dataSource.transaction(async (manager) => {
+    const courseRepo = manager.getRepository('courses')
+    const subsectionRepo = manager.getRepository('course_subsection')
 
-  const subsectionRepo = dataSource.getRepository('course_subsection')
-  const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
-  if (!subsection) {
-    throw appError(404, '小節不存在')
-  }
+    const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
+    if (!subsection) {
+      throw appError(404, '小節不存在')
+    }
+  
+    const allowedTypes = ALLOWED_MIME_TYPES.video
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw appError(400, '僅允許上傳影片格式')
+    }
+  
+    // 狀態
+    subsection.status = 'processing'
+    await subsectionRepo.save(subsection)
+  
+    const videoUrl = await storage.upload(file, folderName)
 
-  const allowedTypes = ALLOWED_MIME_TYPES.video
-  if (!allowedTypes.includes(file.mimetype)) {
-    throw appError(400, '僅允許上傳影片格式')
-  }
+    await getVideoDurationInSeconds(videoUrl).then((duration)=>{
+      subsection.video_duration = duration
+    }) 
+  
+    subsection.video_file_url = videoUrl
+    subsection.status = 'available'
+    subsection.uploaded_at = new Date()
+  
+    const courseInfo = await subsectionRepo.createQueryBuilder('subsection')
+    .select(['course.id AS course_id',
+      'course.course_hours AS course_hours'
+    ])
+    .leftJoin('subsection.section', 'section')
+    .leftJoin('section.course', 'course')
+    .where('subsection.id = :subsectionId', { subsectionId: subsectionId })
+    .getRawOne()
 
-  // 狀態更新
-  subsection.video_status = 'processing'
-  await subsectionRepo.save(subsection)
+    const course_hours = courseInfo.course_hours?Number(courseInfo.course_hours)+subsection.video_duration:subsection.video_duration
 
-  const videoUrl = await storage.upload(file, folderName)
-
-  subsection.video_file_url = videoUrl
-  subsection.video_name = file.originalname || '未命名影片'
-  subsection.video_size = formatFileSize(file.size || 0)
-  subsection.video_type = file.mimetype || 'video/mp4'
-  subsection.video_status = 'available'
-  await subsectionRepo.save(subsection)
-
-  return videoUrl
+    await subsectionRepo.update({id: subsectionId}, subsection)
+    await courseRepo.update({id: courseInfo.course_id}, {course_hours: course_hours})
+  
+    return videoUrl
+  })
 }
 
 const deleteSubsectionVideo = async ({ subsectionId }) => {
-  const subsectionRepo = dataSource.getRepository('course_subsection')
-  const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
-  if (!subsection) {
-    throw appError(404, '小節不存在')
-  }
-  if (!subsection.video_file_url) {
-    throw appError(400, '小節尚未上傳影片')
-  }
+  await dataSource.transaction(async (manager) => {
+    const courseRepo = manager.getRepository('courses')
+    const subsectionRepo = manager.getRepository('course_subsection')
 
-  await storage.delete(subsection.video_file_url)
+    const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
 
-  subsection.video_file_url = null
-  subsection.video_name = null
-  subsection.video_size = null
-  subsection.video_type = null
-  subsection.video_status = 'processing' // 重置狀態
-  await subsectionRepo.save(subsection)
+    if (!subsection) {
+      throw appError(404, '小節不存在')
+    }
+    if (!subsection.video_file_url) {
+      throw appError(400, '小節尚未上傳影片')
+    }
 
-  return true
+    const courseInfo = await subsectionRepo.createQueryBuilder('subsection')
+    .select(['course.id AS course_id',
+      'course.course_hours AS course_hours'
+    ])
+    .leftJoin('subsection.section', 'section')
+    .leftJoin('section.course', 'course')
+    .where('subsection.id = :subsectionId', { subsectionId: subsectionId })
+    .getRawOne()
+    
+    const course_hours = courseInfo.course_hours - subsection.video_duration
+    
+    const courseResult = await courseRepo.update({id: courseInfo.course_id}, {course_hours: course_hours})
+
+    await storage.delete(subsection.video_file_url)
+  
+    subsection.video_file_url = null
+    subsection.video_duration = null
+    subsection.status = 'processing' // 重置狀態
+
+    await subsectionRepo.update({id: subsectionId}, subsection)
+    /* return true   */
+  })
 }
 
 async function saveVideoInfoToDB({ subsectionId, videoUrl, videoName, videoSize, videoType }) {
   const repo = dataSource.getRepository('course_subsection')
   const subsection = await repo.findOne({ where: { id: subsectionId } })
+
   if (!subsection) throw new Error('小節不存在')
 
-  subsection.video_file_url = videoUrl // ✅ 修正這裡
+  subsection.video_file_url = videoUrl
   subsection.video_name = videoName
   subsection.video_size = formatFileSize(videoSize || 0)
   subsection.video_type = videoType

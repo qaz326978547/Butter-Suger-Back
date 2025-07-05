@@ -15,7 +15,7 @@ router.post(
   ...handleMiddleware([isAuth, isTeacher], subsectionController.uploadSubsectionVideo)
 )
 
-// ✅ 刪除小節影片（不是刪整個小節！）
+// 刪除小節影片（不是刪整個小節！）
 router.delete(
   '/:subsectionId/upload-video',
   ...handleMiddleware([isAuth, isTeacher], subsectionController.deleteSubsectionVideo)

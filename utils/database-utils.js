@@ -12,17 +12,17 @@ async function truncateAllTables() {
     })
 
     if (tables.length === 0) {
-      console.log('⚠️ No tables to truncate.')
+      console.log('No tables to truncate.')
     } else {
       const truncateSQL = `TRUNCATE ${tables.join(', ')} RESTART IDENTITY CASCADE`
       await queryRunner.query(truncateSQL)
-      console.log(`✅ All tables truncated: ${tables.join(', ')}`)
+      console.log(`All tables truncated: ${tables.join(', ')}`)
     }
 
     await queryRunner.release()
     await AppDataSource.destroy()
   } catch (error) {
-    console.error('❌ Error truncating tables:', error)
+    console.error('Error truncating tables:', error)
   }
 }
 
@@ -38,19 +38,19 @@ async function dropAllTables() {
     })
 
     if (tables.length === 0) {
-      console.log('⚠️ No tables to drop.')
+      console.log('No tables to drop.')
     } else {
       for (const table of tables) {
         await queryRunner.query(`DROP TABLE IF EXISTS ${table} CASCADE`)
-        console.log(`🗑️ Dropped table: ${table}`)
+        console.log(`Dropped table: ${table}`)
       }
     }
 
     await queryRunner.release()
     await AppDataSource.destroy()
-    console.log('✅ All tables dropped.')
+    console.log('All tables dropped.')
   } catch (error) {
-    console.error('❌ Error dropping tables:', error)
+    console.error('Error dropping tables:', error)
   }
 }
 ;(async () => {
@@ -61,7 +61,7 @@ async function dropAllTables() {
     await dropAllTables()
   } else {
     console.log(
-      '❗ 請使用指令參數 "truncate" 或 "drop"\n 例如：node scripts/database-utils.js truncate'
+      '請使用指令參數 "truncate" 或 "drop"\n 例如：node scripts/database-utils.js truncate'
     )
   }
 })()

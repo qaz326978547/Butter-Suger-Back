@@ -386,18 +386,18 @@ const courseController = {
       return next(appError(404, '課程不存在'))
     }
 
-    // 檢查是否已經有價格設定
-    if (course.origin_price || course.sell_price) {
+    // 檢查是否已經有價格設定, 價格直接更新
+/*     if (course.origin_price || course.sell_price) {
       return next(appError(400, '課程價格已存在，無法重複新增'))
-    }
+    } */
 
     // 更新價格
     course.origin_price = origin_price
     course.sell_price = sell_price
 
-    await courseRepo.save(course)
+    await courseRepo.update({ id: courseId }, course)
 
-    return sendResponse(res, 200, true, '課程價格新增成功', { course })
+    return sendResponse(res, 200, true, '課程價格更新成功', { course })
   }),
 
   /*
@@ -537,6 +537,12 @@ const courseController = {
     }
 
     const ratingsRepo = dataSource.getRepository('ratings')
+    const findRating = await ratingsRepo.findOne({ where:{course_id:course_id, user_id:user_id }})
+    
+    if(findRating){
+      return next(appError(400, '抱歉，無法重複評價課程'))
+    }
+
     const newRatings = ratingsRepo.create({
       user_id: user_id,
       course_id: course_id,
@@ -810,7 +816,7 @@ const courseController = {
 
   /*
    * 新增課程章節
-   * @route POST - /api/v1/course/:courseId/course-section
+   * @route POST - /api/v1/course/:courseId/section
    */
   postCourseSection: wrapAsync(async (req, res, next) => {
     const course_id = req.params.courseId
@@ -829,7 +835,8 @@ const courseController = {
       .select('MAX(section.order_index)', 'max')
       .where('section.course_id = :course_id', { course_id })
       .getRawOne()
-    const newOrderIndex = (lastSection.max || 0) + 100
+
+    const newOrderIndex = (lastSection.max || 0) + 1
 
     const newCourseSection = courseSectionRepo.create({
       course_id: course_id,
@@ -844,16 +851,64 @@ const courseController = {
 
   /*
    * 取得課程章節
-   * @route GET - /api/v1/course/:courseId/course-section
+   * @route GET - /api/v1/course/:courseId/section
    */
-  getCourseSection: wrapAsync(async (req, res, next) => {
+/*   getCourseSection: wrapAsync(async (req, res, next) => {
     const course_id = req.params.courseId
 
-    const courseSectionRepo = dataSource.getRepository('course_section')
-    const findCourseSection = await courseSectionRepo.find({ where: { course_id: course_id } })
+    const sectionRepo = dataSource.getRepository('course_section')
+
+    //取得章節所有資料        
+    findCourseSection = await sectionRepo.createQueryBuilder('section')
+    .select([
+      'section.id',
+      'section.order_index',
+      'section.main_section_title'
+    ])
+    .leftJoin('section.subsections', 'subsection')
+    .addSelect([
+      'subsection.id',
+      'subsection.section_id',
+      'subsection.order_index',
+      'subsection.subsection_title',
+      'subsection.is_preview_available'
+    ])
+    .orderBy('section.order_index', 'ASC')
+    .addOrderBy('subsection.order_index', 'ASC')
+    .where('section.course_id=:course_id', {course_id:course_id})
+    .getMany()
 
     return sendResponse(res, 200, true, '取得課程章節成功', findCourseSection)
+  }), */
+
+  /*
+  * 修改課程章節
+  * @route PATCH - /api/v1/course/section/:courseSectionId
+  */
+  patchCourseSection: wrapAsync(async (req, res, next) => {
+    const section_id = req.params.sectionId
+    const { main_section_title } = req.body
+
+    const courseSectionRepo = dataSource.getRepository('course_section')
+    const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
+
+    if (!findCourseSection) {
+      return next(appError(404, '章節不存在'))
+    }
+
+    const updateCourseSection = await courseSectionRepo.update(
+      { id: section_id },
+      { main_section_title: main_section_title }
+    )
+
+    if (updateCourseSection.affected === 1) {
+      const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
+      return sendResponse(res, 200, true, '更新課程章節成功', findCourseSection)
+    } else {
+      return next(appError(404, '更新課程章節失敗'))
+    }
   }),
+
 
   /*
    * 收藏課程
@@ -1109,31 +1164,6 @@ const courseController = {
     return sendResponse(res, 200, true, '成功刪除收藏課程', findFavoriteResult)
   }),
 
-  /*
-   * 取得我的課程列表
-   * @route GET - /api/v1/course/my-course
-   */
-  /*   getMyCourse: async (req, res, next) => {
-    const user_id = req.user.id
-
-    const studentCourseRepo = dataSource.getRepository('student_course')
-    const findStudentCourse = await studentCourseRepo.find({ where:{user_id: user_id} })
-
-    return sendResponse(res, 200, true, '成功取得我的課程', findStudentCourse)
-  }, */
-
-  /*
-   * 取得我的課程列表
-   * @route GET - /api/v1/course/my-course
-   */
-  /*   getMyCourse: async (req, res, next) => {
-    const user_id = req.user.id
-
-    const studentCourseRepo = dataSource.getRepository('student_course')
-    const findStudentCourse = await studentCourseRepo.find({ where:{user_id: user_id} })
-
-    return sendResponse(res, 200, true, '成功取得我的課程', findStudentCourse)
-  }, */
 
   getMyCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
@@ -1234,42 +1264,16 @@ const courseController = {
     return sendResponse(res, 200, true, '成功取得已購買的課程列表', findStudentCourse)
   }),
 
-  /*
-   * 修改課程章節
-   * @route PATCH - /api/v1/course/course-section/:courseSectionId
-   */
-  patchCourseSection: wrapAsync(async (req, res, next) => {
-    const section_id = req.params.courseSectionId
-    const { main_section_title } = req.body
-
-    const courseSectionRepo = dataSource.getRepository('course_sections')
-    const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
-
-    if (!findCourseSection) {
-      return next(appError(404, '章節不存在'))
-    }
-
-    const updateCourseSection = await courseSectionRepo.update(
-      { id: section_id },
-      { main_section_title: main_section_title }
-    )
-
-    if (updateCourseSection.affected === 1) {
-      const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
-      return sendResponse(res, 200, true, '更新課程章節成功', findCourseSection)
-    } else {
-      return next(appError(404, '更新課程章節失敗'))
-    }
-  }),
+/********************以下暫存****************** */
 
   /*
-   * 刪除課程章節
-   * @route DELETE - /api/v1/course/course-section/:courseSectionId
-   */
-  deleteCourseSection: wrapAsync(async (req, res, next) => {
-    const section_id = req.params.courseSectionId
+  * 刪除課程章節
+  * @route DELETE - /api/v1/course/section/:courseSectionId
+  */
+/*   deleteCourseSection: wrapAsync(async (req, res, next) => {
+    const section_id = req.params.sectionId
 
-    const courseSectionRepo = dataSource.getRepository('course_sections')
+    const courseSectionRepo = dataSource.getRepository('course_section')
     const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
 
     if (!findCourseSection) {
@@ -1283,7 +1287,154 @@ const courseController = {
     } else {
       return next(appError(404, '課程章節刪除失敗'))
     }
-  }),
+  }), */
+
+  /*
+  * 批次編輯課程小節
+  * @route patch - /api/v1/course/:courseId/subsection
+  */
+/*   patchSubsection: wrapAsync(async (req, res, next) => {
+    const course_id = req.params.courseId
+    const sectionList = req.body
+    let subsection, findSection, findSubsection, deleteResult
+
+    await dataSource.transaction(async (manager) => {
+      const sectionRepo = manager.getRepository('course_section')
+      const subsectionRepo = manager.getRepository('course_subsection')
+
+      const ids = new Set(sectionList.map(item => item.id))
+  
+      for(const id of ids){
+        deleteResult = await subsectionRepo.delete({ section_id: id })
+        console.log(deleteResult)
+      }
+
+      for(const section of sectionList){
+        subsection = section.subsections
+  
+        findSection = await sectionRepo.find({ where: { id: section.id } })
+        findSubsection = await subsectionRepo.find({ where: { section_id: section.id } })
+  
+        //取得目前最大排序數字
+        if(!findSection){
+          const lastSection = await sectionRepo
+            .createQueryBuilder('section')
+            .select('MAX(section.order_index)', 'max')
+            .where('section.course_id = :course_id', { course_id })
+            .getRawOne()
+      
+          const newOrderIndex = (lastSection.max || 0) + 1
+          const newSection = sectionRepo.create({
+            course_id: course_id,
+            order_index: newOrderIndex,
+            main_section_title: section.main_section_title
+          })
+      
+          await sectionRepo.save(newSection)
+        }else{
+          await sectionRepo.update({id: section.id}, {
+            course_id: course_id,
+            order_index: section.order_index,
+            main_section_title: section.main_section_title
+          })
+        }
+
+        //新增小節
+        for(const sub of subsection){
+          const newSubsection = subsectionRepo.create({
+            section_id: section.id,
+            subsection_title: sub.subsection_title,
+            order_index: sub.order_index,
+            is_preview_available: sub.is_preview_available
+          })
+          await subsectionRepo.save(newSubsection)
+        }
+
+        //取得章節所有資料        
+        findSection = await sectionRepo.createQueryBuilder('section')
+        .select([
+          'section.id',
+          'section.order_index',
+          'section.main_section_title'
+        ])
+        .leftJoin('section.subsections', 'subsection')
+        .addSelect([
+          'subsection.section_id',
+          'subsection.order_index',
+          'subsection.subsection_title',
+          'subsection.is_preview_available'
+        ])
+        .orderBy('section.order_index', 'ASC')
+        .addOrderBy('subsection.order_index', 'ASC')
+        .getMany()
+      }
+    })
+    
+    return sendResponse(res, 200, true, '更新章節成功', findSection)
+  }), */
+
+/*   postCourseSubsection: wrapAsync(async (req, res, next) => {
+    const section_id = req.params.sectionId
+    const subsectionAry = req.body
+
+    const subsectionRepo = dataSource.getRepository('course_subsection')
+    let findSubsection = await subsectionRepo.find({ where: { id: section_id } })
+
+    if (findSubsection) {
+      const deleteResult = await subsectionRepo.delete({ where: { id: section_id } })
+      console.log("============delete===========")
+      console.log("deleteResult: ", deleteResult)
+      console.log("============delete===========")
+    }
+
+    for(const subsection of subsectionAry){
+      const newSubsection = subsectionRepo.create({
+        section_id: subsection.section_id,
+        subsection_title: subsection.subsection_title,
+        order_index: subsection.order_index,
+        is_preview_available: subsection.is_preview_available
+      })
+      await subsectionRepo.save(newSubsection)
+    }
+    
+    findSubsection = subsectionRepo.find({
+      where:{section_id:section_id},
+      relations: ['section']
+    })
+
+    console.log("============findSubsection==========")
+    console.log("findSubsection: ", findSubsection)
+    console.log("============findSubsection==========")
+    
+    return sendResponse(res, 200, true, '更新章節成功', findSubsection)
+  }), */
+
+  /*
+   * 取得我的課程列表
+   * @route GET - /api/v1/course/my-course
+   */
+  /*   getMyCourse: async (req, res, next) => {
+    const user_id = req.user.id
+
+    const studentCourseRepo = dataSource.getRepository('student_course')
+    const findStudentCourse = await studentCourseRepo.find({ where:{user_id: user_id} })
+
+    return sendResponse(res, 200, true, '成功取得我的課程', findStudentCourse)
+  }, */
+
+  /*
+   * 取得我的課程列表
+   * @route GET - /api/v1/course/my-course
+   */
+  /*   getMyCourse: async (req, res, next) => {
+    const user_id = req.user.id
+
+    const studentCourseRepo = dataSource.getRepository('student_course')
+    const findStudentCourse = await studentCourseRepo.find({ where:{user_id: user_id} })
+
+    return sendResponse(res, 200, true, '成功取得我的課程', findStudentCourse)
+  }, */
+  
 }
 
 module.exports = courseController

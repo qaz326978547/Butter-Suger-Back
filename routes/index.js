@@ -16,11 +16,13 @@ module.exports = (app) => {
   app.use('/api/v1/teacher', teacherRouter)
   app.use('/api/v1/course', coursesRouter)
   app.use('/api/v1/course', courseUploadRoutes)
-  app.use('/api/v1/section', courseSectionRouter)
+  app.use('/api/v1/course', courseSectionRouter)
+  /* app.use('/api/v1/section', courseSectionRouter) */
   app.use('/api/v1/cart', cartRouter)
-  app.use('/api/v1/subsection', subsectionRouter)
+  app.use('/api/v1/course', subsectionRouter)
+/*   app.use('/api/v1/subsection', subsectionRouter) */
   app.use('/api/v1/subsection/upload', subsectionUploadRouter)
-  app.use('/api/v1/order', orderRouter)
+/*   app.use('/api/v1/order', orderRouter) */
   app.use('/api/v1/orders', orderRouter)
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
   app.use('/api/v1/admin/queues', bullBoardRouter)

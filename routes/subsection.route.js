@@ -8,7 +8,23 @@ const { createSubsectionSchema, updateSubsectionSchema } = require('../schema/su
 
 const router = express.Router()
 
-router.get('/section/:sectionId', subsectionController.getSubsectionsBySectionId)
+//取得特定章節小節
+router.get('/section/:sectionId/subsection', 
+  ...handleMiddleware([isAuth, isTeacher],
+  subsectionController.getSubsection))
+
+//新增小節
+router.post('/section/:sectionId/subsection', 
+  ...handleMiddleware([isAuth, isTeacher],
+  subsectionController.postSubsection))
+
+//編輯小節
+router.patch('/:courseId/subsection', 
+  ...handleMiddleware([isAuth, isTeacher],
+  subsectionController.patchSubsection))
+
+  
+/* router.get('/section/:sectionId/', subsectionController.getSubsectionsBySectionId) */
 
 router.post(
   '/',
@@ -18,16 +34,17 @@ router.post(
   )
 )
 
-// ❗️將 PATCH 改為 POST 並保留 ID 更新功能
+// 將 PATCH 改為 POST 並保留 ID 更新功能
 router.post(
   '/:id/update',
   ...handleMiddleware(
     [isAuth, isTeacher, validateSchema(updateSubsectionSchema)],
-    subsectionController.updateSubsection
+    subsectionController.patchSubsection
   )
 )
 
 // 刪除小節 (包含影片)
-router.delete('/:id', ...handleMiddleware([isAuth, isTeacher], subsectionController.deleteSubsection))
+router.delete('/subsection/:subsectionId', ...handleMiddleware([isAuth, isTeacher], subsectionController.deleteSubsection))
+/* router.delete('/:id', ...handleMiddleware([isAuth, isTeacher], subsectionController.deleteSubsection)) */
 
 module.exports = router

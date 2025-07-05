@@ -79,7 +79,7 @@ router.post(
 )
 router.post('/create/title', ...handleMiddleware([isAuth], courseController.createCourseTitle)) */
 
-// ❗️這一行放最後！
+//這一行放最後
 router.get('/:courseId', courseController.getCourse)
 
 
@@ -108,27 +108,33 @@ router.post('/:courseId/questions', ...handleMiddleware([isAuth], courseControll
 router.post('/:courseId/answers', ...handleMiddleware([isAuth], courseController.postAnswers))
 
 //新增課程章節
-router.post(
-  '/:courseId/course-section',
+/* router.post(
+  '/:courseId/section',
   ...handleMiddleware([isAuth, isTeacher], courseController.postCourseSection)
-)
+) */
 
 //取得課程章節
-router.get(
-  '/:courseId/course-section',
+/* router.get(
+  '/:courseId/section',
   ...handleMiddleware([isAuth], courseController.getCourseSection)
-)
+) */
 
 //更新課程章節
-router.patch(
-  '/course-section/:courseSectionId',
+/* router.patch(
+  '/section/:sectionId',
   ...handleMiddleware([isAuth, isTeacher], courseController.patchCourseSection)
-)
+) */
 
 //刪除課程章節
-router.delete(
-  '/course-section/:courseSectionId',
+/* router.delete(
+  '/section/:sectionId',
   ...handleMiddleware([isAuth, isTeacher], courseController.deleteCourseSection)
-)
+) */
+
+//更新課程章節、小節 [isAuth, isTeacher]
+/* router.patch(
+  '/:courseId/subsection',
+  ...handleMiddleware([isAuth], courseController.patchSubsection)
+) */
 
 module.exports = router
