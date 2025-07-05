@@ -2,7 +2,8 @@ const path = require('path')
 const storage = require('../storage/index')
 const { dataSource } = require('../../db/data-source')
 const { appError, sendResponse } = require('../../utils/responseFormat')
-const { getVideoDurationInSeconds } = require('get-video-duration')
+/* const { getVideoDurationInSeconds } = require('get-video-duration') */
+const { videoDuration } = require('@numairawan/video-duration')
 
 const ALLOWED_MIME_TYPES = {
   image: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
@@ -222,9 +223,16 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
   
     const videoUrl = await storage.upload(file, folderName)
 
-    await getVideoDurationInSeconds(videoUrl).then((duration)=>{
-      subsection.video_duration = duration
+    await videoDuration(videoUrl)
+    .then(duration=>{
+      console.log("====================getVideoDurationInSeconds===================")
+      console.log("duration: ", duration)
+      console.log("====================getVideoDurationInSeconds===================")
+      subsection.video_duration = duration.seconds
     }) 
+    .catch(error => {
+      console.error(error);
+    });
   
     subsection.video_file_url = videoUrl
     subsection.status = 'available'
