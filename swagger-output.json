@@ -425,7 +425,7 @@
             "in": "query",
             "required": false,
             "type": "string",
-            "description": "可依 action、api、sys_module、email、status 搜尋"
+            "description": "可依 user_id、role、action、api、sys_module、email、status、時間搜尋"
           }
         ],
         "responses": {
