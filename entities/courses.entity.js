@@ -107,12 +107,14 @@ module.exports = new EntitySchema({
       default: '審核中',
     },
     created_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
       createDate: true,
+      default: () => 'CURRENT_TIMESTAMP'
     },
     updated_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
       updateDate: true,
+      default: () => 'CURRENT_TIMESTAMP'
     },
   },
   relations: {

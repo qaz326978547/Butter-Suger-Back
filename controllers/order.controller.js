@@ -2,6 +2,8 @@ const { dataSource } = require('../db/data-source')
 const { appError, sendResponse } = require('../utils/responseFormat')
 const wrapAsync = require('../utils/wrapAsync')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
+const logSystemAction = require('../services/system/logSystemAction')
+
 
 const orderController = {
     /*
@@ -10,6 +12,12 @@ const orderController = {
     */
     getOrderList: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id
+        let logEntry = req.logEntry
+        logEntry = {
+            ...logEntry,
+            action: "取得所有訂單",
+            sys_module: "後台頁面-個人資料頁面模組"
+        }
         
         const orderItemRepo = dataSource.getRepository('order_item')
         const result = await orderItemRepo.createQueryBuilder('orderItem')
@@ -33,6 +41,10 @@ const orderController = {
             }
         })
         
+        await logSystemAction({
+            ...logEntry,
+            status:"200"
+        })
         return sendResponse(res, 200, true, '成功取得訂單', orderResult)
     }),
 
@@ -43,7 +55,13 @@ const orderController = {
     getOrder: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id
         const order_number = req.params.orderNumber
-        
+        let logEntry = req.logEntry
+        logEntry = {
+            ...logEntry,
+            action: "取得單筆訂單",
+            sys_module: "前台頁面-購物車模組"
+        }
+
         const orderItemRepo = dataSource.getRepository('order_item')
         const orderResult = await orderItemRepo.createQueryBuilder('orderItem')
         .select([
@@ -86,6 +104,10 @@ const orderController = {
             }
         })
 
+        await logSystemAction({
+            ...logEntry,
+            status:"200"
+        })
         return sendResponse(res, 200, true, '成功取得訂單', parsedResult)
     })
 }

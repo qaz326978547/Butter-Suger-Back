@@ -4,6 +4,7 @@ const wrapAsync = require('../utils/wrapAsync')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const storage = require('../services/storage')
 const updateUserAndTeacher = require('../services/teacher/updateUserAndTeacher')
+const logSystemAction = require('../services/system/logSystemAction')
 
 
 const teacherController = {
@@ -14,6 +15,12 @@ const teacherController = {
   getTeacherData: wrapAsync(async (req, res, next) => {
     const userId = req.user.id
     const teacherRepo = dataSource.getRepository('teacher')
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得教師資料",
+      sys_module: "後台頁面-個人資料頁面模組"
+    }
 
     // 確認教師是否存在
     const findTeacher = await teacherRepo.findOne({
@@ -31,9 +38,17 @@ const teacherController = {
     })
 
     if (!findTeacher) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '查無教師資料'))
     }
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     // 回傳教師資料
     sendResponse(res, 200, true, '取得教師資料成功', {
           name: findTeacher.user.name,
@@ -58,6 +73,12 @@ const teacherController = {
   updateTeacherData: wrapAsync(async (req, res, next) => {
     const userId = req.user.id
     const {name, nickname, phone, birthday, sex, address, bank_name, bank_account, slogan, description, specialization} = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "更新教師資料",
+      sys_module: "後台頁面-個人資料頁面模組"
+    }
 
     const teacherRepo = dataSource.getRepository('teacher')
     // 確認教師是否存在
@@ -94,15 +115,26 @@ const teacherController = {
 
     await updateUserAndTeacher(userId, updateUserData, updateTeacherData)
     
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '更新教師資料成功')
   }),
 
   /*
    * 取得教師課程
-   * @route GET - /api/v1/teacher/profile
+   * @route GET - /api/v1/teacher/teacherCourse?pageNum=1
    */
   getTeacherCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
+    let logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得教師課程",
+      sys_module: "前台頁面-教師課程頁面模組"
+    }
+
     let pageNum = req.query.pageNum || 1
     let perNum = 12;
 
@@ -119,10 +151,11 @@ const teacherController = {
       { id: '97464bde-ba8a-4dbf-8369-25e2656315aa' }
     ] */
     const ids = await teacherCourseRepo.createQueryBuilder('course')
-    .select(['course.id'])
+    .select(['course.id','course.created_at'])
     .leftJoin('course.teacher', 'teacher')
     .leftJoin('teacher.user', 'user') 
     .where('user.id=:user_id', {user_id: user_id})
+    .orderBy('course.created_at', 'DESC')
     .take(perNum)
     .skip(offset)
     .getMany() 
@@ -135,24 +168,6 @@ const teacherController = {
     .leftJoinAndSelect('teacher.user', 'user')
     .whereInIds(courseIds)
     .getMany()
-
-    //.take() .skip() 沒有生效,  select 不是 entity 內建的 column, TypeORM 有時候直接不處理 take/skip。
-    /* const findTeacherCourse = await teacherCourseRepo
-      .createQueryBuilder('course')
-      .select([
-        'course.id AS course_id',
-        'teacher.id AS teacher_id',
-        'user.name AS teacher_name',
-        'course.course_small_imageUrl AS course_small_imageUrl',
-        'course.course_name AS course_name'
-      ])
-      .leftJoin('course.teacher', 'teacher')
-      .leftJoin('teacher.user', 'user')
-      .where('user.id=:user_id', { user_id: user_id })
-      .take(perNum)
-      .skip(offset)
-      .getRawMany() */
-
 
     const ratingRepo = dataSource.getRepository('ratings')
 
@@ -192,15 +207,21 @@ const teacherController = {
       }
     }))
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
+
     // 回傳教師資料
     sendResponse(res, 200, true, '取得教師課程成功', result)
+    /* sendResponse(res, 200, true, '取得教師課程成功', {data: result, perNum, pageNum }) */
   }),
 
   /*
-  * 更新是否為教師的狀態
+  * 更新是否為教師的狀態, 移到管理者模組
   * @route PATCH - /api/v1/teacher/teacherStatus
   */
-  updateTeacherStatus: wrapAsync(async (req, res, next) => {
+ /*  updateTeacherStatus: wrapAsync(async (req, res, next) => {
     const studentId = req.params.studentId
     const studentRepo = dataSource.getRepository('users')
     
@@ -221,7 +242,7 @@ const teacherController = {
     }
 
     return sendResponse(res, 200, true, '審核教師成功')
-  }),
+  }), */
 
   /*
   * 取得精選教師

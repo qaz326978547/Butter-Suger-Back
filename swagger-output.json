@@ -236,6 +236,243 @@
         }
       }
     },
+    "/api/v1/teacher-applications": {
+      "get": {
+        "tags": ["Teacher"],
+        "summary": "取得教師審核資料（個人）",
+        "description": "取得目前登入使用者的所有教師申請資料。",
+        "responses": {
+          "200": {
+            "description": "取得教師審核資料成功",
+            "schema": {
+              "type": "array"
+            }
+          },
+          "401": { "description": "未授權" }
+        }
+      },
+      "post": {
+        "tags": ["Teacher"],
+        "summary": "申請成為教師",
+        "description": "申請成為教師，提交課程名稱與說明。",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["course_name", "description"],
+              "properties": {
+                "course_name": {
+                  "type": "string",
+                  "example": "乳酪濃郁！日式巴斯克蛋糕入門課",
+                  "description": "欲開課之名稱"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "課程介紹日式巴斯克乳酪蛋糕的經典與變化：原味、抹茶、焦糖海鹽等多種版本。重點說明乳酪選擇、烘烤溫度、如何做出濕潤綿密的理想口感，以及切片保存等實用技巧。",
+                  "description": "申請說明"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "申請教師成功"
+          },
+          "400": { "description": "申請失敗" }
+        }
+      }
+    },
+    "/api/v1/teacher-applications/{applicationId}": {
+      "patch": {
+        "tags": ["Teacher"],
+        "summary": "修改教師審核資料",
+        "description": "修改已送出的教師申請資料（僅限尚未審核通過或退件）。",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "教師申請資料ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_name": {
+                  "type": "string",
+                  "example": "乳酪濃郁！日式巴斯克蛋糕入門課2",
+                  "description": "欲開課之名稱"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "課程介紹日式巴斯克乳酪蛋糕的經典與變化：原味、抹茶、焦糖海鹽等多種版本。重點說明乳酪選擇、烘烤溫度、如何做出濕潤綿密的理想口感，以及切片保存等實用技巧。",
+                  "description": "申請說明"
+                }
+              },
+              "required": ["course_name", "description"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "修改教師審核資料成功"
+          },
+          "400": { "description": "修改失敗" }
+        }
+      }
+    },
+    "/api/v1/admin/teacher-applications": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "取得所有教師申請資料",
+        "description": "（管理者）取得所有教師申請資料。",
+        "responses": {
+          "200": {
+            "description": "取得成功",
+            "schema": {
+              "type": "array"
+            }
+          },
+          "401": { "description": "未授權" }
+        }
+      }
+    },
+    "/api/v1/admin/teacher-applications/{applicationId}": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "取得單一教師申請資料",
+        "description": "（管理者）根據申請ID取得單一教師申請資料。",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "教師申請資料ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取得成功"
+          },
+          "404": { "description": "查無此資料" }
+        }
+      }
+    },
+    "/api/v1/admin/teacher-applications/{applicationId}/status": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "審核教師申請",
+        "description": "（管理者）審核教師申請，可設為 approved/rejected。",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "教師申請資料ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["approved", "rejected"],
+                  "example": "approved",
+                  "description": "審核狀態"
+                }
+              },
+              "required": ["status"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "審核狀態已更新"
+          },
+          "400": { "description": "審核失敗" }
+        }
+      }
+    },
+    "/api/v1/admin/system-log": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "取得系統日誌",
+        "description": "可依 pageNum、keyword（支援 action、api、sys_module、email、status）搜尋系統日誌。",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "description": "分頁頁碼"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "可依 action、api、sys_module、email、status 搜尋"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取得系統日誌成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "systemLogList": {
+                  "type": "array"
+                },
+                "total": { "type": "integer", "example": 100 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "TeacherApplication": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "e1254c0b-37fa-46d6-87d2-4b93df9d8e4b" },
+          "user_id": { "type": "string", "example": "e3e2a781-18b7-4e92-908c-44aeedc1b165" },
+          "course_name": { "type": "string", "example": "乳酪濃郁！日式巴斯克蛋糕入門課" },
+          "description": { "type": "string", "example": "課程介紹日式巴斯克乳酪蛋糕..." },
+          "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "example": "pending" },
+          "created_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" },
+          "updated_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" }
+        }
+      },
+      "SystemLog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "c31d98cd0-0917-46fd-88f1-a689b1543541" },
+          "user_id": { "type": "string", "example": "ee0756a2-0add-4092-9b04-14a32183e8f6" },
+          "role": { "type": "string", "example": "admin" },
+          "action": { "type": "string", "example": "結帳" },
+          "api": { "type": "string", "example": "/api/v1/orders/checkout" },
+          "sys_module": { "type": "string", "example": "購物車模組" },
+          "email": { "type": "string", "example": "user@example.com" },
+          "ip": { "type": "string", "example": "127.0.0.1" },
+          "status": { "type": "string", "example": "200" },
+          "created": { "type": "string", "format": "date-time", "example": "2025-07-06T09:00:00.000Z" }
+        }
+      }
+    },
     "/api/v1/course/popular": {
       "get": {
         "tags": ["Courses"],

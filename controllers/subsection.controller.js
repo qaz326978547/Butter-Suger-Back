@@ -3,7 +3,8 @@ const { dataSource } = require('../db/data-source')
 const { sendResponse, appError } = require('../utils/responseFormat')
 const wrapAsync = require('../utils/wrapAsync')
 const videoUploadQueue = require('../queues/videoUpload.queue')
-const storage = require('../services/storage')
+const logSystemAction = require('../services/system/logSystemAction')
+
 
 const {
   uploadSubsectionVideo,
@@ -19,8 +20,18 @@ const subsectionController = {
   */
   getSubsection: wrapAsync(async (req, res, next) => {
     const { sectionId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得特定章節小節",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     if(!sectionId){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, 'id 錯誤'))
     }
 
@@ -31,9 +42,17 @@ const subsectionController = {
     })
 
     if(!findSubsection){
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '小節不存在'))
     }
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '取得特定章節小節成功', findSubsection)
   }),
 
@@ -44,8 +63,18 @@ const subsectionController = {
   postSubsection: wrapAsync(async (req, res, next) => {
     const { sectionId } = req.params
     const { subsection_title, is_preview_available } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "新增小節",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     if(!sectionId || !subsection_title || !is_preview_available){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, 'id 錯誤、小節標題或預覽設定錯誤'))
     }
 
@@ -54,6 +83,10 @@ const subsectionController = {
 
     const findSection = await sectionRepo.findOne({where: {id: sectionId}})
     if(!findSection){
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '找不到此章節 id, 請先建立章節'))
     }
 
@@ -74,9 +107,17 @@ const subsectionController = {
 
     const result = await subsectionRepo.save(newSubsection)
     if(!result){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '新增小節失敗'))
     }
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '新增小節成功', result)
   }),
 
@@ -88,6 +129,12 @@ const subsectionController = {
     const course_id = req.params.courseId
     const sectionList = req.body
     let subsection, findSection, findSubsection, updateSectionResult, updateSubsectionResult 
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "批次編輯課程小節",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     await dataSource.transaction(async (manager) => {
       const sectionRepo = manager.getRepository('course_section')
@@ -97,6 +144,10 @@ const subsectionController = {
         subsection = section.subsections
 
         if(!section.id){
+          await logSystemAction({
+            ...logEntry,
+            status:"404"
+          })
           return next(appError(404, `章節 id ${section.id} 錯誤`))
         }
   
@@ -105,6 +156,10 @@ const subsectionController = {
   
         //取得目前最大排序數字
         if(!findSection){
+          await logSystemAction({
+            ...logEntry,
+            status:"404"
+          })
           return next(appError(404, `找不到章節 id ${section.id}`))
         }
 
@@ -115,17 +170,29 @@ const subsectionController = {
         })
 
         if(!updateSectionResult.affected){
+          await logSystemAction({
+            ...logEntry,
+            status:"400"
+          })
           return next(appError(400, `章節 id ${section.id} 更新失敗`))
         }
 
         //修改小節
         for(const sub of subsection){
           if(!sub.id){
+            await logSystemAction({
+              ...logEntry,
+              status:"404"
+            })
             return next(appError(404, `小節 id ${sub.id} 錯誤`))
           }
           findSubsection = subsectionRepo.findOne({where: {id: sub.id}})
 
           if(!findSubsection){
+            await logSystemAction({
+              ...logEntry,
+              status:"404"
+            })
             return next(appError(404, `找不到小節 id ${sub.id}`))
           }
 
@@ -140,16 +207,12 @@ const subsectionController = {
           )
           
           if(!updateSubsectionResult.affected){
+            await logSystemAction({
+              ...logEntry,
+              status:"400"
+            })
             return next(appError(400, `小節 id ${sub.id} 更新失敗`))
           }
-
-/*           const newSubsection = subsectionRepo.create({
-            section_id: section.id,
-            subsection_title: sub.subsection_title,
-            order_index: sub.order_index,
-            is_preview_available: sub.is_preview_available
-          })
-          await subsectionRepo.save(newSubsection) */
         }
 
         //取得章節所有資料        
@@ -172,6 +235,10 @@ const subsectionController = {
       }
     })
     
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '更新章節成功', findSection)
   }),
 
@@ -181,6 +248,12 @@ const subsectionController = {
   */
   deleteSubsection: wrapAsync(async (req, res, next) => {
     const { subsectionId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "刪除小節（含影片資源）",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     const subsectionRepo = dataSource.getRepository('course_subsection')
     const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
@@ -192,6 +265,10 @@ const subsectionController = {
         await deleteSubsectionVideo({ subsectionId: subsectionId }) 
 /*         await storage.delete(subsection.video_file_url) */
       } catch (err) {
+        await logSystemAction({
+          ...logEntry,
+          status:"400"
+        })
         console.warn('刪除小節影片失敗:', err.message || err)
         return next(appError(400, '小節影片刪除失敗'))
       }
@@ -199,9 +276,17 @@ const subsectionController = {
 
     const result = await subsectionRepo.delete({id: subsectionId})
     if(!result.affected){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '小節刪除失敗'))
     }
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '小節與影片已成功刪除')
   }),
 
@@ -211,9 +296,19 @@ const subsectionController = {
   */
   deleteSubsectionVideo: wrapAsync(async (req, res, next) => {
     const { subsectionId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "刪除小節影片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     await deleteSubsectionVideo({ subsectionId: subsectionId })    
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '影片已成功刪除')
   }),
 
@@ -224,8 +319,18 @@ const subsectionController = {
   uploadSubsectionVideo: wrapAsync(async (req, res, next) => {
     const { subsectionId } = req.params
     const file = req.file
-    
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "上傳小節影片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     if (!file || !subsectionId) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '缺少影片檔案或小節 ID'))
     }
   
@@ -244,6 +349,10 @@ const subsectionController = {
       videoType: file.mimetype,
     }) */
   
+    await logSystemAction({
+      ...logEntry,
+      status:"202s"
+    })
     return sendResponse(res, 202, true, '影片已提交處理中', subVideoUploadResult)
   }),
 }

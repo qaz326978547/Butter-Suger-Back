@@ -33,8 +33,9 @@ module.exports = new EntitySchema({
             default: 'pending'
         }, *///許願池  
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             createDate: true,
+            default: () => 'CURRENT_TIMESTAMP'
         }
     },
     relations: {

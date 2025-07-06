@@ -4,6 +4,8 @@ const wrapAsync = require('../utils/wrapAsync')
 const { generateJWT, verifyJWT } = require('../utils/jwtUtils')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const storage = require('../services/storage')
+const logSystemAction = require('../services/system/logSystemAction')
+
 
 const userController = {
   /*
@@ -11,14 +13,29 @@ const userController = {
   * @route GET - /api/v1/users/auth/google/callback
   */
   getGoogleProfile: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得使用者資料",
+      sys_module: "後台頁面-個人資料頁面模組"
+    }
+
     // 確保 passport 已帶入 user 資料
     if (!req.user || !req.user.id) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '登入失敗，缺少使用者資訊'))
     }
 
     // 確保 email 經過驗證
     const emailVerified = req.user.emails?.[0]?.verified
     if (!emailVerified) {
+      await logSystemAction({
+        ...logEntry,
+        status:"401"
+      })
       return next(appError(401, '登入失敗，使用者電子郵件未經驗證'))
     }
 
@@ -64,6 +81,10 @@ const userController = {
       )
 
       if (updateResult.affected === 0) {
+        await logSystemAction({
+          ...logEntry,
+          status:"400"
+        })
         return next(appError(400, '登入失敗，請重新登入'))
       }
     }
@@ -72,6 +93,11 @@ const userController = {
     const token = generateJWT({
       id: findUser.id,
       role: findUser.role,
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
 
     // 傳回 JSON 給前端，token= 測試用(暫不考慮安全性)
@@ -86,6 +112,13 @@ const userController = {
   */
   getUserData: wrapAsync(async (req, res, next) => {
     const userId = req.user.id
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得使用者資料",
+      sys_module: "後台頁面-個人資料頁面模組"
+    }
+
     const userRepo = dataSource.getRepository('users')
 
     // 確認使用者是否存在
@@ -105,9 +138,19 @@ const userController = {
       where: { id: userId },
     })
 
+
     if (!findUser) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(404, '查無個人資料，請重新登入'))
     }
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
 
     // 回傳使用者資料
     sendResponse(res, 200, true, '取得使用者資料成功', findUser)
@@ -119,8 +162,19 @@ const userController = {
   */
   getCheck: wrapAsync(async (req, res, next) => {
     const authHeader = req.headers.authorization
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "驗證使用者是否登入",
+      sys_module: "後台頁面-個人資料頁面模組"
+    }
+
     if (!authHeader || !authHeader.startsWith('Bearer')) {
       //401: 請先登入!
+      await logSystemAction({
+        ...logEntry,
+        status:"401"
+      })
       next(appError(401, '驗證錯誤，token 無效或是不存在'))
       return
     }
@@ -133,6 +187,10 @@ const userController = {
     if (!decoded) {
       if (!authHeader || !authHeader.startsWith('Bearer')) {
         //401: 請先登入!
+        await logSystemAction({
+          ...logEntry,
+          status:"401"
+        })
         next(appError(401, '驗證錯誤，token 無效或是不存在'))
         return
       }
@@ -147,10 +205,18 @@ const userController = {
     })
 
     if (!currentUser) {
+      await logSystemAction({
+        ...logEntry,
+        status:"401"
+      })
       next(appError(401, '驗證錯誤，token 無效或是不存在'))
       return
     }
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '驗證成功')
   }),
 
@@ -161,6 +227,12 @@ const userController = {
   updateUserData: wrapAsync(async (req, res, next) => {
     const userId = req.user.id
     const { name, nickname, phone, birthday, address } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "更新使用者資料",
+      sys_module: "後台頁面-個人資料頁面模組"
+    }
 
     const userRepo = dataSource.getRepository('users')
 
@@ -170,6 +242,10 @@ const userController = {
     })
 
     if (!findUser) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '查無個人資料，請重新登入'))
     }
 
@@ -192,6 +268,10 @@ const userController = {
     const updateResult = await userRepo.update({ id: userId }, updateData)
 
     if (updateResult.affected === 0) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '更新失敗，請稍後再試'))
     }
 
@@ -202,11 +282,22 @@ const userController = {
     })
 
     if (!updatedUser) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '查無個人資料，請重新登入'))
     }
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '成功更新使用者資料')
   }),
+
+  
+
 }
 
 module.exports = userController

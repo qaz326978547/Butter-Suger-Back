@@ -18,8 +18,9 @@ module.exports = new EntitySchema({
             nullable: false,
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             createDate: true,
+            default: () => 'CURRENT_TIMESTAMP'
         }
     },
     relations: {
@@ -31,7 +32,8 @@ module.exports = new EntitySchema({
                 name: 'cart_id',
                 referencedColumnName: 'id',
                 foreignKeyConstraintName: 'cart_items_carts_id_fk'
-            }
+            },
+            onDelete: 'CASCADE'
         },
         courses: {
             target: 'courses',

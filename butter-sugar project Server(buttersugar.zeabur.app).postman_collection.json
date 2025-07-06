@@ -270,7 +270,8 @@
 										{
 											"key": "video",
 											"type": "file",
-											"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/新增資料夾/20250615_1643_Fruit Cake Decorating_simple_compose_01jxsc41c4fpz97aht8ccqyeqs.mp4"
+											"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/新增資料夾/20250615_1643_Fruit Cake Decorating_simple_compose_01jxsc41c4fpz97aht8ccqyeqs.mp4",
+											"disabled": true
 										}
 									]
 								},
@@ -908,7 +909,7 @@
 					"response": []
 				},
 				{
-					"name": "新增課程價格",
+					"name": "新增修改課程價格",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1964,6 +1965,121 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "申請成為教師",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"course_name\": \"乳酪濃郁！日式巴斯克蛋糕入門課\",\r\n    \"description\": \"課程介紹日式巴斯克乳酪蛋糕的經典與變化：原味、抹茶、焦糖海鹽等多種版本。重點說明乳酪選擇、烘烤溫度、如何做出濕潤綿密的理想口感，以及切片保存等實用技巧。\"\r\n}s",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/teacher-applications",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teacher-applications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得教師審核資料",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/teacher-applications",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teacher-applications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "修改教師審核資料",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"course_name\": \"乳酪濃郁！日式巴斯克蛋糕入門課2\",\r\n    \"description\": \"課程介紹日式巴斯克乳酪蛋糕的經典與變化：原味、抹茶、焦糖海鹽等多種版本。重點說明乳酪選擇、烘烤溫度、如何做出濕潤綿密的理想口感，以及切片保存等實用技巧。\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/teacher-applications/0ac352a4-baa9-466f-94ae-cf9af19b4afd",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teacher-applications",
+								"0ac352a4-baa9-466f-94ae-cf9af19b4afd"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2176,40 +2292,6 @@
 			"name": "admin",
 			"item": [
 				{
-					"name": "審核教師",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "http://buttersugar.zeabur.app/api/v1/teacher/teacherStatus/f3a45fa9-2e27-46a8-a9be-484b9e553da1",
-							"protocol": "http",
-							"host": [
-								"buttersugar",
-								"zeabur",
-								"app"
-							],
-							"path": [
-								"api",
-								"v1",
-								"teacher",
-								"teacherStatus",
-								"f3a45fa9-2e27-46a8-a9be-484b9e553da1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "更改課程狀態",
 					"request": {
 						"method": "PATCH",
@@ -2224,6 +2306,166 @@
 								"course",
 								"441edd32-986a-46c6-8769-86ea3994b57b",
 								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得所有教師申請資料",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/admin/teacher-applications?pageNum=1",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"teacher-applications"
+							],
+							"query": [
+								{
+									"key": "pageNum",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得單一教師申請資料",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/admin/teacher-applications/0ac352a4-baa9-466f-94ae-cf9af19b4afd",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"teacher-applications",
+								"0ac352a4-baa9-466f-94ae-cf9af19b4afd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "審核教師申請",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"approved\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/admin/teacher-applications/0ac352a4-baa9-466f-94ae-cf9af19b4afd/status",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"teacher-applications",
+								"0ac352a4-baa9-466f-94ae-cf9af19b4afd",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得系統日誌",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/admin/system-log?pageNum=1&keyword=200",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"system-log"
+							],
+							"query": [
+								{
+									"key": "pageNum",
+									"value": "1"
+								},
+								{
+									"key": "keyword",
+									"value": "200"
+								}
 							]
 						}
 					},

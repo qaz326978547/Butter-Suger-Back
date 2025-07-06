@@ -53,11 +53,11 @@ module.exports = new EntitySchema({
       nullable: true,
     },
     created_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
       createDate: true,
     },
     updated_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
       updateDate: true,
     },
   },
@@ -72,5 +72,10 @@ module.exports = new EntitySchema({
       },
       onDelete: 'CASCADE',
     },
+    course: {
+        target: 'courses',
+        type: 'one-to-many',
+        inverseSide: 'teacher'
+      }
   },
 })

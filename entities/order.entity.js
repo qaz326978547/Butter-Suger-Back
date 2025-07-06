@@ -41,7 +41,7 @@ module.exports = new EntitySchema({
             nullable: false     
         },
         payment_date: {
-            type: 'timestamp',
+            type: 'timestamptz',
             nullable: true
         },
         pay_trade_no: {
@@ -59,8 +59,9 @@ module.exports = new EntitySchema({
             nullable: true
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             createDate: true,
+            default: () => 'CURRENT_TIMESTAMP'
         }
     }
 })

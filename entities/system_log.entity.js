@@ -41,10 +41,10 @@ module.exports = new EntitySchema({
         ip: {
             type: 'varchar',
             length: 45, 
-            nullable: true,
+            default: '秘密'
         },
         status: {
-            type: 'varchar',
+            type: 'varchar',   //varchar: 可自定義狀態, ex: 200_ok,  int: 200
             length: 20,
             nullable: true,
         },
@@ -54,8 +54,9 @@ module.exports = new EntitySchema({
             nullable: true,
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             createDate: true,
+            default: () => 'CURRENT_TIMESTAMP'
         },
     },
     relations: {

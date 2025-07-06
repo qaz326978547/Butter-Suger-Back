@@ -81,12 +81,14 @@ module.exports = new EntitySchema({
     },
     created_at: {
       type: 'timestamptz',
+      createDate: true,
       default: () => 'CURRENT_TIMESTAMP', // 預設為當前時間
     },
     updated_at: {
       type: 'timestamptz',
+      updateDate: true,
       default: () => 'CURRENT_TIMESTAMP', // 預設為當前時間
-      onUpdate: 'CURRENT_TIMESTAMP', // 更新時自動更新為當前時間
+/*       onUpdate: 'CURRENT_TIMESTAMP', // 更新時自動更新為當前時間 */ //mysql的
     },
   },
 })

@@ -9,8 +9,8 @@ const dataSource = new DataSource({
   database: config.get('db.database'),
   synchronize: config.get('db.synchronize'),
   poolSize: 10,
-  synchronize: false, // migration 下通常要關閉自動同步 
-  logging: true,
+  synchronize: true, // migration 下通常要關閉自動同步 
+  logging: false,
   entities: [__dirname + '/../entities/**/*.js'],
   // migrations: [__dirname + '/../migration/**/*.js'],
   // cli: {

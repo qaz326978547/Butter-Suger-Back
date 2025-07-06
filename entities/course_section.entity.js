@@ -22,12 +22,14 @@ module.exports = new EntitySchema({
       default: '第一章:準備工作',
     },
     created_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
       createDate: true,
+      default: () => 'CURRENT_TIMESTAMP'
     },
     updated_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
       updateDate: true,
+      default: () => 'CURRENT_TIMESTAMP'
     },
   },
   relations: {

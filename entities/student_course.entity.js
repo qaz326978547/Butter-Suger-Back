@@ -28,13 +28,18 @@ module.exports = new EntitySchema({
             nullable:true
         },
         purchase_date: {
-            type: 'timestamp',
+            type: 'timestamptz',
             createDate: true,
         },
         last_accessed_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             nullable: true,
         },
+        created_at: {
+            type: 'timestamptz',
+            createDate: true,
+            default: () => 'CURRENT_TIMESTAMP'
+        }
     },
     relations: {
         user: {

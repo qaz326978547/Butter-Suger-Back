@@ -1,6 +1,6 @@
 const { dataSource } = require('../../db/data-source')
 
-//新增評價，課程刪除後重新計算課程評價平均分數, 測試用，塞資料，非正式格式 
+//新增評價 
 async function updateTeacherRating(courseId){
     //查找課程對應老師
     const courseRepo = dataSource.getRepository('courses');

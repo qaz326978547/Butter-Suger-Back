@@ -28,8 +28,9 @@ module.exports = new EntitySchema({
             default: 0,
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             createDate: true,
+            default: () => 'CURRENT_TIMESTAMP', // 預設為當前時間
         },
     },
     relations: {
@@ -42,6 +43,6 @@ module.exports = new EntitySchema({
             foreignKeyConstraintName: 'teacher_earning_teacher_id_fk',
         },
         onDelete: 'CASCADE',
-        },
+        }
     },
     });

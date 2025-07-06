@@ -3,6 +3,7 @@ const { appError, sendResponse } = require('../utils/responseFormat')
 const wrapAsync = require('../utils/wrapAsync')
 const { dataSource } = require('../db/data-source')
 const updateTeacherRating = require('../services/teacher/updateTeacherRating')
+const logSystemAction = require('../services/system/logSystemAction')
 const {
   updateCourseMediaService,
   deleteCourseMedia,
@@ -11,6 +12,7 @@ const {
   deleteVideo,
 } = require('../services/updateCourseMedia/updateCourseMedia.service')
 const MediaField = require('../services/updateCourseMedia/updateCourseMedia.interface')
+
 
 const courseController = {
   /*
@@ -48,7 +50,7 @@ const courseController = {
   }),
 
   /*
-   * 取得所有課程分類別
+   * 取得所有課程類別
    * @route GET /api/v1/course/category
    */
   getCourseCategoryList: wrapAsync(async (req, res, next) => {
@@ -79,6 +81,7 @@ const courseController = {
       take: perNum,
       skip: (pageNum-1)*perNum,
       relations: ['handouts', 'category', 'teacher', 'teacher.user'],
+      order: {created_at: 'DESC'}
     })
 
     if (!courses || courses.length === 0) {
@@ -102,7 +105,8 @@ const courseController = {
       }
     })
 
-    return sendResponse(res, 200, true, '取得課程列表成功', { courses: result })
+    return sendResponse(res, 200, true, '取得課程列表成功', result)
+    /* return sendResponse(res, 200, true, '取得課程列表成功', { data: result, perNum, pageNum }) */
   }),
 
   /*
@@ -134,6 +138,12 @@ const courseController = {
     const { course_name } = req.body
     const courseRepo = dataSource.getRepository('courses')
     const teacherRepo = dataSource.getRepository('teacher')
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "新增課程標題",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     // 檢查 teacher 是否存在，根據 user_id 找
     let teacher = await teacherRepo.findOne({ where: { user_id } })
@@ -151,6 +161,10 @@ const courseController = {
 
     await courseRepo.save(course)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"201"
+    })    
     return sendResponse(res, 201, true, '課程標題新增成功', { course })
   }),
 
@@ -161,20 +175,43 @@ const courseController = {
   createCourseCategory: wrapAsync(async (req, res, next) => {
     const courseId = req.params.courseId
     const { category_id } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "新增課程類別",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     if (!courseId) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '請提供課程 ID'))
     }
     const courseRepo = dataSource.getRepository('courses')
     const course = await courseRepo.findOne({ where: { id: courseId } })
     if (!course) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
     if (!category_id) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '請提供類別 ID'))
     }
     course.category_id = category_id
     await courseRepo.save(course)
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '課程類別新增成功', { course })
   }),
 
@@ -183,12 +220,24 @@ const courseController = {
    * @route POST /api/v1/course/:courseId/upload/small-image
    */
   uploadCourseSmallImage: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "上傳課程小圖",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     const imageUrl = await updateCourseMediaService({
       courseId: req.params.courseId,
       file: req.file,
       folderName: 'course-small-images',
       fieldName: 'course_small_imageUrl',
       type: 'image', // 限制為圖片格式
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
     return sendResponse(res, 200, true, '圖片上傳成功', { imageUrl })
   }),
@@ -198,9 +247,20 @@ const courseController = {
    * @route DELETE /api/v1/course/:courseId/small-image
    */
   deleteCourseSmallImage: wrapAsync(async (req, res, next) => {
+    logEntry = {
+      ...logEntry,
+      action: "刪除課程小圖",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     await deleteCourseMedia({
       courseId: req.params.courseId,
       fieldName: 'course_small_imageUrl',
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
     return sendResponse(res, 200, true, '圖片已刪除')
   }),
@@ -210,11 +270,23 @@ const courseController = {
    * @route POST /api/v1/course/:courseId/description-image
    */
   uploadCourseDescriptionImage: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "上傳課程描述圖片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     const imageUrl = await updateCourseMediaService({
       courseId: req.params.courseId,
       file: req.file,
       folderName: 'course-description-images',
       fieldName: MediaField.DESCRIPTION,
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
     return sendResponse(res, 200, true, '描述圖片上傳成功', { imageUrl })
   }),
@@ -236,11 +308,23 @@ const courseController = {
    * @route POST /api/v1/course/:courseId/banner
    */
   uploadCourseBanner: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "上傳課程 Banner 圖片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     const imageUrl = await updateCourseMediaService({
       courseId: req.params.courseId,
       file: req.file,
       folderName: 'course-banner-images',
       fieldName: MediaField.BANNER,
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
     return sendResponse(res, 200, true, 'Banner 圖片上傳成功', { imageUrl })
   }),
@@ -250,9 +334,21 @@ const courseController = {
    * @route DELETE /api/v1/course/:courseId/banner
    */
   deleteCourseBanner: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "刪除課程 Banner 圖片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     await deleteCourseMedia({
       courseId: req.params.courseId,
       fieldName: MediaField.BANNER,
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
     return sendResponse(res, 200, true, 'Banner 圖片已刪除')
   }),
@@ -262,12 +358,24 @@ const courseController = {
    * @route POST /api/v1/course/:courseId/upload/trailer
    */
   uploadCourseTrailer: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "上傳課程預告影片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     const videoUrl = await updateCourseMediaService({
       courseId: req.params.courseId,
       file: req.file,
       folderName: 'course-trailers',
       fieldName: MediaField.TRAILER,
       type: 'video', // 限制為影片格式
+    })
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
     })
     return sendResponse(res, 200, true, '預告影片上傳成功', { videoUrl })
   }),
@@ -278,17 +386,30 @@ const courseController = {
    */
   deleteCourseTrailer: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "刪除課程預告影片",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     // 確認課程是否存在
     const courseRepo = dataSource.getRepository('courses')
     const course = await courseRepo.findOne({ where: { id: courseId } })
     if (!course) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
     // 刪除預告影片
     await deleteVideo(courseId)
-
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '預告影片已刪除')
   }),
   /*
@@ -297,17 +418,31 @@ const courseController = {
    */
   getCourseHandOuts: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得課程講義",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     // 確認課程是否存在
     const courseRepo = dataSource.getRepository('courses')
     const course = await courseRepo.findOne({ where: { id: courseId } })
     if (!course) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
     const handoutRepo = dataSource.getRepository('course_handouts')
     const handouts = await handoutRepo.find({ where: { course_id: courseId } })
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '取得課程講義成功', { handouts })
   }),
 
@@ -318,8 +453,18 @@ const courseController = {
   uploadCourseHandOuts: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
     let files = req.files || []
+    let logEntry
+    logEntry = {
+      ...logEntry,
+      action: "上傳課程多個講義",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     if (!files || files.length === 0) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return res.status(400).json({ status: 'error', message: '請上傳檔案' })
     }
 
@@ -347,6 +492,10 @@ const courseController = {
       sizeMB: (handout.size / (1024 * 1024)).toFixed(2), // 保留兩位小數
     }))
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '講義上傳成功', { handouts: handoutsWithMB })
   }),
 
@@ -356,26 +505,51 @@ const courseController = {
    */
   deleteCourseHandOuts: wrapAsync(async (req, res, next) => {
     const { handoutId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "刪除課程講義",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     // 確認 service 名稱與參數格式
     const deleted = await deleteHandout({ handoutId })
 
     if (!deleted) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '講義不存在或已被刪除'))
     }
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '講義已成功刪除', { handoutId })
   }),
 
   /*
-   * 新增課程價格
+   * 新增修改課程價格
    * @route POST /api/v1/course/:courseId/price
    */
 
   updateCoursePrice: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
     const { origin_price, sell_price } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "新增修改課程價格",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     if (!courseId) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '請提供課程 ID'))
     }
 
@@ -383,6 +557,10 @@ const courseController = {
     const course = await courseRepo.findOne({ where: { id: courseId } })
 
     if (!course) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -397,6 +575,10 @@ const courseController = {
 
     await courseRepo.update({ id: courseId }, course)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '課程價格更新成功', { course })
   }),
 
@@ -408,11 +590,21 @@ const courseController = {
     const { courseId } = req.params
     const { suitable_for, course_goal, course_description, course_banner_description } =
       req.validatedData
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "儲存課程資訊",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const course = await courseRepo.findOne({ where: { id: courseId } })
 
     if (!course) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -425,6 +617,10 @@ const courseController = {
     const missingFields = requiredFields.filter((field) => !course[field])
 
     if (missingFields.length > 0) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, `課程資料缺少以下欄位：${missingFields.join(', ')}`))
     }
 
@@ -436,30 +632,49 @@ const courseController = {
 
     await courseRepo.save(course)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '課程資訊儲存成功', { course })
   }),
 
   /*
-   * 取得課程教材列表
+   * 取得課程講義
    * @route GET /api/v1/course/course-id/upload/course-handouts
    */
   getCourseHandOuts: wrapAsync(async (req, res, next) => {
     const courseId = req.params.courseId
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得課程講義",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
+
     if (!courseId) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '請提供課程 ID'))
     }
 
     const courseHandoutRepo = dataSource.getRepository('course_handouts')
     const handouts = await courseHandoutRepo.find({ where: { course_id: courseId } })
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '取得教材列表成功', { handouts })
   }),
 
   /*
-   * 新增課程價格 New
+   * 新增修改課程價格 
    * @route POST /api/v1/course/:courseId/price
    */
-  createCoursePrice: wrapAsync(async (req, res, next) => {
+  /* createCoursePrice: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
     const { origin_price } = req.body
 
@@ -481,7 +696,7 @@ const courseController = {
     } else {
       return next(appError(400, '課程價格新增失敗'))
     }
-  }),
+  }), */
 
   /*
    * 更新課程狀態
@@ -490,11 +705,21 @@ const courseController = {
   updateCourseStatus: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
     const { course_status } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "更新課程狀態",
+      sys_module: "後台管理者模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const course = await courseRepo.findOne({ where: { id: courseId } })
 
     if (!course) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -505,8 +730,16 @@ const courseController = {
 
     if (updateCourseStatusResult.affected == 1) {
       const updateCourse = await courseRepo.findOne({ where: { id: courseId } })
+      await logSystemAction({
+        ...logEntry,
+        status:"200"
+      })
       return sendResponse(res, 200, true, '課程狀態更新成功', updateCourse)
     } else {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '課程狀態更新失敗'))
     }
   }),
@@ -520,6 +753,13 @@ const courseController = {
     const course_id = req.params.courseId
     const { rating_score, review_text } = req.body
 
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "新增課程評價",
+      sys_module: "前台頁面-我的課程頁面模組"
+    }
+
     const courseRepo = dataSource.getRepository('courses')
     const courseResult = await courseRepo
       .createQueryBuilder('course')
@@ -533,6 +773,10 @@ const courseController = {
       .getRawMany()
 
     if (courseResult.user_id === user_id) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })  
       return next(appError(400, '抱歉，無法評價自己的課程'))
     }
 
@@ -540,6 +784,10 @@ const courseController = {
     const findRating = await ratingsRepo.findOne({ where:{course_id:course_id, user_id:user_id }})
     
     if(findRating){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })  
       return next(appError(400, '抱歉，無法重複評價課程'))
     }
 
@@ -553,6 +801,10 @@ const courseController = {
 
     updateTeacherRating(course_id)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })  
     return sendResponse(res, 200, true, '新增評價成功', result)
   }),
 
@@ -564,6 +816,12 @@ const courseController = {
     const user_id = req.user.id
     const course_id = req.params.courseId
     const { rating_score, review_text } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "修改特定課程評價",
+      sys_module: "前台頁面-我的課程頁面模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const courseResult = await courseRepo
@@ -578,6 +836,10 @@ const courseController = {
       .getRawMany()
 
     if (courseResult.user_id === user_id) {
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '抱歉，無法評價自己的課程'))
     }
 
@@ -593,12 +855,21 @@ const courseController = {
       }
     )
 
-    if (updateRatings.affected === 1) {
-      updateTeacherRating(course_id)
-      return sendResponse(res, 200, true, '更新評價成功')
-    } else {
+    if(!updateRatings.affected){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(400, '更新評價失敗'))
     }
+
+    updateTeacherRating(course_id)
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })  
+    return sendResponse(res, 200, true, '更新評價成功')
   }),
 
   /*
@@ -655,7 +926,8 @@ const courseController = {
       .getRawMany() 
       */
 
-    return sendResponse(res, 200, true, '取得資料成功', result)
+      return sendResponse(res, 200, true, '取得資料成功', result)
+    /* return sendResponse(res, 200, true, '取得資料成功', {data:result , perNum, pageNum }) */
   }),
   /*
    * 取得所有課程評價
@@ -687,11 +959,21 @@ const courseController = {
     const user_id = req.user.id
     const course_id = req.params.courseId
     const { question_text } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "提出課程問題",
+      sys_module: "前台頁面-課程詳細頁面模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const findCourse = await courseRepo.findOne({ where: { id: course_id } })
 
     if (!findCourse) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -699,6 +981,10 @@ const courseController = {
     const findUser = await userRepo.findOne({ where: { id: user_id } })
 
     if (!findUser) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '使用者不存在'))
     }
 
@@ -711,6 +997,10 @@ const courseController = {
     })
     const result = await questionRepo.save(newQuestion)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '新增問題成功', result)
   }),
 
@@ -722,11 +1012,21 @@ const courseController = {
     const user_id = req.user.id
     const course_id = req.params.courseId
     const { question_id, answer_text } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "提出課程回答",
+      sys_module: "前台頁面-課程詳細頁面模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const findCourse = await courseRepo.findOne({ where: { id: course_id } })
 
     if (!findCourse) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -734,6 +1034,10 @@ const courseController = {
     const findUser = await userRepo.findOne({ where: { id: user_id } })
 
     if (!findUser) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '使用者不存在'))
     }
 
@@ -747,6 +1051,10 @@ const courseController = {
     })
     const result = await answerRepo.save(newAnswer)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '新增回答成功', result)
   }),
 
@@ -756,6 +1064,12 @@ const courseController = {
    */
   getQuestions: wrapAsync(async (req, res, next) => {
     const course_id = req.params.courseId
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得課程問題列表",
+      sys_module: "前台頁面-課程詳細頁面模組"
+    }
 
     const questionRepo = dataSource.getRepository('question')
 
@@ -809,8 +1123,10 @@ const courseController = {
       question.answers = findAnswer
     }
 
-    console.log('findQuestion')
-
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '取得課程問題列表', findQuestion)
   }),
 
@@ -821,11 +1137,21 @@ const courseController = {
   postCourseSection: wrapAsync(async (req, res, next) => {
     const course_id = req.params.courseId
     const { main_section_title } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "新增課程章節",
+      sys_module: "前台頁面-教師課程頁面模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const findCourse = await courseRepo.findOne({ where: { id: course_id } })
 
     if (!findCourse) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -846,6 +1172,10 @@ const courseController = {
 
     const result = await courseSectionRepo.save(newCourseSection)
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '新增章節成功', result)
   }),
 
@@ -888,11 +1218,21 @@ const courseController = {
   patchCourseSection: wrapAsync(async (req, res, next) => {
     const section_id = req.params.sectionId
     const { main_section_title } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "修改課程章節",
+      sys_module: "前台頁面-教師課程頁面模組"
+    }
 
     const courseSectionRepo = dataSource.getRepository('course_section')
-    const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
+    let findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
 
     if (!findCourseSection) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '章節不存在'))
     }
 
@@ -901,12 +1241,20 @@ const courseController = {
       { main_section_title: main_section_title }
     )
 
-    if (updateCourseSection.affected === 1) {
-      const findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
-      return sendResponse(res, 200, true, '更新課程章節成功', findCourseSection)
-    } else {
+    if(!updateCourseSection.affected){
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '更新課程章節失敗'))
     }
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
+    findCourseSection = await courseSectionRepo.findOne({ where: { id: section_id } })
+    return sendResponse(res, 200, true, '更新課程章節成功', findCourseSection)
   }),
 
 
@@ -917,11 +1265,21 @@ const courseController = {
   postFavoriteCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
     const { course_id } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "收藏課程",
+      sys_module: "前台頁面-課程頁面模組"
+    }
 
     const courseRepo = dataSource.getRepository('courses')
     const findCourse = await courseRepo.findOne({ where: { id: course_id } })
 
     if (!findCourse) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -931,6 +1289,10 @@ const courseController = {
     })
 
     if (findFavorite) {
+      await logSystemAction({
+        ...logEntry,
+        status:"200"
+      })
       return sendResponse(res, 200, true, '你已經收藏過此課程', findFavorite)
     }
 
@@ -1002,6 +1364,10 @@ const courseController = {
       }
     })
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '成功收藏課程', findFavoriteResult)
   }),
 
@@ -1011,6 +1377,12 @@ const courseController = {
    */
   getFavoriteCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得收藏課程",
+      sys_module: "前台頁面-課程頁面模組"
+    }
 
     const favoriteRepo = dataSource.getRepository('favorite_course')
     const findFavoriteCourse = await favoriteRepo
@@ -1078,6 +1450,10 @@ const courseController = {
       }
     })
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '成功取得收藏課程', findFavoriteResult)
   }),
 
@@ -1088,11 +1464,21 @@ const courseController = {
   deleteFavoriteCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
     const favorite_id = req.params.favoriteId
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取消收藏課程",
+      sys_module: "前台頁面-課程頁面模組"
+    }
 
     const favoriteRepo = dataSource.getRepository('favorite_course')
     const deleteResult = await favoriteRepo.delete({ id: favorite_id })
 
     if (!deleteResult.affected) {
+      await logSystemAction({
+        ...logEntry,
+        status:"404"
+      })
       return next(appError(404, '課程不存在'))
     }
 
@@ -1161,12 +1547,26 @@ const courseController = {
       }
     })
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
     return sendResponse(res, 200, true, '成功刪除收藏課程', findFavoriteResult)
   }),
 
-
+  /*
+   * 取得我的課程列表
+   * @route GET /api/v1/course/my-courses
+   */
   getMyCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得我的課程列表",
+      sys_module: "前台頁面-我的課程頁面模組"
+    }
+
     let pageNum = req.query.pageNum || 1
     let perNum = 12;
 
@@ -1186,6 +1586,7 @@ const courseController = {
         'user.name AS teacher_name',
         'course.course_small_imageUrl AS course_small_imageUrl',
         'course.course_name AS course_name',
+        'course.created_at AS course_created_at',
         'student_course.purchase_date AS purchase_date',
         'student_course.last_accessed_at AS last_accessed_at',
         'student_course.last_subsection_id AS last_subsection_id',
@@ -1194,6 +1595,7 @@ const courseController = {
       .leftJoin('student_course.user', 'user')
       .leftJoin('student_course.course', 'course')
       .leftJoin('course.teacher', 'teacher')
+      .orderBy('course.created_at', 'DESC')
       .where('student_course.user_id=:user_id', { user_id: user_id })
       .take(perNum)
       .skip(offset)
@@ -1242,7 +1644,13 @@ const courseController = {
       },
     }))
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
+
     return sendResponse(res, 200, true, '成功取得我的課程', result)
+    /* return sendResponse(res, 200, true, '成功取得我的課程', {data: result , perNum, pageNum }) */
   }),
 
   /*
@@ -1251,6 +1659,12 @@ const courseController = {
    */
   getPurchased: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得已購買的課程列表",
+      sys_module: "前台頁面-購物車模組"
+    }
 
     //取得已購買的課程列表
     const studentCourseRepo = dataSource.getRepository('student_course')
@@ -1261,6 +1675,10 @@ const courseController = {
       .where('student_course.user_id=:user_id', { user_id: user_id })
       .getRawMany()
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })  
     return sendResponse(res, 200, true, '成功取得已購買的課程列表', findStudentCourse)
   }),
 

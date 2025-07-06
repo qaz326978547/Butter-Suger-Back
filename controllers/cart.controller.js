@@ -5,6 +5,7 @@ const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const getCartItemDetails = require('../services/cart/cartItemDetails')
 const summaryCartItems = require('../services/cart/summaryCartItems')
 const renderOrderHtml = require('../services/cart/renderOrderHtml')
+const logSystemAction = require('../services/system/logSystemAction')
 const { createAesEncrypt, createShaEncrypt, createAesDecrypt } = require('../services/checkout/checkout')
 const { In } = require('typeorm')
 const escapeHtml = require('he')  //防止 html 注入攻擊，最後再補上
@@ -16,6 +17,7 @@ const NotifyUrl = config.get('newebpay.NotifyUrl')
 const ReturnUrl = config.get('newebpay.ReturnUrl')
 const PayGateWay = config.get('newebpay.PayGateWay')
 
+
 const cartController = {
     /*
    * 取得購物車資料
@@ -23,12 +25,22 @@ const cartController = {
    */
     getCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
+        let logEntry = req.logEntry
+        logEntry = {
+            ...logEntry,
+            action: "取得購物車資料",
+            sys_module: "購物車模組"
+        }
 
         try{
             const cartsRepo = dataSource.getRepository('carts')
             const findCart = await cartsRepo.findOne({where: {user_id: user_id}})
             
             if(!findCart){
+                await logSystemAction({
+                    ...logEntry,
+                    status:"404"
+                })
                 return next(appError(404, '購物車尚未建立'))
             }
         
@@ -39,8 +51,12 @@ const cartController = {
             //回傳購物車課程數量跟總金額
             const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
+            await logSystemAction({
+                ...logEntry,
+                status:"200"
+            })
+
             return sendResponse(res, 200, true, '成功取得購物車清單', {
-/*                     cart_id: cart_id, */
                 cart_items: cartItemDetails,
                 item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
                 total_price: summaryItems?.total_price ?? 0
@@ -63,9 +79,20 @@ const cartController = {
             const user_id = req.user.id;
             const { course_id } = req.body;
 
+            let logEntry = req.logEntry
+            logEntry = {
+                ...logEntry,
+                action: "購物車加入課程",
+                sys_module: "購物車模組"
+            }
+    
             //檢查課程是否存在且狀態為上架
             const findCourse = await courseRepo.findOne({where:{ id: course_id,  course_status: '上架'}})
             if(!findCourse){
+                await logSystemAction({
+                    ...logEntry,
+                    status:"404"
+                })
                 return next(appError(404, "課程不存在或未上架"))
             }
 
@@ -81,49 +108,55 @@ const cartController = {
 
             //判斷是否有買過此課程
             if(course_Ids.includes(course_id)){
+                await logSystemAction({
+                    ...logEntry,
+                    status:"400"
+                })
                 return next(appError(400, "您已購買過此課程"))
             }
+        // 查看此使用者是否建立購物車
+        let findCart = await cartsRepo.findOne({
+            where:{ user_id:user_id }
+        });
 
-            try {
-                // 查看此使用者是否建立購物車
-                let findCart = await cartsRepo.findOne({
-                    where:{ user_id:user_id }
-                });
+        // 若未建立購物車的話，就建立一個，建立後要取得 id
+        if(!findCart){
+            const newCart = cartsRepo.create({ user_id:user_id });
+            findCart = await cartsRepo.save(newCart);
+        }
 
-                // 若未建立購物車的話，就建立一個，建立後要取得 id
-                if(!findCart){
-                    const newCart = cartsRepo.create({ user_id:user_id });
-                    findCart = await cartsRepo.save(newCart);
-                }
+        // 如果已建立購物車，取出購物車 id
+        const cart_id = findCart.id;
 
-                // 如果已建立購物車，取出購物車 id
-                const cart_id = findCart.id;
+        //查看購物車明細表是否有相同的課程
+        const findItem = await cartItemsRepo.findOne({
+            where:{cart_id:cart_id, course_id:course_id}
+        })
 
-                //查看購物車明細表是否有相同的課程
-                
-                const findItem = await cartItemsRepo.findOne({
-                    where:{cart_id:cart_id, course_id:course_id}
-                })
+        if(findItem){
+            await logSystemAction({
+                ...logEntry,
+                status:"409"
+            })
+            return next(appError(409, "此課程已存在購物車"))
+        }
 
-                if(findItem){
-                    return next(appError(409, "此課程已存在購物車"))
-                }
+        //若沒有相同課程就新增課程
+        const newItem = cartItemsRepo.create({cart_id: cart_id, course_id:course_id})
+        await cartItemsRepo.save(newItem)
 
-                //若沒有相同課程就新增課程
-                const newItem = cartItemsRepo.create({cart_id: cart_id, course_id:course_id})
-                await cartItemsRepo.save(newItem)
+        //回傳購物車課程數量跟總金額
+        const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
-                //回傳購物車課程數量跟總金額
-                const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
+        await logSystemAction({
+            ...logEntry,
+            status:"200"
+        })
 
-                return sendResponse(res, 200, true, '成功加入課程到購物車', {
-                    item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
-                    total_price: summaryItems?.total_price ?? 0
-                })   
-
-            } catch (error) {
-                next(error)
-            }                
+        return sendResponse(res, 200, true, '成功加入課程到購物車', {
+            item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
+            total_price: summaryItems?.total_price ?? 0
+        })   
         })
     }),
 
@@ -140,6 +173,12 @@ const cartController = {
     mergeCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
         const { course_ids } = req.body;
+        let logEntry = req.logEntry
+        logEntry = {
+            ...logEntry,
+            action: "登入後整合購物車",
+            sys_module: "購物車模組"
+        }
 
         //取得我的課程資訊
         const studentCourseRepo = dataSource.getRepository('student_course')
@@ -191,6 +230,10 @@ const cartController = {
                 })
 
                 if(validCourses.length===0){
+                    await logSystemAction({
+                        ...logEntry,
+                        status:"404"
+                    })
                     return next(appError(404, "課程不存在或已下架"))
                 }
 
@@ -223,6 +266,11 @@ const cartController = {
                 //回傳購物車課程數量跟總金額
                 const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
 
+                await logSystemAction({
+                    ...logEntry,
+                    status:"200"
+                })
+
                 return sendResponse(res, 200, true, '成功加入課程到購物車', {
                     item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
                     total_price: summaryItems?.total_price ?? 0,
@@ -245,12 +293,21 @@ const cartController = {
     deleteCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
         const { cartItemId } = req.params
+        logEntry = {
+            ...logEntry,
+            action: "刪除購物車資料",
+            sys_module: "購物車模組"
+        }
 
         try{
             const cartsRepo = dataSource.getRepository('carts')
             const findCart = await cartsRepo.findOne({where:{user_id:user_id}})
             
             if(!findCart){
+                await logSystemAction({
+                    ...logEntry,
+                    status:"404"
+                })
                 return next(appError(404, '購物車尚未建立'))
             }
 
@@ -261,12 +318,20 @@ const cartController = {
             const findCartItem = await cartItemsRepo.findOne({where:{id:cartItemId}})                
 
             if(!findCartItem){
+                await logSystemAction({
+                    ...logEntry,
+                    status:"400"
+                })
                 return next(appError(400, '找不到該課程項目，可能已被刪除'))                
             }
             
             const deleteResult = await cartItemsRepo.delete(cartItemId)
 
             if(deleteResult.affected===0){
+                await logSystemAction({
+                    ...logEntry,
+                    status:"400"
+                })
                 return  next(appError(400, "ID 錯誤"))                
             }
 
@@ -280,6 +345,10 @@ const cartController = {
             .where('cartItems.cart_id = :cart_id', { cart_id })
             .getRawOne()
 
+            await logSystemAction({
+                ...logEntry,
+                status:"200"
+            })
             return sendResponse(res, 200, true, '成功刪除課程', {
                 item_count: summaryItems?.item_count ?? 0, //只要結果是 0 或 "" 就回傳 0, 跟 ||不一樣
                 total_price: summaryItems?.total_price ?? 0
@@ -295,125 +364,142 @@ const cartController = {
    */
     checkout: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id
-        const { coupon_id, coupon, discount_amount } = req.body       
+        const { coupon_id, coupon, discount_amount } = req.body 
 
-        try{
-            const cartsRepo = dataSource.getRepository('carts')
-            const findCart = await cartsRepo.findOne({where:{user_id:user_id}})
-            
-            if(!findCart){
-                return next(appError(404, '購物車尚未建立'))
-            }
-            
-            const usersRepo = dataSource.getRepository('users')
-            const findUser = await usersRepo.findOne({
-                where: {id:user_id}
-            })
-
-            const email = findUser.email
-            const cart_id = findCart.id
-            const cartItemsRepo = dataSource.getRepository('cart_items')
-            const cartItemDetails = await getCartItemDetails(cartItemsRepo, cart_id)
-            const course_ids = cartItemDetails.map(item =>item.course_id)
-
-            //取得我的課程資訊
-            const studentCourseRepo = dataSource.getRepository('student_course')
-            const findCourseIds = await studentCourseRepo.find({
-                select:['course_id'],
-                where: {user_id:user_id}
-            })
-
-            //取出課程 id
-            const studentCourseIds = findCourseIds.map(item => item.course_id)
-
-            //判斷課程是否購買
-            const alreadyBoughtIds = course_ids.filter( id => studentCourseIds.includes(id))
-
-            //判斷是否有買過此課程
-            if(alreadyBoughtIds.length){
-                return next(appError(400, `您已購買過這些課程 ${alreadyBoughtIds}`))
-            }
-
-            //回傳購物車課程數量跟總金額
-            const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
-
-            const TimeStamp = Math.round(new Date().getTime()/1000)
-            
-            const order = {
-                Email: email,
-                ItemDesc: course_ids.join(','),   //course_ids.join(',')
-                TimeStamp,
-                Amt: summaryItems.total_price-(Number(discount_amount)||0),
-                MerchantOrderNo: TimeStamp
-            }
-
-            const aesEncrypt = createAesEncrypt(order)
-            const shaEncrypt = createShaEncrypt(aesEncrypt)
-
-            const orderRepo = dataSource.getRepository('order')
-
-            if(summaryItems.total_price - Number(discount_amount)<0){
-                return next(appError(404, '折扣金額有誤'))
-            }
-
-            const newOrder = orderRepo.create({
-                user_id: user_id,
-                coupon_id: coupon_id, //escapeHtml.escape(coupon_id)
-                discount_amount: Number(discount_amount)||0,  //escapeHtml.escape(discount_amount)
-                final_amount: summaryItems.total_price - (Number(discount_amount)||0), //escapeHtml.escape(discount_amount)
-                order_number: String(order.MerchantOrderNo),
-                payment_status: 'pending',
-                pay_trade_no: '',
-                pay_check_mac_value: shaEncrypt
-            })
-            const result = await orderRepo.save(newOrder)
-
-            const insertOrderItems = cartItemDetails.map(item => {
-                return {order_id: result.id,
-                        course_id: item.course_id, 
-                        price: item.price}
-            })
-            const orderItemRepo = dataSource.getRepository('order_item')
-            const newOrderItem = orderItemRepo.create(insertOrderItems)
-            await orderItemRepo.save(newOrderItem)
-            
-            await cartItemsRepo.delete({cart_id: cart_id})   
-            await cartsRepo.delete({id: cart_id})
-/*          //正式用，不顯示表單  
-            const html = `<form action="${PayGateWay}" method="post" style:"display:none">
-                        <input type="hidden" name="MerchantID" value="${MerchantID}" />
-                        <input type="hidden" name="TradeSha" value="${shaEncrypt}" />
-                        <input type="hidden" name="TradeInfo" value="${aesEncrypt}" />
-                        <input type="hidden" name="TimeStamp" value="${TimeStamp}" />
-                        <input type="hidden" name="Version" value="${Version}" />
-                        <input type="hidden" name="NotifyUrl" value="${NotifyUrl}" />
-                        <input type="hidden" name="ReturnUrl" value="${ReturnUrl}" />
-                        <input type="hidden" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
-                        <input type="hidden" name="Amt" value="${order.Amt}" />
-                        <input type="hidden" name="ItemDesc" value="${order.ItemDesc}" />
-                        <input type="hidden" name="Email" value="${email}" />
-                    </form>` */
-
-                //測試用，顯示表單
-                const html = `<form action="${PayGateWay}" method="post">
-                    <input type="text" name="MerchantID" value="${MerchantID}" />
-                    <input type="text" name="TradeSha" value="${shaEncrypt}" />
-                    <input type="text" name="TradeInfo" value="${aesEncrypt}" />
-                    <input type="text" name="TimeStamp" value="${TimeStamp}" />
-                    <input type="text" name="Version" value="${Version}" />
-                    <input type="text" name="NotifyUrl" value="${NotifyUrl}" />
-                    <input type="text" name="ReturnUrl" value="${ReturnUrl}" />
-                    <input type="text" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
-                    <input type="text" name="Amt" value="${order.Amt}" />
-                    <input type="text" name="ItemDesc" value="${order.ItemDesc}" />
-                    <input type="email" name="Email" value="${email}" />
-                </form>`
-
-            res.send(html)
-
-        }catch(error){
-            next(error)
+        let logEntry = req.logEntry
+        logEntry = {
+            ...logEntry,
+            action: "結帳",
+            sys_module: "購物車模組"
         }
+
+        const cartsRepo = dataSource.getRepository('carts')
+        const findCart = await cartsRepo.findOne({where:{user_id:user_id}})
+        
+        if(!findCart){
+            await logSystemAction({
+                ...logEntry,
+                status:"404"
+            })
+            return next(appError(404, '購物車尚未建立'))
+        }
+        
+        const usersRepo = dataSource.getRepository('users')
+        const findUser = await usersRepo.findOne({
+            where: {id:user_id}
+        })
+
+        const email = findUser.email
+        const cart_id = findCart.id
+        const cartItemsRepo = dataSource.getRepository('cart_items')
+        const cartItemDetails = await getCartItemDetails(cartItemsRepo, cart_id)
+        const course_ids = cartItemDetails.map(item =>item.course_id)
+
+        //取得我的課程資訊
+        const studentCourseRepo = dataSource.getRepository('student_course')
+        const findCourseIds = await studentCourseRepo.find({
+            select:['course_id'],
+            where: {user_id:user_id}
+        })
+
+        //取出課程 id
+        const studentCourseIds = findCourseIds.map(item => item.course_id)
+
+        //判斷課程是否購買
+        const alreadyBoughtIds = course_ids.filter( id => studentCourseIds.includes(id))
+
+        //判斷是否有買過此課程
+        if(alreadyBoughtIds.length){
+            await logSystemAction({
+                ...logEntry,
+                status:"400"
+            })
+            return next(appError(400, `您已購買過這些課程 ${alreadyBoughtIds}`))
+        }
+
+        //回傳購物車課程數量跟總金額
+        const summaryItems = await summaryCartItems(cartItemsRepo, cart_id) || { item_count: 0, total_price: 0 }
+
+        const TimeStamp = Math.round(new Date().getTime()/1000)
+        
+        const order = {
+            Email: email,
+            ItemDesc: course_ids.join(','),   //course_ids.join(',')
+            TimeStamp,
+            Amt: summaryItems.total_price-(Number(discount_amount)||0),
+            MerchantOrderNo: TimeStamp
+        }
+
+        const aesEncrypt = createAesEncrypt(order)
+        const shaEncrypt = createShaEncrypt(aesEncrypt)
+
+        const orderRepo = dataSource.getRepository('order')
+
+        if(summaryItems.total_price - Number(discount_amount)<0){
+            await logSystemAction({
+                ...logEntry,
+                status:"404"
+            })
+            return next(appError(404, '折扣金額有誤'))
+        }
+
+        const newOrder = orderRepo.create({
+            user_id: user_id,
+            coupon_id: coupon_id, //escapeHtml.escape(coupon_id)
+            discount_amount: Number(discount_amount)||0,  //escapeHtml.escape(discount_amount)
+            final_amount: summaryItems.total_price - (Number(discount_amount)||0), //escapeHtml.escape(discount_amount)
+            order_number: String(order.MerchantOrderNo),
+            payment_status: 'pending',
+            pay_trade_no: '',
+            pay_check_mac_value: shaEncrypt
+        })
+        const result = await orderRepo.save(newOrder)
+
+        const insertOrderItems = cartItemDetails.map(item => {
+            return {order_id: result.id,
+                    course_id: item.course_id, 
+                    price: item.price}
+        })
+        const orderItemRepo = dataSource.getRepository('order_item')
+        const newOrderItem = orderItemRepo.create(insertOrderItems)
+        await orderItemRepo.save(newOrderItem)
+        
+        await cartsRepo.delete({id: cart_id})
+/*          //正式用，不顯示表單  
+        const html = `<form action="${PayGateWay}" method="post" style:"display:none">
+                    <input type="hidden" name="MerchantID" value="${MerchantID}" />
+                    <input type="hidden" name="TradeSha" value="${shaEncrypt}" />
+                    <input type="hidden" name="TradeInfo" value="${aesEncrypt}" />
+                    <input type="hidden" name="TimeStamp" value="${TimeStamp}" />
+                    <input type="hidden" name="Version" value="${Version}" />
+                    <input type="hidden" name="NotifyUrl" value="${NotifyUrl}" />
+                    <input type="hidden" name="ReturnUrl" value="${ReturnUrl}" />
+                    <input type="hidden" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
+                    <input type="hidden" name="Amt" value="${order.Amt}" />
+                    <input type="hidden" name="ItemDesc" value="${order.ItemDesc}" />
+                    <input type="hidden" name="Email" value="${email}" />
+                </form>` */
+
+            //測試用，顯示表單
+            const html = `<form action="${PayGateWay}" method="post">
+                <input type="text" name="MerchantID" value="${MerchantID}" />
+                <input type="text" name="TradeSha" value="${shaEncrypt}" />
+                <input type="text" name="TradeInfo" value="${aesEncrypt}" />
+                <input type="text" name="TimeStamp" value="${TimeStamp}" />
+                <input type="text" name="Version" value="${Version}" />
+                <input type="text" name="NotifyUrl" value="${NotifyUrl}" />
+                <input type="text" name="ReturnUrl" value="${ReturnUrl}" />
+                <input type="text" name="MerchantOrderNo" value="${order.MerchantOrderNo}" />
+                <input type="text" name="Amt" value="${order.Amt}" />
+                <input type="text" name="ItemDesc" value="${order.ItemDesc}" />
+                <input type="email" name="Email" value="${email}" />
+            </form>`
+
+        await logSystemAction({
+            ...logEntry,
+            status:"200"
+        })
+        res.send(html)
     }),
 
     /*
@@ -455,31 +541,10 @@ const cartController = {
             "item_count": result.length
         }
 
-              // 傳回 JSON 給前端，token= 測試用(暫不考慮安全性)
+        // 傳回 JSON 給前端，token= 測試用(暫不考慮安全性)
         return res.redirect(
             `${process.env.FRONTEND_URL}/home/cart-flow/order-success?renderData=${encodeURIComponent(JSON.stringify(renderData))}`
         )
-
-/*         return res.redirect(
-            `/index.html?renderData=${encodeURIComponent(JSON.stringify(renderData))}`
-        ) */
-        // 二選一，傳送表單或是 json 檔
-        const html = renderOrderHtml(renderData)
-        res.send(html)
-
-        /* return res.status(200).json({
-            status:true,
-            message: "結帳成功",
-            data: {
-                    "payway": data.Result.PaymentType,
-                    "final_amount": data.Result.Amt,
-                    "payment_status": data.status,
-                    "payment_date": data.Result.PayTime,
-                    "order_number": data.Result.MerchantOrderNo,
-                    "order_items": result,
-                    "item_count": result.length
-                }
-        }) */
     }),
 
     /*
@@ -541,7 +606,6 @@ const cartController = {
                 total_users = findCourse?.total_users?findCourse?.total_users+1:1
                 updateCourse = await courseRepo.update({id:course.course_id},{total_users: total_users})
             }
-
         }
 
         return sendResponse(res, 200, true, '結帳成功', data)
