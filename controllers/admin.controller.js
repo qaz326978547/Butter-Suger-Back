@@ -108,7 +108,7 @@ const adminController = {
 
     if(keyword){
       qb = qb.andWhere(
-        `(CAST(log.user_id AS TEXT) ILIKE :kw OR log.action ILIKE :kw OR log.api ILIKE :kw OR log.sys_module ILIKE :kw OR log.email ILIKE :kw OR log.status ILIKE :kw)`,
+        `(CAST(log.user_id AS TEXT) ILIKE :kw OR log.role ILIKE :kw OR log.action ILIKE :kw OR log.api ILIKE :kw OR log.sys_module ILIKE :kw OR log.email ILIKE :kw OR log.status ILIKE :kw)`,
         { kw: `%${keyword}%` }
       )
     }

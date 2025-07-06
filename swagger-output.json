@@ -409,8 +409,8 @@
     "/api/v1/admin/system-log": {
       "get": {
         "tags": ["Admin"],
-        "summary": "取得系統日誌",
-        "description": "可依 pageNum、keyword（支援 action、api、sys_module、email、status）搜尋系統日誌。",
+        "summary": "取得系統日誌(目前只紀錄登入後的動作)",
+        "description": "可依 pageNum、keyword（支援 user_id、role、action、api、sys_module、email、status）搜尋系統日誌。",
         "parameters": [
           {
             "name": "pageNum",
