@@ -5,9 +5,9 @@
     "description": "Description",
     "version": "1.0.0"
   },
-  "host": "buttersugar.zeabur.app",
+  "host": "localhost:8080",
   "basePath": "/",
-  "schemes": ["https"],
+  "schemes": ["http"],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
@@ -410,7 +410,7 @@
       "get": {
         "tags": ["Admin"],
         "summary": "取得系統日誌(目前只紀錄登入後的動作)",
-        "description": "可依 pageNum、keyword（支援 user_id、role、action、api、sys_module、email、status）搜尋系統日誌。",
+        "description": "可依 pageNum、keyword（支援 user_id、role、action、api、sys_module、email、status、時間）搜尋系統日誌。",
         "parameters": [
           {
             "name": "pageNum",

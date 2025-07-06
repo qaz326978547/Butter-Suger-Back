@@ -13,6 +13,12 @@ const adminController = {
   getApplicationsData: wrapAsync(async (req, res, next) => {
     let pageNum = req.query.pageNum || 1
     let perNum = 12;
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得所有教師申請者資料",
+      sys_module: "後台管理者"
+    }
 
     if(pageNum<=0){
       pageNum = 1
@@ -40,6 +46,11 @@ const adminController = {
     .leftJoin('application.user', 'user')
     .getCount()
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
+
     sendResponse(res, 200, true, '取得使用者資料成功', 
       { 
         data: findApplications, 
@@ -55,6 +66,12 @@ const adminController = {
   */
   getOneApplicationData: wrapAsync(async (req, res, next) => {
     const { applicationId } = req.params
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得所有教師申請者資料",
+      sys_module: "後台管理者"
+    }
 
     const teacherRepo = dataSource.getRepository('teacher')
     const applicationRepo = dataSource.getRepository('teacher_application')
@@ -78,6 +95,11 @@ const adminController = {
       where: {user_id: findApplication.user_id}
     })
 
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
+
     sendResponse(res, 200, true, '取得使用者資料成功', {
       application: findApplication,
       teacher: findTeacher
@@ -91,6 +113,12 @@ const adminController = {
   getSystemLog: wrapAsync(async (req, res, next) => {
     let pageNum = req.query.pageNum || 1
     let perNum = 12;
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得所有教師申請者資料",
+      sys_module: "後台管理者"
+    }
 
     if(pageNum<=0){
       pageNum = 1
@@ -108,12 +136,17 @@ const adminController = {
 
     if(keyword){
       qb = qb.andWhere(
-        `(CAST(log.user_id AS TEXT) ILIKE :kw OR log.role ILIKE :kw OR log.action ILIKE :kw OR log.api ILIKE :kw OR log.sys_module ILIKE :kw OR log.email ILIKE :kw OR log.status ILIKE :kw)`,
+        `(CAST(log.user_id AS TEXT) ILIKE :kw OR log.role ILIKE :kw OR log.action ILIKE :kw OR log.api ILIKE :kw OR log.sys_module ILIKE :kw OR log.email ILIKE :kw OR log.status ILIKE :kw OR CAST(log.created_at AS TEXT) ILIKE :kw)`,
         { kw: `%${keyword}%` }
       )
     }
 
     const [systemLogList, total] = await qb.getManyAndCount()
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
 
     sendResponse(res, 200, true, '取得系統日誌成功', {
       data: systemLogList,
@@ -130,8 +163,18 @@ const adminController = {
   patchApplicationsData: wrapAsync(async (req, res, next) => {
     const { applicationId } = req.params
     const { status } = req.body
+    let logEntry = req.logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得所有教師申請者資料",
+      sys_module: "後台管理者"
+    }
 
     if(!applicationId){
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return next(appError(res, 400, false, 'ID 錯誤'))
     }
 
@@ -145,6 +188,10 @@ const adminController = {
       const updateUser = await userRepo.update({id: findApplication.user_id},{role: 'teacher', teacher_status: status})
   
       if(!updateUser.affected){
+        await logSystemAction({
+          ...logEntry,
+          status:"400"
+        })
         return next(appError(res, 400, false, '審核教師失敗'))
       }
   
@@ -152,15 +199,27 @@ const adminController = {
       const updateTeacher = await teacherRepo.update({user_id: findApplication.user_id},{is_verified: is_verified})
   
       if(!updateTeacher.affected){
+        await logSystemAction({
+          ...logEntry,
+          status:"400"
+        })
         return next(appError(res, 400, false, '審核教師失敗'))
       }
   
       const updateApplication = await applicationRepo.update({id: applicationId},{status: status})
   
       if(!updateApplication.affected){
+        await logSystemAction({
+          ...logEntry,
+          status:"400"
+        })
         return next(appError(res, 400, false, '審核教師失敗'))
       }
   
+      await logSystemAction({
+        ...logEntry,
+        status:"400"
+      })
       return sendResponse(res, 200, true, '審核教師成功')
     })
   })
