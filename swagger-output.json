@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Butter & Sugar",
-    "description": "Description",
+    "description": "Butter & Sugar 烘焙影音課程平台",
     "version": "1.0.0"
   },
   "host": "buttersugar.zeabur.app",
@@ -444,32 +444,108 @@
         }
       }
     },
-    "definitions": {
-      "TeacherApplication": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string", "example": "e1254c0b-37fa-46d6-87d2-4b93df9d8e4b" },
-          "user_id": { "type": "string", "example": "e3e2a781-18b7-4e92-908c-44aeedc1b165" },
-          "course_name": { "type": "string", "example": "乳酪濃郁！日式巴斯克蛋糕入門課" },
-          "description": { "type": "string", "example": "課程介紹日式巴斯克乳酪蛋糕..." },
-          "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "example": "pending" },
-          "created_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" },
-          "updated_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" }
+    "/api/v1/course/my-courses": {
+      "get": {
+        "tags": ["My-Courses"],
+        "summary": "取得我的課程列表",
+        "description": "取得目前使用者已購買或擁有的課程列表",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "分頁的頁碼，預設為 1",
+            "required": false,
+            "type": "integer",
+            "default": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得我的課程列表",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/course/subsections/{subsectionId}/progress": {
+      "post": {
+        "tags": ["My-Courses"],
+        "summary": "新增章節進度",
+        "description": "新增（建立）某個章節（subsection）的學習進度，例如學習開始。",
+        "parameters": [
+          {
+            "name": "subsectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "小節（subsection）ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["in_progress", "completed"],
+                  "example": "in_progress",
+                  "description": "進度狀態"
+                }
+              },
+              "required": ["status"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "新增進度成功" },
+          "400": { "description": "新增進度失敗" }
         }
       },
-      "SystemLog": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string", "example": "c31d98cd0-0917-46fd-88f1-a689b1543541" },
-          "user_id": { "type": "string", "example": "ee0756a2-0add-4092-9b04-14a32183e8f6" },
-          "role": { "type": "string", "example": "admin" },
-          "action": { "type": "string", "example": "結帳" },
-          "api": { "type": "string", "example": "/api/v1/orders/checkout" },
-          "sys_module": { "type": "string", "example": "購物車模組" },
-          "email": { "type": "string", "example": "user@example.com" },
-          "ip": { "type": "string", "example": "127.0.0.1" },
-          "status": { "type": "string", "example": "200" },
-          "created": { "type": "string", "format": "date-time", "example": "2025-07-06T09:00:00.000Z" }
+      "patch": {
+        "tags": ["My-Courses"],
+        "summary": "標記章節進度",
+        "description": "更新指定小節（subsection）的學習進度狀態與觀看時間。",
+        "parameters": [
+          {
+            "name": "subsectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "小節（subsection）ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["in_progress", "completed"],
+                  "example": "completed",
+                  "description": "進度狀態"
+                },
+                "watched_time": {
+                  "type": "integer",
+                  "example": 5,
+                  "description": "已觀看時間（單位：分鐘或秒，請根據你的實作調整）"
+                }
+              },
+              "required": ["status"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "進度已更新" },
+          "400": { "description": "更新失敗" }
         }
       }
     },
@@ -1101,34 +1177,6 @@
         ],
         "responses": {
           "200": { "description": "成功提出課程回答" }
-        }
-      }
-    },
-    "/api/v1/course/my-courses": {
-      "get": {
-        "tags": ["Courses"],
-        "summary": "取得我的課程列表",
-        "description": "取得目前使用者已購買或擁有的課程列表",
-        "parameters": [
-          {
-            "name": "pageNum",
-            "in": "query",
-            "description": "分頁的頁碼，預設為 1",
-            "required": false,
-            "type": "integer",
-            "default": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "成功取得我的課程列表",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            }
-          }
         }
       }
     },

@@ -7,6 +7,7 @@ const coursesRouter = require('./courses.route')
 const courseSectionRouter = require('./section.route')
 const subsectionRouter = require('./subsection.route')
 const subsectionUploadRouter = require('./subsectionUpload.route')
+const progressRouter = require('./progress.route')
 const cartRouter = require('./cart.route')
 const orderRouter = require('./order.route')
 const swaggerUi = require('swagger-ui-express')
@@ -22,6 +23,8 @@ module.exports = (app) => {
   app.use('/api/v1/course', courseUploadRoutes)  //路由強關聯
   app.use('/api/v1/course', courseSectionRouter)  //路由強關聯
   app.use('/api/v1/course', subsectionRouter) //路由強關聯
+  app.use('/api/v1/course', progressRouter) 
+  
   /* app.use('/api/v1/section', courseSectionRouter) */
   app.use('/api/v1/cart', cartRouter)
   /* app.use('/api/v1/subsection', subsectionRouter) */

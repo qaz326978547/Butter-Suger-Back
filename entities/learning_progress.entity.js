@@ -1,8 +1,8 @@
 const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
-  name: 'learning_process',
-  tableName: 'learning_process',
+  name: 'learning_progress',
+  tableName: 'learning_progress',
   columns: {
     id: {
       primary: true,
@@ -13,25 +13,17 @@ module.exports = new EntitySchema({
       type: 'uuid',
       nullable: false,
     },
-    course_id: {
-      type: 'uuid',
-      nullable: false,
-    },
-    section_id: {
-      type: 'uuid',
-      nullable: false,
-    },
     subsection_id: {
       type: 'uuid',
       nullable: false,
     },
     status: {
       type: 'varchar',
-      enum: ['not_started', 'in_progress', 'completed'],
-      default: 'not_started',
+      enum: ['in_progress', 'completed'],
+      default: 'in_progress',
     },
     watched_time: {
-      type: 'varchar',
+      type: 'int',
       nullable: true,
     },
     completed_at: {
@@ -42,6 +34,11 @@ module.exports = new EntitySchema({
         type: 'timestamptz',
         createDate: true,
         default: () => 'CURRENT_TIMESTAMP'
+    },
+    updated_at: {
+        type: 'timestamptz',
+        updateDate: true,
+        default: () => 'CURRENT_TIMESTAMP'
     }
   },
   relations: {
@@ -49,18 +46,6 @@ module.exports = new EntitySchema({
       type: 'many-to-one',
       target: 'users',
       joinColumn: { name: 'user_id' },
-      onDelete: 'CASCADE',
-    },
-    course: {
-      type: 'many-to-one',
-      target: 'courses',
-      joinColumn: { name: 'course_id' },
-      onDelete: 'CASCADE',
-    },
-    section: {
-      type: 'many-to-one',
-      target: 'course_section',
-      joinColumn: { name: 'section_id' },
       onDelete: 'CASCADE',
     },
     subsection: {

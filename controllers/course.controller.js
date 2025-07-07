@@ -929,6 +929,7 @@ const courseController = {
       return sendResponse(res, 200, true, '取得資料成功', result)
     /* return sendResponse(res, 200, true, '取得資料成功', {data:result , perNum, pageNum }) */
   }),
+  
   /*
    * 取得所有課程評價
    * @route GET /api/v1/course/ratings
