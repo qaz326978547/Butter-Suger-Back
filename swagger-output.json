@@ -1610,6 +1610,23 @@
           }
         }
       }
+    },
+    "/api/v1/course/purchased": {
+      "get": {
+        "tags": ["Cart"],
+        "summary": "取得已購買的課程列表",
+        "description": "取得當前登入使用者已購買的所有課程列表。",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "取得成功",
+            "schema": {
+              "type": "array"
+            }
+          },
+          "401": { "description": "未登入" }
+        }
+      }
     }
   },
   "security": [

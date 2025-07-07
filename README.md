@@ -163,6 +163,11 @@ PayGateWay=
 - `PATCH /api/v1/admin/teacher-applications/{applicationId}/status` 審核教師申請
 - `GET /api/v1/admin/system-log` 取得系統日誌(目前只紀錄登入後的動作)
 
+#### My-Courses
+- `GET /api/v1/course/my-courses` 取得我的課程列表
+- `POST /api/v1/course/subsections/{subsectionId}/progress` 新增章節進度
+- `PATCH /api/v1/course/subsections/{subsectionId}/progress` 標記章節進度
+
 #### Courses
 - `GET /api/v1/course/popular` 取得首頁熱門課程資料
 - `GET /api/v1/course/list` 取得所有課程
@@ -190,7 +195,6 @@ PayGateWay=
 - `POST /api/v1/course/{courseId}/questions` 提出課程問題
 - `GET /api/v1/course/{courseId}/questions` 取得課程問題列表
 - `POST /api/v1/course/{courseId}/answers` 提出課程回答
-- `GET /api/v1/course/my-courses` 取得我的課程列表
 
 #### Section
 - `GET /api/v1/course/{courseId}/section` 取得課程章節
@@ -212,6 +216,7 @@ PayGateWay=
 - `POST /api/v1/cart/merge` 登入後整合購物車
 - `POST /api/v1/cart/checkout` 結帳(請使用網頁執行結帳，因會跳轉頁面)
 - `DELETE /api/v1/cart/{cartItemId}` 刪除購物車中的課程
+- `GET /api/v1/course/purchased` 取得已購買的課程列表
 
 
 

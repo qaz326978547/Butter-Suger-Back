@@ -611,6 +611,17 @@ const cartController = {
         return sendResponse(res, 200, true, '結帳成功', data)
     }),
 
+
+    /*
+   * 更新教師收益表
+   * @route POST - /api/v1/payment/newebpay_notify
+   */
+    newebpayNotify: wrapAsync(async (req, res, next) => {
+
+
+        return sendResponse(res, 200, true, '結帳成功', data)
+    }),
+
 }
 module.exports = cartController
 
