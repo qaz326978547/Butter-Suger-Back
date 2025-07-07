@@ -29,7 +29,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"main_section_title\": \"第一章節: 準備工作test\"\r\n}",
+									"raw": "{\r\n    \"main_section_title\": \"第一章節: 準備工作\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -37,7 +37,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://buttersugar.zeabur.app/api/v1/course/f35e6f65-c07e-4609-ad33-813f65a6cb9b/section",
+									"raw": "http://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/section",
 									"protocol": "http",
 									"host": [
 										"buttersugar",
@@ -48,7 +48,7 @@
 										"api",
 										"v1",
 										"course",
-										"f35e6f65-c07e-4609-ad33-813f65a6cb9b",
+										"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 										"section"
 									]
 								}
@@ -728,7 +728,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"course_name\":\"經典美味！法式海綿蛋糕全攻略\"\r\n}",
+							"raw": "{\r\n    \"course_name\":\"經典不敗！日式湯種軟麵包實作班\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -771,7 +771,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"category_id\":4\r\n}",
+							"raw": "{\r\n    \"category_id\":2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -779,7 +779,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/18051237-c2c1-4807-b86a-79890c26ad64/category",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/category",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -790,7 +790,7 @@
 								"api",
 								"v1",
 								"course",
-								"18051237-c2c1-4807-b86a-79890c26ad64",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"category"
 							]
 						}
@@ -818,12 +818,12 @@
 								{
 									"key": "banner",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/新增資料夾/2c7b0284-797d-444d-a84e-08b78b42c77f.png"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/新增資料夾/08aa88ed-448d-4ef6-9c2c-f1a47893e6c5.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/upload/course-banner-image",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/upload/course-banner-image",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -834,7 +834,7 @@
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"upload",
 								"course-banner-image"
 							]
@@ -863,12 +863,12 @@
 								{
 									"key": "course-small-image",
 									"type": "file",
-									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/新增資料夾/f11cdfef-4d1b-494b-b109-19b757e3ed0a.png"
+									"src": "/C:/Users/user/Desktop/程式開發/圖片/cookie/新增資料夾/9ed6c0dd-8b4c-426e-8335-7f0cb1feba44.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/upload/small-image",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/upload/small-image",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -879,7 +879,7 @@
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"upload",
 								"small-image"
 							]
@@ -918,7 +918,7 @@
 							]
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/18051237-c2c1-4807-b86a-79890c26ad64/upload/course-handouts",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/upload/course-handouts",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -929,7 +929,7 @@
 								"api",
 								"v1",
 								"course",
-								"18051237-c2c1-4807-b86a-79890c26ad64",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"upload",
 								"course-handouts"
 							]
@@ -953,7 +953,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/handouts",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/handouts",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -964,7 +964,7 @@
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"handouts"
 							]
 						}
@@ -997,7 +997,7 @@
 							]
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/upload/course-trailer",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/upload/course-trailer",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -1008,7 +1008,7 @@
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"upload",
 								"course-trailer"
 							]
@@ -1042,7 +1042,7 @@
 							]
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/upload/description-image",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/upload/description-image",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -1053,7 +1053,7 @@
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"upload",
 								"description-image"
 							],
@@ -1085,7 +1085,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"suitable_for\":\"健康飲食者、全麥雜糧愛好者\",\r\n    \"course_goal\":\"熟練全麥雜糧堅果麵包配方與技巧，做出高纖維健康美味麵包\",\r\n    \"course_description\":\"專為注重飲食健康設計，課程包含全麥雜糧麵包、核桃蔓越莓雜糧麵包、南瓜子燕麥麵包三大主題。深入講解高含水量麵糰操作、雜糧與堅果均勻分佈訣竅，以及冷藏發酵提升風味的小技巧。\",\r\n    \"course_banner_description\":\"高纖全麥結合營養堅果與雜糧，兼顧健康與美味的日常能量麵包。\"\r\n}",
+							"raw": "{\r\n    \"suitable_for\":\"家庭烘焙愛好者、軟麵包控\",\r\n    \"course_goal\":\"學會湯種麵包技法，輕鬆做出口感濕潤、柔軟的經典日式麵包\",\r\n    \"course_description\":\"本課程詳細解析湯種製作、麵糰發酵、整型與烘焙溫控等關鍵步驟。主題包括牛奶餐包、抹茶紅豆麵包、巧克力核桃麵包等人氣口味，並特別講解如何延長麵包柔軟保鮮時間，讓新手也能在家輕鬆完成職人級作品。\",\r\n    \"course_banner_description\":\"學會湯種技法，打造蓬鬆濕潤的日式軟麵包，入口即化不乾柴！\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1093,7 +1093,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/save",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/save",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -1104,7 +1104,7 @@
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"save"
 							]
 						}
@@ -1159,14 +1159,14 @@
 							}
 						},
 						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/price",
+							"raw": "https:///buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/price",
 							"protocol": "https",
 							"path": [
 								"buttersugar.zeabur.app",
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"price"
 							]
 						}
@@ -1198,14 +1198,14 @@
 							}
 						},
 						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6/status",
+							"raw": "https:///buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/status",
 							"protocol": "https",
 							"path": [
 								"buttersugar.zeabur.app",
 								"api",
 								"v1",
 								"course",
-								"7fc557d5-b5e4-4f1d-afb2-b4f7ebcf30b6",
+								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 								"status"
 							]
 						}
@@ -1557,144 +1557,6 @@
 								"course",
 								"441edd32-986a-46c6-8769-86ea3994b57b",
 								"questions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "新增課程章節",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"main_section_title\": \"準備工作\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/06585aaa-bb4d-4503-ba42-6f66adb836f0/course-section",
-							"protocol": "https",
-							"path": [
-								"buttersugar.zeabur.app",
-								"api",
-								"v1",
-								"course",
-								"06585aaa-bb4d-4503-ba42-6f66adb836f0",
-								"course-section"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "取得課程章節",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/06585aaa-bb4d-4503-ba42-6f66adb836f0/course-section",
-							"protocol": "https",
-							"path": [
-								"buttersugar.zeabur.app",
-								"api",
-								"v1",
-								"course",
-								"06585aaa-bb4d-4503-ba42-6f66adb836f0",
-								"course-section"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "修改課程章節",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"main_section_title\": \"準備工作2\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/course-section/52daacf9-802a-42f4-a369-e4697eb1d0ab",
-							"protocol": "https",
-							"path": [
-								"buttersugar.zeabur.app",
-								"api",
-								"v1",
-								"course",
-								"course-section",
-								"52daacf9-802a-42f4-a369-e4697eb1d0ab"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "刪除課程章節",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/course-section/52daacf9-802a-42f4-a369-e4697eb1d0ab",
-							"protocol": "https",
-							"path": [
-								"buttersugar.zeabur.app",
-								"api",
-								"v1",
-								"course",
-								"course-section",
-								"52daacf9-802a-42f4-a369-e4697eb1d0ab"
 							]
 						}
 					},

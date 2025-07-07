@@ -87,7 +87,7 @@ router.get('/:courseId', courseController.getCourse)
 router.patch(
   '/:courseId/status',
   ...handleMiddleware(
-    [isAuth, isAdmin, validateSchema(updateCourseStatus)],
+    [isAuth, isTeacher, validateSchema(updateCourseStatus)],
     courseController.updateCourseStatus
   )
 )
