@@ -183,9 +183,13 @@ const adminController = {
       const teacherRepo = manager.getRepository('teacher')
       const applicationRepo = manager.getRepository('teacher_application')
   
+
       const findApplication = await applicationRepo.findOne({where: {id: applicationId}})
-  
-      const updateUser = await userRepo.update({id: findApplication.user_id},{role: 'teacher', teacher_status: status})
+      const findUser = await userRepo.findOne({where:{ id: findApplication.user_id}})  
+      
+      const teacher_status = status==="approved"?"approved":findUser.teacher_status
+      const teacher_role = status==="approved"?"teacher":findUser.role
+      const updateUser = await userRepo.update({id: findApplication.user_id},{role: teacher_role, teacher_status: teacher_status})
   
       if(!updateUser.affected){
         await logSystemAction({
