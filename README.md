@@ -157,7 +157,7 @@ PayGateWay=
 - `POST /api/v1/teacher-applications` 申請成為教師
 - `PATCH /api/v1/teacher-applications/{applicationId}` 修改教師審核資料
 - `PATCH /api/v1/course/{courseId}/status` 更改課程狀態
-- `GET /api/v1/teacher/revenue` 取得教師收益表
+- `GET /api/v1/teacher/revenue` 取得教師收益報表
 
 #### Admin
 - `GET /api/v1/admin/teacher-applications` 取得所有教師申請資料
