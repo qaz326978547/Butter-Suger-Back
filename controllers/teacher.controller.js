@@ -218,31 +218,49 @@ const teacherController = {
   }),
 
   /*
-  * 更新是否為教師的狀態, 移到管理者模組
-  * @route PATCH - /api/v1/teacher/teacherStatus
+  * 取得教師收益表
+  * @route GET - /api/v1/teacher/revenue
   */
- /*  updateTeacherStatus: wrapAsync(async (req, res, next) => {
-    const studentId = req.params.studentId
-    const studentRepo = dataSource.getRepository('users')
-    
-    // 確認學生是否存在
-    const findStudent = await studentRepo.findOne({
-        select: ['id'],
-        where: { id: studentId }
-    })
+  getTeacherRevenue: wrapAsync(async (req, res, next) => {
+    const user_id = req.user.id
 
-    if(!findStudent){
-      return next(appError(res, 400, false, 'ID 錯誤'))
-    }
+    const teacherRepo = dataSource.getRepository('teacher')
+    const findTeacher = await teacherRepo.createQueryBuilder('teacher')
+    .select(['teacher.id AS teacher_id'])
+    .leftJoin('teacher.user', 'user')
+    .where('user.id=:user_id', {user_id})
+    .getRawOne()
 
-    const updateStudent = await studentRepo.update({id: studentId},{role: 'teacher', teacher_status: 'approved'})
+    const orderItemRepo = dataSource.getRepository('order_item')
+    const summaryRevenue = await orderItemRepo.createQueryBuilder('orderItem')
+    .select([
+        'teacher.id AS teacher_id',
+        'user.name AS user_name',
+        'orderItem.course_id AS course_id',
+        'course.course_name AS course_name',
+        'orderItem.price AS course_price',
+        'ROUND(SUM(orderItem.price * 0.25)) AS service_fee',
+        'ROUND(SUM(orderItem.price * 0.75)) AS revenue_net',
+        'COUNT(orderItem.course_id) AS total_students',
+        'SUM(orderItem.price) AS total_revenue',
+        'teacher.rating_score AS rating_score',
+        'COUNT(orderItem.course_id) AS sales_count',
+        'COUNT(course.id) AS opened_course_count',
+        
+    ])
+    .leftJoin('orderItem.courses', 'course')
+    .leftJoin('course.teacher', 'teacher')
+    .leftJoin('teacher.user', 'user')
+    .groupBy('teacher.id')
+    .addGroupBy('orderItem.course_id')
+    .addGroupBy('orderItem.price')
+    .addGroupBy('course.course_name')
+    .addGroupBy('user.name')
+    .where('teacher.id = :teacher_id', { teacher_id: findTeacher.teacher_id })
+    .getRawMany()
 
-    if(!updateStudent.affected){
-      return next(appError(res, 400, false, '審核教師失敗'))
-    }
-
-    return sendResponse(res, 200, true, '審核教師成功')
-  }), */
+    return sendResponse(res, 200, true, '成功取得教師收益表', summaryRevenue)
+  }),
 
   /*
   * 取得精選教師

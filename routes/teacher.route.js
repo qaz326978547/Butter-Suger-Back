@@ -17,6 +17,9 @@ router.get('/profile', ...handleMiddleware([isAuth, isTeacher], teacherControlle
 // 取得教師課程
 router.get('/teacherCourse', ...handleMiddleware([isAuth, isTeacher], teacherController.getTeacherCourse))
 
+// 取得教師收益表
+router.get('/revenue', ...handleMiddleware([isAuth, isTeacher], teacherController.getTeacherRevenue))
+
 //更新教師資料
 router.patch('/profile', ...handleMiddleware([upload.single('file'), isAuth, validateSchema(updateTeacherSchema), teacherController.updateTeacherData]))
 

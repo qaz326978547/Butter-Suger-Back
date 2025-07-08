@@ -71,7 +71,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://buttersugar.zeabur.app/api/v1/course/f35e6f65-c07e-4609-ad33-813f65a6cb9b/section",
+									"raw": "http://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/section",
 									"protocol": "http",
 									"host": [
 										"buttersugar",
@@ -82,7 +82,7 @@
 										"api",
 										"v1",
 										"course",
-										"f35e6f65-c07e-4609-ad33-813f65a6cb9b",
+										"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
 										"section"
 									]
 								}
@@ -2006,6 +2006,63 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "取得教師收益表",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://buttersugar.zeabur.app/api/v1/teacher/revenue",
+							"protocol": "http",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teacher",
+								"revenue"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "更改課程狀態",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/441edd32-986a-46c6-8769-86ea3994b57b/status",
+							"protocol": "https",
+							"host": [
+								"buttersugar",
+								"zeabur",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"course",
+								"441edd32-986a-46c6-8769-86ea3994b57b",
+								"status"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2247,26 +2304,6 @@
 			"name": "admin",
 			"item": [
 				{
-					"name": "更改課程狀態",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/441edd32-986a-46c6-8769-86ea3994b57b/status",
-							"protocol": "https",
-							"path": [
-								"buttersugar.zeabur.app",
-								"api",
-								"v1",
-								"course",
-								"441edd32-986a-46c6-8769-86ea3994b57b",
-								"status"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "取得所有教師申請資料",
 					"request": {
 						"auth": {
@@ -2356,7 +2393,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"status\": \"approved\"\r\n}",
+							"raw": "{\r\n    \"status\": \"rejected\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

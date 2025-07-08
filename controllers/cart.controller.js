@@ -609,7 +609,8 @@ const cartController = {
         }
 
         return sendResponse(res, 200, true, '結帳成功', data)
-    })
+    }),
+    
 }
 module.exports = cartController
 

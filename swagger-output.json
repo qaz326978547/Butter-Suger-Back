@@ -20,6 +20,7 @@
     "/api/v1/users/auth/google": {
       "get": {
         "tags": ["User"],
+        "summary": "Google 第三方登入",
         "description": "",
         "responses": {
           "default": {
@@ -326,6 +327,62 @@
             "description": "修改教師審核資料成功"
           },
           "400": { "description": "修改失敗" }
+        }
+      }
+    },
+    "/api/v1/teacher/revenue": {
+      "get": {
+        "tags": ["Teacher"],
+        "summary": "取得教師收益表",
+        "description": "取得當前登入教師的總收益資訊。",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "取得成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total_revenue": {
+                  "type": "integer",
+                  "description": "總收益（未扣除手續費）"
+                },
+                "rating_score": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "教師評價"
+                },
+                "sales_count": {
+                  "type": "integer",
+                  "description": "銷售課程數"
+                },
+                "opened_course_count": {
+                  "type": "integer",
+                  "description": "開設課程數"
+                },
+                "course_name": {
+                  "type": "string",
+                  "description": "課程名稱"
+                },
+                "course_price": {
+                  "type": "integer",
+                  "description": "課程金額"
+                },
+                "service_fee": {
+                  "type": "integer",
+                  "description": "手續費"
+                },
+                "revenue_net": {
+                  "type": "integer",
+                  "description": "淨收益"
+                },
+                "total_students": {
+                  "type": "integer",
+                  "description": "學生數"
+                }
+              }
+            }
+          },
+          "401": { "description": "未登入" }
         }
       }
     },

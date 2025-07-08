@@ -156,6 +156,8 @@ PayGateWay=
 - `GET /api/v1/teacher-applications` 取得教師審核資料（個人）
 - `POST /api/v1/teacher-applications` 申請成為教師
 - `PATCH /api/v1/teacher-applications/{applicationId}` 修改教師審核資料
+- `PATCH /api/v1/course/{courseId}/status` 更改課程狀態
+- `GET /api/v1/teacher/revenue` 取得教師收益表
 
 #### Admin
 - `GET /api/v1/admin/teacher-applications` 取得所有教師申請資料
@@ -190,7 +192,6 @@ PayGateWay=
 - `DELETE /api/v1/course/{courseId}/upload/description-image` 刪除課程描述圖片
 - `POST /api/v1/course/{courseId}/save` 儲存課程內容資訊
 - `PATCH /api/v1/course/{courseId}/price` 新增修改課程價格
-- `PATCH /api/v1/course/{courseId}/status` 更改課程狀態
 - `GET /api/v1/course/ratings` 取得所有課程評價
 - `POST /api/v1/course/{courseId}/questions` 提出課程問題
 - `GET /api/v1/course/{courseId}/questions` 取得課程問題列表
