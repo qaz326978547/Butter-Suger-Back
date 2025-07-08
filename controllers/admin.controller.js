@@ -69,7 +69,7 @@ const adminController = {
     let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
-      action: "取得所有教師申請者資料",
+      action: "取得單一教師申請者資料",
       sys_module: "後台管理者"
     }
 
@@ -116,7 +116,7 @@ const adminController = {
     let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
-      action: "取得所有教師申請者資料",
+      action: "取得系統日誌",
       sys_module: "後台管理者"
     }
 
@@ -166,7 +166,7 @@ const adminController = {
     let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
-      action: "取得所有教師申請者資料",
+      action: "審核教師申請",
       sys_module: "後台管理者"
     }
 
