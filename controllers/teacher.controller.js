@@ -223,7 +223,12 @@ const teacherController = {
   */
   getTeacherRevenue: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
-
+    let logEntry
+    logEntry = {
+      ...logEntry,
+      action: "取得教師收益報表",
+      sys_module: "後台頁面-教師課程頁面模組"
+    }
     const teacherRepo = dataSource.getRepository('teacher')
     const findTeacher = await teacherRepo.createQueryBuilder('teacher')
     .select(['teacher.id AS teacher_id'])
@@ -259,7 +264,24 @@ const teacherController = {
     .where('teacher.id = :teacher_id', { teacher_id: findTeacher.teacher_id })
     .getRawMany()
 
-    return sendResponse(res, 200, true, '成功取得教師收益表', summaryRevenue)
+    const summaryRevenueNumber = summaryRevenue.map(row => ({
+      ...row,
+      service_fee: Number(row.service_fee),
+      revenue_net: Number(row.revenue_net),
+      total_students: Number(row.total_students),
+      total_revenue: Number(row.total_revenue),
+      rating_score: Number(row.rating_score),
+      sales_count: Number(row.sales_count),
+      opened_course_count: Number(row.opened_course_count),
+      course_price: Number(row.course_price)      
+    }))
+
+    await logSystemAction({
+      ...logEntry,
+      status:"200"
+    })
+    
+    return sendResponse(res, 200, true, '成功取得教師收益表', summaryRevenueNumber)
   }),
 
   /*
