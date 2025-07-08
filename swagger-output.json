@@ -7,7 +7,7 @@
   },
   "host": "buttersugar.zeabur.app",
   "basePath": "/",
-  "schemes": ["https"],
+  "schemes": ["http"],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
@@ -333,7 +333,7 @@
     "/api/v1/teacher/revenue": {
       "get": {
         "tags": ["Teacher"],
-        "summary": "取得教師收益表",
+        "summary": "取得教師收益報表",
         "description": "取得當前登入教師的總收益資訊。",
         "parameters": [],
         "responses": {
