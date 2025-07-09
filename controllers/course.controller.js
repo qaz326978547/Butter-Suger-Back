@@ -453,7 +453,7 @@ const courseController = {
   uploadCourseHandOuts: wrapAsync(async (req, res, next) => {
     const { courseId } = req.params
     let files = req.files || []
-    let logEntry
+    let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
       action: "上傳課程多個講義",

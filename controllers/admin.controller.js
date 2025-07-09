@@ -11,7 +11,7 @@ const adminController = {
   * @route GET - /api/v1/admin/teacher-applications
   */
   getApplicationsData: wrapAsync(async (req, res, next) => {
-    let pageNum = req.query.pageNum || 1
+    let pageNum = req.query?.pageNum || 1
     let perNum = 12;
     let logEntry = req.logEntry
     logEntry = {
@@ -111,7 +111,7 @@ const adminController = {
   * @route GET - /api/v1/admin/getSystemLog
   */
   getSystemLog: wrapAsync(async (req, res, next) => {
-    let pageNum = req.query.pageNum || 1
+    let pageNum = req.query?.pageNum || 1
     let perNum = 12;
     let logEntry = req.logEntry
     logEntry = {

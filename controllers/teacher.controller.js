@@ -128,7 +128,7 @@ const teacherController = {
    */
   getTeacherCourse: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
-    let logEntry
+    let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
       action: "取得教師課程",
@@ -227,7 +227,7 @@ const teacherController = {
   */
   getTeacherRevenue: wrapAsync(async (req, res, next) => {
     const user_id = req.user.id
-    let logEntry
+    let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
       action: "取得教師收益報表",
