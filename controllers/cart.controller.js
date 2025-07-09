@@ -9,6 +9,9 @@ const logSystemAction = require('../services/system/logSystemAction')
 const { createAesEncrypt, createShaEncrypt, createAesDecrypt } = require('../services/checkout/checkout')
 const { In } = require('typeorm')
 const escapeHtml = require('he')  //防止 html 注入攻擊，最後再補上
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
 const config = require('../config/index')
 const { database } = require('../config/db')
 const MerchantID = config.get('newebpay.MerchantID')
@@ -17,8 +20,20 @@ const NotifyUrl = config.get('newebpay.NotifyUrl')
 const ReturnUrl = config.get('newebpay.ReturnUrl')
 const PayGateWay = config.get('newebpay.PayGateWay')
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+function parseNewebPay(raw) {
+    const fixed = raw.replace(
+        /^(\d{4}-\d{2}-\d{2})(\d{2}:\d{2}:\d{2})$/,
+        '$1 $2'
+    );
+    return dayjs.tz(fixed, 'YYYY-MM-DD HH:mm:ss', 'Asia/Taipei').toDate();
+}
 
 const cartController = {
+
+
     /*
    * 取得購物車資料
    * @route GET /api/v1/cart
@@ -568,6 +583,12 @@ const cartController = {
         console.log("data: ", data)
         console.log("=============newebpayNotify data=============")
 
+        data.Result.PayTime = parseNewebPay(data.Result.PayTime)
+
+        console.log("=============newebpayNotify data2=============")
+        console.log("data2: ", data)
+        console.log("=============newebpayNotify data2=============")
+        
         const payment_status =  data.Status==='SUCCESS'?'paid':'failed'
         const orderRepo = dataSource.getRepository('order')
         const updateOrder = await orderRepo.update({order_number: data.Result.MerchantOrderNo}, {
