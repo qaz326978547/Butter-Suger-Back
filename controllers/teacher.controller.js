@@ -135,7 +135,7 @@ const teacherController = {
       sys_module: "前台頁面-教師課程頁面模組"
     }
 
-    let pageNum = req.query.pageNum || 1
+    let pageNum = req.query?.pageNum || 1
     let perNum = 12;
 
     if(pageNum<=0){
