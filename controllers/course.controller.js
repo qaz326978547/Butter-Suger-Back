@@ -69,7 +69,7 @@ const courseController = {
    * @route GET /api/v1/course/list
    */
   getCourseList: wrapAsync(async (req, res, next) => {
-    let pageNum = req.query.pageNum || 1
+    let pageNum = req.query?.pageNum || 1
     let perNum = 12;
 
     if(pageNum<=0){
