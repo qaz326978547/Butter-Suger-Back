@@ -105,7 +105,7 @@ const courseController = {
       }
     })
 
-    return sendResponse(res, 200, true, '取得課程列表成功', result)
+    return sendResponse(res, 200, true, '取得課程列表成功', { courses: result })
     /* return sendResponse(res, 200, true, '取得課程列表成功', { data: result, perNum, pageNum }) */
   }),
 
@@ -877,7 +877,7 @@ const courseController = {
    * @route GET /api/v1/course/popular
    */
   getPopularCourses: wrapAsync(async (req, res, next) => {
-    let pageNum = req.query.pageNum || 1
+    let pageNum = req.query?.pageNum || 1
     let perNum = 12;
 
     if(pageNum<=0){
@@ -1568,7 +1568,7 @@ const courseController = {
       sys_module: "前台頁面-我的課程頁面模組"
     }
 
-    let pageNum = req.query.pageNum || 1
+    let pageNum = req.query?.pageNum || 1
     let perNum = 12;
 
     if(pageNum<=0){
