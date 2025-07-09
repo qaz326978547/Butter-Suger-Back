@@ -7,7 +7,7 @@
   },
   "host": "buttersugar.zeabur.app",
   "basePath": "/",
-  "schemes": ["http"],
+  "schemes": ["https"],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
