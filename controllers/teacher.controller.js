@@ -206,6 +206,10 @@ const teacherController = {
         avg_rating_score: avgRatingMap[teacherCourse.id] || '',
       }
     }))
+    
+    console.log("==============取得教師課程===========")
+    console.log("logEntry: ", logEntry)
+    console.log("==============取得教師課程===========")
 
     await logSystemAction({
       ...logEntry,
