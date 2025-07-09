@@ -564,6 +564,10 @@ const cartController = {
             return next(appError(400, '付款失敗'))
         } 
 
+        console.log("=============newebpayNotify data=============")
+        console.log("data: ", data)
+        console.log("=============newebpayNotify data=============")
+
         const payment_status =  data.Status==='SUCCESS'?'paid':'failed'
         const orderRepo = dataSource.getRepository('order')
         const updateOrder = await orderRepo.update({order_number: data.Result.MerchantOrderNo}, {
@@ -574,9 +578,17 @@ const cartController = {
             pay_rtn_msg: JSON.stringify(data.Result)
             }
         )
+
+        console.log("=============newebpayNotify=============")
+        console.log("updateOrder: ", updateOrder)
+        console.log("=============newebpayNotify=============")
         
         //取得訂單
         const findOrder = await orderRepo.findOne({where: {order_number: data.Result.MerchantOrderNo}})
+
+        console.log("=============newebpayNotify findOrder=============")
+        console.log("findOrder: ", findOrder)
+        console.log("=============newebpayNotify findOrder=============")
 
         const user_id = findOrder.user_id
         const order_id = findOrder.id
@@ -585,6 +597,10 @@ const cartController = {
         // 取得訂單詳細項目
         const orderItemRepo = dataSource.getRepository('order_item')
         const orderCourse = await orderItemRepo.find({where:{order_id:order_id}})
+
+        console.log("=============newebpayNotify orderCourse=============")
+        console.log("orderCourse: ", orderCourse)
+        console.log("=============newebpayNotify orderCourse=============")
 
         //新增學生課程表課程
         const studentCourseRepo = dataSource.getRepository('student_course')
@@ -597,9 +613,17 @@ const cartController = {
                 course_id: course.course_id,
                 last_accessed_at: purchase_date
             })
-            await studentCourseRepo.save(newStudentCourse)
+            const studentCourseResult = await studentCourseRepo.save(newStudentCourse)
+
+            console.log("=============newebpayNotify studentCourseResult=============")
+            console.log("studentCourseResult: ", studentCourseResult)
+            console.log("=============newebpayNotify studentCourseResult=============")
 
             findCourse = await courseRepo.findOne({where:{id:course.course_id}})
+
+            console.log("=============newebpayNotify findCourse=============")
+            console.log("findCourse: ", findCourse)
+            console.log("=============newebpayNotify findCourse=============")
 
             // 新增課程人數
             if(findCourse){
