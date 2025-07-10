@@ -1,3 +1,5 @@
+# Butter & Sugar 烘焙課程影音平台
+
 ## 啟動方式
 
 1. 安裝相依套件
@@ -57,10 +59,25 @@ JWT_SECRET=hexschool666
 - `npm run db:truncate ` - 清空所有資料表資料
 - `npm run db:drop ` - 刪除所有資料表
 
-
 ## 開發建立環境順序
 
 - `npm i`
 - `.env 載入環境變數`
 - `npm run start:prod`
 - `npm run dev`
+
+### 前端網址
+
+- `https://buttersuger-frontend.zeabur.app/Home`
+
+### swagger 文件
+
+- `https://sugerbutter-test.zeabur.app/api-docs/`
+
+### 前端專案
+
+- `https://github.com/HatchiX8/Butter-Sugar-Frontend`
+
+### 後端專案
+
+- `https://github.com/qaz326978547/Butter-Suger-Back`

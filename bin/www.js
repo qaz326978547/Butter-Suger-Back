@@ -3,6 +3,9 @@ const http = require('http')
 const config = require('../config/index')
 const app = require('../app')
 const logger = require('../utils/logger')('www')
+// const { dataSource } = require('./db/data-source')
+const seedCourseCategories = require('../db/seed/createCourseCategoriesSeed')
+require('../workers/videoUpload.worker')
 const { dataSource } = require('../db/data-source')
 
 const port = config.get('web.port')
@@ -53,12 +56,21 @@ server.on('error', onError)
 server.listen(port, async () => {
   try {
     logger.info(`Server starting on port ${port}...`)
+
+    // 1. 初始化資料庫連線
     await dataSource.initialize()
+
+    // 2. 清空整個資料庫（開發用）
+    // await dataSource.dropDatabase()
+
+    // 3. 同步 schema（重建表）
+    // await dataSource.synchronize()
+    await seedCourseCategories()
+    logger.info('Seed course categories 完成')
     logger.info('資料庫連線成功')
     logger.info(`伺服器運作中. port: ${port}`)
   } catch (error) {
     logger.error(`資料庫連線失敗: ${error.stack || error.message}`)
-    // 額外印出錯誤完整資訊
     console.error(error)
     process.exit(1)
   }

@@ -4,7 +4,6 @@ const { verifyJWT } = require('../utils/jwtUtils')
 const logger = require('../utils/logger')('isAuth')
 
 const isAuth = async (req, res, next) => {
-  console.log("===============isAuth=================")
   try {
     // 確認 token 是否存在並取出 token
     const authHeader = req.headers.authorization

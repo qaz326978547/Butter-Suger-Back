@@ -16,8 +16,14 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5500',
   'http://localhost:8080',
-  'https://buttersuger-frontend.zeabur.app',
-  'https://buttersuger-test.zeabur.app',
+  'https://buttersugar-frontend.zeabur.app',
+  'https://buttersugar-test.zeabur.app',
+  'https://buttersugar.zeabur.app',
+  'https://butter-sugar-test.zeabur.app',
+  'https://butter-sugar-backend.zeabur.app',
+  'https://buttersugar-backend.zeabur.app',
+  'https://d144vsl069kyo0.cloudfront.net', //結帳成功回傳頁面顯示
+  'https://ccore.newebpay.com', // 藍新金流
 ]
 app.use(
   cors({
@@ -72,20 +78,5 @@ app.get('/healthcheck', (req, res) => {
 
 // 讓錯誤處理 middleware 做全域錯誤處理
 app.use(errorHandler)
-const { dataSource } = require('./db/data-source')
-const seedCourseCategories = require('./db/seed/createCourseCategoriesSeed')
 
-dataSource
-  .initialize()
-  .then(async () => {
-    await seedCourseCategories()
-    // 這裡可以加上啟動 server 的程式碼
-    // 例如:
-    // app.listen(process.env.PORT || 8080, () => {
-    //   console.log('Server is running...')
-    // })
-  })
-  .catch((err) => {
-    console.error('資料庫連線失敗:', err)
-  })
 module.exports = app

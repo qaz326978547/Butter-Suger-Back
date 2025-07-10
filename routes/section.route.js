@@ -21,8 +21,8 @@ router.post(
 )
 
 // 更新章節
-router.patch(
-  '/:id',
+router.post(
+  '/:id/update',
   ...handleMiddleware(
     [isAuth, validateSchema(updateSectionSchema)],
     sectionController.updateSection

@@ -11,3 +11,5 @@ module.exports = (handler, defaultErrorMessage = '伺服器錯誤') => {
     }
   }
 }
+
+

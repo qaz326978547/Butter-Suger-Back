@@ -14,7 +14,7 @@ module.exports = new EntitySchema({
       nullable: true,
     },
     category_id: {
-      type: 'uuid',
+      type: 'int',
       nullable: true,
     },
     course_banner_imageUrl: {
@@ -119,7 +119,7 @@ module.exports = new EntitySchema({
     teacher: {
       target: 'teacher',
       type: 'many-to-one',
-      inverseSide: 'teacher',
+      inverseSide: 'courses',
       joinColumn: {
         name: 'teacher_id',
         referencedColumnName: 'id',

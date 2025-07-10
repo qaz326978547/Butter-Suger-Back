@@ -12,6 +12,10 @@ const sectionController = {
     if (!courseId) return next(appError(400, '缺少課程 ID'))
 
     const sectionRepo = dataSource.getRepository('course_section')
+    // 確認 courseId 是否存在
+    const courseExists = await sectionRepo.findOne({ where: { course_id: courseId } })
+    if (!courseExists) return next(appError(404, '找不到對應課程'))
+
     const sections = await sectionRepo.find({
       where: { course_id: courseId },
       order: { order_index: 'ASC' },

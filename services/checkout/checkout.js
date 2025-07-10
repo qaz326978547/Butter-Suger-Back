@@ -10,7 +10,6 @@ const ReturnUrl = config.get('newebpay.ReturnUrl')
 const RespondType = 'JSON';
 
 function genDataChain(order) {
-    console.log("===========genDataChain============")
     return `MerchantID=${MerchantID}&TimeStamp=${
       order.TimeStamp
     }&Version=${Version}&RespondType=${RespondType}&MerchantOrderNo=${
@@ -23,14 +22,12 @@ function genDataChain(order) {
   }
 
 function createAesEncrypt(TradeInfo) {
-    console.log("===========TradeInfo============")
     const encrypt = crypto.createCipheriv('aes-256-cbc', HASHKEY, HASHIV);
     const enc = encrypt.update(genDataChain(TradeInfo), 'utf8', 'hex');
     return enc + encrypt.final('hex');
 }
 
 function createShaEncrypt(aesEncrypt) {
-    console.log("===========aesEncrypt============")
     const sha = crypto.createHash('sha256');
     const plainText = `HashKey=${HASHKEY}&${aesEncrypt}&HashIV=${HASHIV}`;
     return sha.update(plainText).digest('hex').toUpperCase();
@@ -38,7 +35,6 @@ function createShaEncrypt(aesEncrypt) {
 
 //AES 解密
 function createAesDecrypt(TradeInfo) {
-    console.log("===========TradeInfo============")
     const decrypt = crypto.createDecipheriv('aes-256-cbc', HASHKEY, HASHIV);
     decrypt.setAutoPadding(false);
     const text = decrypt.update(TradeInfo, 'hex', 'utf8');

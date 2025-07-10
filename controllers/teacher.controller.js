@@ -1,17 +1,20 @@
 const { dataSource } = require('../db/data-source')
 const { appError, sendResponse } = require('../utils/responseFormat')
+const wrapAsync = require('../utils/wrapAsync')
 const cleanUndefinedFields = require('../utils/cleanUndefinedFields')
 const storage = require('../services/storage')
 const updateUserAndTeacher = require('../services/teacher/updateUserAndTeacher')
 
 
 const teacherController = {
-  //取得教師資料
-  async getTeacherData(req, res, next) {
+  /*
+   * 取得教師資料
+   * @route GET - /api/v1/teacher/profile
+   */
+  getTeacherData: wrapAsync(async (req, res, next) => {
     try {
       const userId = req.user.id
       const teacherRepo = dataSource.getRepository('teacher')
-
 
       // 確認教師是否存在
       const findTeacher = await teacherRepo.findOne({
@@ -50,33 +53,24 @@ const teacherController = {
     } catch (error) {
       next(error)
     }
-  },
+  }),
 
-  // 更新教師資料
-  async updateTeacherData(req, res, next) {
-    console.log("================updateTeacherData==============")
-    console.log(req.user.id)
-    console.log("================updateTeacherData==============")
+  /*
+  * 更新教師資料
+  * @route PATCH - /api/v1/teacher/profile
+  */
+  updateTeacherData: wrapAsync(async (req, res, next) => {
     try {
         const userId = req.user.id
         const {name, nickname, phone, birthday, sex, address, bank_name, bank_account, slogan, description, specialization} = req.body
 
         const teacherRepo = dataSource.getRepository('teacher')
-        console.log("================updateTeacherData teacherRepo==============")
         // 確認教師是否存在
         const findTeacher = await teacherRepo.findOne({
             select: ['id'],
             where: { user_id: userId },
             relations: ['user']
         })
-        console.log("================updateTeacherData findTeacher==============")
-        console.log(findTeacher)
-        
-        console.log("================updateTeacherData findTeacher==============")
-        console.log(findTeacher)
-        console.log("================updateTeacherData findTeacher==============")
-        console.log(findTeacher?.user?.profile_image_url)
-        console.log("================updateTeacherData findTeacher2==============")
 
       // 清理未定義的欄位
         const updateUserData = cleanUndefinedFields({
@@ -86,7 +80,7 @@ const teacherController = {
             birthday, 
             sex, 
             address,
-            profile_image_url: findTeacher?.users?.profile_image_url || '',
+            profile_image_url: findTeacher?.user?.profile_image_url || '',
             role: 'teacher',
         })
 
@@ -105,14 +99,17 @@ const teacherController = {
 
         await updateUserAndTeacher(userId, updateUserData, updateTeacherData)
         
-        return sendResponse(res, 200, true, '更新使用者資料成功')
+        return sendResponse(res, 200, true, '更新教師資料成功')
     } catch (error) {
       next(error)
     }
-  },
+  }),
 
-  //取得精選教師
-  async getTeacherFeatured(req, res, next){
+  /*
+  * 取得精選教師
+  * @route GET - /api/v1/teacher/featured
+  */
+  getTeacherFeatured: (async (req, res, next) => {
     const coursesRepo = dataSource.getRepository('courses')
 
     //內層： 先選出教師的最新課程，再把結果包成子查詢
@@ -127,15 +124,17 @@ const teacherController = {
       'teacher.slogan AS teacher_slogan',
       'user.id AS user_id',
       'user.name AS teacher_name',
+      'user.profile_image_url AS teacher_profile_image_url',
     "ROW_NUMBER() OVER (PARTITION BY teacher.id ORDER BY course.created_at DESC) AS rn"])
     .leftJoin('course.teacher', 'teacher') //relations:teacher => course.teacher
-    .leftJoin('teacher.users', 'user')
+    .leftJoin('teacher.user', 'user')
 
     //外層： 再依據教師的評價排序和課程時間(只留 rn = 1)
     const result = await dataSource.createQueryBuilder()
     .select(['t.teacher_id',
               't.user_id',
               't.teacher_name',
+              't.teacher_profile_image_url',
               't.teacher_specialization',
               't.teacher_slogan',
               't.course_id',
@@ -144,22 +143,25 @@ const teacherController = {
     .from('('+ sub.getQuery() +')', 't')
     .setParameters(sub.getParameters())  //把內層 QueryBuilder 用到的所有參數，原封不動地複製到外層 QueryBuilder
     .where('t.rn=1') // 取出第一筆
-    .orderBy('t.teacher_rating_score', 'DESC')
+    .orderBy('t.teacher_rating_score', 'DESC', 'NULLS LAST')
     .addOrderBy('t.created_at', 'DESC')
     .limit(10)
     .getRawMany()
 
     return sendResponse(res, 200, true, '取得資料成功', result)
-  },
+  }),
 
-  //取得單一精選教師資料
-  async getSingleFeaturedTeacherData(req, res, next){
+  /*
+  * 取得單一精選教師資料
+  * @route GET - /api/v1/teachers/:teacher-id
+  */
+  getSingleFeaturedTeacherData: wrapAsync(async (req, res, next) => {
     const {teacherId} = req.params
 
     // 取得課程資料, 不用 relations: ['teacher']，拆開請求比較好分類
     const coursesRepo = dataSource.getRepository('courses')
     const findCourses = await coursesRepo.find({
-      select: ['id', 'course_banner_imageUrl', 'course_name'],
+      select: ['id', 'course_small_imageUrl', 'course_name', 'course_hours','origin_price', 'sell_price', 'total_users'],
       where: { teacher_id:teacherId }
     })
 
@@ -171,20 +173,48 @@ const teacherController = {
       relations:['user']
     })
 
+    const ratingRepo = dataSource.getRepository('ratings')
+    const ratingCount = await ratingRepo.createQueryBuilder('rating')
+    .select('COUNT(rating.id)', 'rating_users')
+    .leftJoin('rating.courses', 'course')
+    .leftJoin('course.teacher', 'teacher')
+    .where('teacher.id = :teacher_id', {teacher_id:teacherId})
+    .getRawOne()
+
+    //每門課的平均評價分數
+    const avgRatings = await ratingRepo.createQueryBuilder('rating')
+    .select(['rating.course_id AS course_id', 
+            'ROUND(AVG(rating.rating_score)::numeric, 2) AS avg_rating_score',
+            'COUNT(rating.id) AS course_rating_users',])
+    .groupBy('rating.course_id')
+    .getRawMany()
+
+
+    //轉成物件
+    const avgRatingMap = Object.fromEntries(avgRatings.map(r => [r.course_id, {avg_rating_score: r.avg_rating_score, course_rating_users: r.course_rating_users}]))
+    
+    const findCourseResult = findCourses.map(course => {
+      return {
+        ...course,
+        course_ratings: avgRatingMap[course.id] || ''
+      }
+    })
+
     return sendResponse(res, 200, true, '取得資料成功', {
       teacher: {
             teacher_id : findTeacher.id,
-            user_id : findTeacher.users.id,
-            name: findTeacher.users.name,
-            profile_image_url:findTeacher.users.profile_image_url,
-            rating_score: findTeacher.rating_score, 	
+            user_id : findTeacher.user.id,
+            name: findTeacher.user.name,
+            profile_image_url:findTeacher.user.profile_image_url,
+            rating_score: findTeacher.rating_score, 
+            rating_users: ratingCount.rating_users,	
             slogan: findTeacher.slogan,
             description: findTeacher.description,
             specialization: findTeacher.specialization    
           },
-      course: findCourses
+      course: findCourseResult
     })
-  }
+  })
 }
 
 module.exports = teacherController

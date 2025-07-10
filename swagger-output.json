@@ -5,11 +5,9 @@
     "description": "Description",
     "version": "1.0.0"
   },
-  "host": "butter-sugar.zeabur.app",
+  "host": "sugerbutter-test.zeabur.app",
   "basePath": "/",
-  "schemes": [
-    "https"
-  ],
+  "schemes": ["https"],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
@@ -58,62 +56,78 @@
       "patch": {
         "tags": ["User"],
         "summary": "更新使用者資料",
-        "consumes": [
-          "multipart/form-data"
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          { "name": "name", "in": "formData", "type": "string", "description": "使用者姓名" },
+          { "name": "nickname", "in": "formData", "type": "string", "description": "暱稱" },
+          { "name": "phone", "in": "formData", "type": "string", "description": "手機" },
+          { "name": "birthday", "in": "formData", "type": "string", "description": "生日" },
+          { "name": "sex", "in": "formData", "type": "string", "description": "性別" },
+          { "name": "address", "in": "formData", "type": "string", "description": "地址" },
+          { "name": "file", "in": "formData", "type": "file", "description": "頭像上傳（檔案）" }
         ],
+        "responses": {
+          "200": { "description": "成功更新使用者資料" },
+          "400": { "description": "更新失敗，請稍後再試" },
+          "404": { "description": "查無個人資料，請重新登入" }
+        }
+      }
+    },
+    "/api/v1/course/favorites/list": {
+      "get": {
+        "tags": ["User"],
+        "summary": "取得收藏課程列表",
+        "description": "取得目前使用者所有收藏的課程",
+        "responses": {
+          "200": {
+            "description": "成功取得收藏課程列表"
+          }
+        }
+      }
+    },
+    "/api/v1/course/favorites": {
+      "post": {
+        "tags": ["User"],
+        "summary": "新增收藏課程",
+        "description": "將指定課程加入收藏",
         "parameters": [
           {
-            "name": "name",
-            "in": "formData",
-            "type": "string",
-            "description": "使用者姓名"
-          },
-          {
-            "name": "nickname",
-            "in": "formData",
-            "type": "string",
-            "description": "暱稱"
-          },
-          {
-            "name": "phone",
-            "in": "formData",
-            "type": "string",
-            "description": "手機"
-          },
-          {
-            "name": "birthday",
-            "in": "formData",
-            "type": "string",
-            "description": "生日"
-          },
-          {
-            "name": "sex",
-            "in": "formData",
-            "type": "string",
-            "description": "性別"
-          },
-          {
-            "name": "address",
-            "in": "formData",
-            "type": "string",
-            "description": "地址"
-          },
-          {
-            "name": "file",
-            "in": "formData",
-            "type": "file",
-            "description": "頭像上傳（檔案）"
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_id": { "type": "string", "example": "97ff5cbd-7cbd-4e47-ab8b-b5da0e0be89f" }
+              },
+              "required": ["course_id"]
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "成功更新使用者資料"
-          },
-          "400": {
-            "description": "更新失敗，請稍後再試"
-          },
-          "404": {
-            "description": "查無個人資料，請重新登入"
+            "description": "成功加入收藏"
+          }
+        }
+      }
+    },
+    "/api/v1/course/favorites/{favoriteId}": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "刪除收藏課程",
+        "description": "依 favoriteId 刪除指定收藏",
+        "parameters": [
+          {
+            "name": "favoriteId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "收藏記錄ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功刪除收藏課程"
           }
         }
       }
@@ -124,9 +138,18 @@
         "summary": "取得所有訂單",
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/api/v1/users/orders/{orderNumber}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "取得單一訂單",
+        "description": "",
+        "parameters": [{ "name": "orderNumber", "in": "path", "required": true, "type": "string" }],
+        "responses": {
+          "200": { "description": "OK" }
         }
       }
     },
@@ -136,101 +159,31 @@
         "summary": "取得教師資料",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
-          }
+          "default": { "description": "" }
         }
       },
       "patch": {
         "tags": ["Teacher"],
         "summary": "更新教師資料",
-        "consumes": [
-          "multipart/form-data"
-        ],
+        "consumes": ["multipart/form-data"],
         "parameters": [
-          {
-            "name": "name",
-            "in": "formData",
-            "type": "string",
-            "description": "姓名"
-          },
-          {
-            "name": "nickname",
-            "in": "formData",
-            "type": "string",
-            "description": "暱稱"
-          },
-          {
-            "name": "phone",
-            "in": "formData",
-            "type": "string",
-            "description": "手機"
-          },
-          {
-            "name": "birthday",
-            "in": "formData",
-            "type": "string",
-            "description": "生日"
-          },
-          {
-            "name": "sex",
-            "in": "formData",
-            "type": "string",
-            "description": "性別"
-          },
-          {
-            "name": "address",
-            "in": "formData",
-            "type": "string",
-            "description": "地址"
-          },
-          {
-            "name": "bank_name",
-            "in": "formData",
-            "type": "string",
-            "description": "銀行名稱"
-          },
-          {
-            "name": "bank_account",
-            "in": "formData",
-            "type": "string",
-            "description": "銀行帳號"
-          },
-          {
-            "name": "slogan",
-            "in": "formData",
-            "type": "string",
-            "description": "標語"
-          },
-          {
-            "name": "description",
-            "in": "formData",
-            "type": "string",
-            "description": "自我介紹"
-          },
-          {
-            "name": "specialization",
-            "in": "formData",
-            "type": "string",
-            "description": "專長"
-          },
-          {
-            "name": "file",
-            "in": "formData",
-            "type": "file",
-            "description": "頭像上傳（檔案）"
-          }
+          { "name": "name", "in": "formData", "type": "string", "description": "姓名" },
+          { "name": "nickname", "in": "formData", "type": "string", "description": "暱稱" },
+          { "name": "phone", "in": "formData", "type": "string", "description": "手機" },
+          { "name": "birthday", "in": "formData", "type": "string", "description": "生日" },
+          { "name": "sex", "in": "formData", "type": "string", "description": "性別" },
+          { "name": "address", "in": "formData", "type": "string", "description": "地址" },
+          { "name": "bank_name", "in": "formData", "type": "string", "description": "銀行名稱" },
+          { "name": "bank_account", "in": "formData", "type": "string", "description": "銀行帳號" },
+          { "name": "slogan", "in": "formData", "type": "string", "description": "標語" },
+          { "name": "description", "in": "formData", "type": "string", "description": "自我介紹" },
+          { "name": "specialization", "in": "formData", "type": "string", "description": "專長" },
+          { "name": "file", "in": "formData", "type": "file", "description": "頭像上傳（檔案）" }
         ],
         "responses": {
-          "200": {
-            "description": "成功更新老師資料"
-          },
-          "400": {
-            "description": "更新失敗，請稍後再試"
-          },
-          "404": {
-            "description": "查無資料，請重新登入"
-          }
+          "200": { "description": "成功更新老師資料" },
+          "400": { "description": "更新失敗，請稍後再試" },
+          "404": { "description": "查無資料，請重新登入" }
         }
       }
     },
@@ -240,9 +193,7 @@
         "summary": "取得精選教師資料",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
-          }
+          "default": { "description": "" }
         }
       }
     },
@@ -251,353 +202,65 @@
         "tags": ["Teacher"],
         "summary": "取得單一精選教師",
         "description": "",
-        "parameters": [
-          {
-            "name": "teacherId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "parameters": [{ "name": "teacherId", "in": "path", "required": true, "type": "string" }],
         "responses": {
-          "default": {
-            "description": ""
-          }
+          "default": { "description": "" }
         }
       }
     },
-    "/api/v1/courses/popular": {
+    "/api/v1/course/popular": {
       "get": {
         "tags": ["Courses"],
         "summary": "取得首頁熱門課程資料",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
-          }
+          "default": { "description": "" }
         }
       }
     },
-    "/api/v1/courses": {
+    "/api/v1/course/list": {
       "get": {
         "tags": ["Courses"],
-        "summary": "取得課程(測試用)",
+        "summary": "取得課程",
         "description": "取得所有課程",
         "responses": {
           "200": {
             "description": "取得課程列表成功",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "object"
-              }
+              "items": { "type": "object" }
             }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Courses"],
-        "summary": "新增課程(測試用)",
-        "description": "新增一筆課程資料",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "課程資料",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "teacher_id": {
-                  "type": "string",
-                  "example": "d02366a9-0c2d-480a-9685-bce659a2e079"
-                },
-                "category_id": {
-                  "type": "string",
-                  "example": "0e07a888-40a4-4338-9aed-4c38d6921ceb"
-                },
-                "course_name": {
-                  "type": "string",
-                  "example": "健康滿分！穀物燕麥餅乾入門與進階技巧"
-                },
-                "course_banner_imageUrl": {
-                  "type": "string",
-                  "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
-                },
-                "course_banner_description": {
-                  "type": "string",
-                  "example": "一次學會低糖、無添加的健康燕麥餅乾，從基礎營養配方到創意穀物變化，讓美味和健康兼得！"
-                },
-                "course_description": {
-                  "type": "string",
-                  "example": "本課程專為注重健康的你設計，完整教學燕麥餅乾、堅果能量棒、全麥果乾餅乾等多種穀物點心。包含食材選擇、減糖配比、烘烤溫控及口感優化技巧，讓你做出低負擔、營養豐富又美味的家庭手作餅乾。"
-                },
-                "course_description_image": {
-                  "type": "array",
-                  "example": []
-                },
-                "course_smallimage": {
-                  "type": "string",
-                  "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
-                },
-                "course_hours": {
-                  "type": "integer",
-                  "example": 8
-                },
-                "total_users": {
-                  "type": "integer",
-                  "example": 740
-                },
-                "trailer_vimeo_id": {
-                  "type": "string",
-                  "example": "butterSugar-00000002"
-                },
-                "trailer_name": {
-                  "type": "string",
-                  "example": "課程導覽"
-                },
-                "trailer_url": {
-                  "type": "string",
-                  "example": "https://vimeo.com/xyz9876abdc3.mp4"
-                },
-                "trailer_status": {
-                  "type": "string",
-                  "example": "ready"
-                },
-                "handout_name": {
-                  "type": "string",
-                  "example": "穀物燕麥餅乾講義"
-                },
-                "handout_url": {
-                  "type": "string",
-                  "example": "https://butterandsugar.com/handouts/handout2.pdf"
-                },
-                "suitable_for": {
-                  "type": "string",
-                  "example": "烘焙新手、健康飲食愛好者"
-                },
-                "course_goal": {
-                  "type": "string",
-                  "example": "學會健康燕麥餅乾的實用配方與多樣變化，輕鬆做出營養均衡的點心分享全家"
-                },
-                "origin_price": {
-                  "type": "integer",
-                  "example": 1000
-                },
-                "sell_price": {
-                  "type": "integer",
-                  "example": 850
-                },
-                "course_status": {
-                  "type": "string",
-                  "example": "上架"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "新增課程成功",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "message": {
-                  "type": "string",
-                  "example": "新增課程成功"
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "teacher_id": {
-                      "type": "string",
-                      "example": "d02366a9-0c2d-480a-9685-bce659a2e079"
-                    },
-                    "category_id": {
-                      "type": "string",
-                      "example": "0e07a888-40a4-4338-9aed-4c38d6921ceb"
-                    },
-                    "course_banner_imageUrl": {
-                      "type": "string",
-                      "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
-                    },
-                    "course_name": {
-                      "type": "string",
-                      "example": "健康滿分！穀物燕麥餅乾入門與進階技巧"
-                    },
-                    "course_banner_description": {
-                      "type": "string",
-                      "example": "一次學會低糖、無添加的健康燕麥餅乾，從基礎營養配方到創意穀物變化，讓美味和健康兼得！"
-                    },
-                    "course_description": {
-                      "type": "string",
-                      "example": "本課程專為注重健康的你設計，完整教學燕麥餅乾、堅果能量棒、全麥果乾餅乾等多種穀物點心。包含食材選擇、減糖配比、烘烤溫控及口感優化技巧，讓你做出低負擔、營養豐富又美味的家庭手作餅乾。"
-                    },
-                    "course_description_image": {
-                      "type": "array",
-                      "example": []
-                    },
-                    "course_hours": {
-                      "type": "integer",
-                      "example": 8
-                    },
-                    "course_smallimage": {
-                      "type": "string",
-                      "example": "https://cdn.butterandsugar.com/courses/img2.jpg"
-                    },
-                    "total_users": {
-                      "type": "integer",
-                      "example": 740
-                    },
-                    "trailer_vimeo_id": {
-                      "type": "string",
-                      "example": "butterSugar-00000002"
-                    },
-                    "trailer_name": {
-                      "type": "string",
-                      "example": "課程導覽"
-                    },
-                    "trailer_url": {
-                      "type": "string",
-                      "example": "https://vimeo.com/xyz9876abdc3.mp4"
-                    },
-                    "trailer_status": {
-                      "type": "string",
-                      "example": "ready"
-                    },
-                    "handout_name": {
-                      "type": "string",
-                      "example": "穀物燕麥餅乾講義"
-                    },
-                    "handout_url": {
-                      "type": "string",
-                      "example": "https://butterandsugar.com/handouts/handout2.pdf"
-                    },
-                    "suitable_for": {
-                      "type": "string",
-                      "example": "烘焙新手、健康飲食愛好者"
-                    },
-                    "course_goal": {
-                      "type": "string",
-                      "example": "學會健康燕麥餅乾的實用配方與多樣變化，輕鬆做出營養均衡的點心分享全家"
-                    },
-                    "origin_price": {
-                      "type": "integer",
-                      "example": 1000
-                    },
-                    "sell_price": {
-                      "type": "integer",
-                      "example": 850
-                    },
-                    "course_status": {
-                      "type": "string",
-                      "example": "上架"
-                    },
-                    "id": {
-                      "type": "string",
-                      "example": "88d36f8d-fcea-4723-ad3f-5f959cfacc1a"
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2025-06-04T12:00:17.404Z"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2025-06-04T12:00:17.404Z"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      },
-    "/api/v1/courses/course-category": {
-      "get": {
-        "tags": ["Courses"],
-        "summary": "取得課程分類列表(測試用)",
-        "description": "取得所有課程分類（如麵包、蛋糕、餅乾等）",
-          "responses": {
-            "200": {
-              "description": "成功取得分類清單",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "string", "example": "aabbccdd-1122-3344-5566-77889900" },
-                    "name": { "type": "string", "example": "麵包" }
-                  }
-                }
-              }
-            }
-          }
-      },
-      "post": {
-        "tags": ["Courses"],
-        "summary": "新增課程分類(測試用)",
-        "description": "新增一個課程分類（如麵包、蛋糕、餅乾等）",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "課程分類資料",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string", "example": "麵包" }
-              },
-              "required": ["name"]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "新增成功",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": { "type": "boolean", "example": true },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "新增類別成功"
-                    },
-                    "data": {
-                      "type": ["object", "null"],   
-                      "nullable": true,
-                      "example": null
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "新增類別失敗"
           }
         }
       }
     },
-    "/api/v1/courses/{courseId}/ratings": {
+    "/api/v1/course/category": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得課程分類列表",
+        "description": "取得所有課程分類（如麵包、蛋糕、餅乾等）",
+        "responses": {
+          "200": {
+            "description": "成功取得分類清單",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string", "example": "aabbccdd-1122-3344-5566-77889900" },
+                  "name": { "type": "string", "example": "麵包" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/ratings": {
       "post": {
         "tags": ["Courses"],
-        "summary": "新增評價（測試用）",
-        "description": "新增一筆評價到指定課程。測試用 API，塞資料。",
+        "summary": "新增評價",
+        "description": "新增一筆評價到指定課程。",
         "parameters": [
           {
             "name": "courseId",
@@ -614,11 +277,7 @@
               "type": "object",
               "required": ["rating_score", "review_text"],
               "properties": {
-                "rating_score": {
-                  "type": "integer",
-                  "example": 5,
-                  "description": "評分（1~5）"
-                },
+                "rating_score": { "type": "integer", "example": 5, "description": "評分（1~5）" },
                 "review_text": {
                   "type": "string",
                   "example": "手工餅乾很好吃，會持續練習！",
@@ -639,40 +298,584 @@
                 "data": {
                   "type": "object",
                   "properties": {
-                    "user_id": { "type": "string", "example": "ee0756a2-0add-4092-9b04-14a32183e8f6" },
-                    "course_id": { "type": "string", "example": "1c733528-e70f-42f6-948a-ea21abe9e36d" },
+                    "user_id": {
+                      "type": "string",
+                      "example": "ee0756a2-0add-4092-9b04-14a32183e8f6"
+                    },
+                    "course_id": {
+                      "type": "string",
+                      "example": "1c733528-e70f-42f6-948a-ea21abe9e36d"
+                    },
                     "rating_score": { "type": "integer", "example": 5 },
                     "review_text": { "type": "string", "example": "手工餅乾很好吃，會持續練習！" },
                     "id": { "type": "string", "example": "d1d98cd0-0917-46fd-88f1-a689b1543541" },
-                    "created_at": { "type": "string", "format": "date-time", "example": "2025-06-04T11:48:24.206Z" }
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-04T11:48:24.206Z"
+                    }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "新增失敗"
+          "400": { "description": "新增失敗" }
+        }
+      },
+      "patch": {
+        "tags": ["Courses"],
+        "summary": "更新課程評價",
+        "parameters": [
+          { "name": "courseId", "in": "path", "type": "string", "required": true },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rating_score": { "type": "integer", "example": 5 },
+                "review_text": { "type": "string", "example": "法式海綿蛋糕好吃，會持續練習！" }
+              },
+              "required": ["rating_score", "review_text"]
+            }
           }
+        ],
+        "responses": {
+          "200": { "description": "成功更新課程評價" }
         }
       }
     },
-    "/api/v1/courses/{courseId}": {
+    "/api/v1/course/{courseId}": {
       "get": {
         "tags": ["Courses"],
         "summary": "取得單一課程資料",
         "description": "",
+        "parameters": [{ "name": "courseId", "in": "path", "required": true, "type": "string" }],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+    "/api/v1/course/create/title": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程標題",
+        "description": "新增一門課程標題",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_name": { "type": "string", "example": "健康升級！全麥雜糧堅果麵包實作課" }
+              },
+              "required": ["course_name"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功建立課程標題" },
+          "400": { "description": "建立失敗" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/category": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程類別",
         "parameters": [
           {
             "name": "courseId",
             "in": "path",
+            "type": "string",
             "required": true,
-            "type": "string"
+            "description": "課程ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "category_id": { "type": "integer", "example": 2 }
+              },
+              "required": ["category_id"]
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": { "description": "成功新增課程類別" },
+          "400": { "description": "新增失敗" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/upload/course-banner-image": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增banner圖片",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          { "name": "banner", "in": "formData", "type": "file", "description": "banner圖片" }
+        ],
+        "responses": {
+          "200": { "description": "成功上傳banner圖片" }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "刪除banner圖片",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
           }
+        ],
+        "responses": {
+          "200": { "description": "成功刪除banner圖片" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/upload/small-image": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程封面小圖",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "name": "course-small-image",
+            "in": "formData",
+            "type": "file",
+            "description": "課程小圖"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功上傳課程封面小圖" }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "刪除課程封面小圖",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功刪除課程封面小圖" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/upload/course-handouts": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程講義",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "name": "handout",
+            "in": "formData",
+            "type": "file",
+            "description": "課程講義檔案，可多檔",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功上傳課程講義" }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "刪除課程講義",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功刪除課程講義" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/handouts": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得課程講義",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功取得課程講義" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/upload/course-trailer": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程預告片",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          { "name": "trailer", "in": "formData", "type": "file", "description": "課程預告片影片" }
+        ],
+        "responses": {
+          "200": { "description": "成功上傳預告片" }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "刪除課程預告片",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功刪除課程預告片" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/upload/description-image": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程描述圖片",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "name": "course-description-image",
+            "in": "formData",
+            "type": "file",
+            "description": "課程描述圖片"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功上傳課程描述圖片" }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "刪除課程描述圖片",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功刪除課程描述圖片" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/save": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "儲存課程內容資訊",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "suitable_for": { "type": "string" },
+                "course_goal": { "type": "string" },
+                "course_description": { "type": "string" },
+                "course_banner_description": { "type": "string" }
+              },
+              "required": [
+                "suitable_for",
+                "course_goal",
+                "course_description",
+                "course_banner_description"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功儲存課程內容資訊" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/price": {
+      "patch": {
+        "tags": ["Courses"],
+        "summary": "新增課程價格",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "origin_price": {
+                  "type": "integer",
+                  "example": 2400
+                },
+                "sell_price": {
+                  "type": "integer",
+                  "example": 2200
+                }
+              },
+              "required": ["origin_price", "sell_price"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功新增課程價格"
+          }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/status": {
+      "patch": {
+        "tags": ["Courses"],
+        "summary": "更改課程狀態",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "課程ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "course_status": { "type": "string", "example": "上架" }
+              },
+              "required": ["course_status"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功更改課程狀態" }
+        }
+      }
+    },
+    "/api/v1/course/ratings": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得所有課程評價",
+        "responses": {
+          "200": { "description": "成功取得所有課程評價" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/questions": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "提出課程問題",
+        "parameters": [
+          { "name": "courseId", "in": "path", "type": "string", "required": true },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "question_text": {
+                  "type": "string",
+                  "example": "使用的水果有哪些？可以替換成其他水果嗎？"
+                }
+              },
+              "required": ["question_text"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功提出課程問題" }
+        }
+      },
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得課程問題列表",
+        "parameters": [{ "name": "courseId", "in": "path", "type": "string", "required": true }],
+        "responses": {
+          "200": { "description": "成功取得課程問題列表" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/answers": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "提出課程回答",
+        "parameters": [
+          { "name": "courseId", "in": "path", "type": "string", "required": true },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "question_id": {
+                  "type": "string",
+                  "example": "008385b1-75af-41de-8017-dc0f233fb8bf"
+                },
+                "answer_text": { "type": "string", "example": "課程中示範使用的是..." }
+              },
+              "required": ["question_id", "answer_text"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功提出課程回答" }
+        }
+      }
+    },
+    "/api/v1/course/my-courses": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得我的課程列表",
+        "responses": {
+          "200": { "description": "成功取得我的課程列表" }
+        }
+      }
+    },
+    "/api/v1/course/{courseId}/course-section": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "新增課程章節",
+        "parameters": [
+          { "name": "courseId", "in": "path", "type": "string", "required": true },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "main_section_title": { "type": "string", "example": "準備工作" }
+              },
+              "required": ["main_section_title"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功新增課程章節" }
+        }
+      },
+      "get": {
+        "tags": ["Courses"],
+        "summary": "取得課程章節",
+        "parameters": [{ "name": "courseId", "in": "path", "type": "string", "required": true }],
+        "responses": {
+          "200": { "description": "成功取得課程章節" }
+        }
+      }
+    },
+    "/api/v1/course/course-section/{courseId}": {
+      "patch": {
+        "tags": ["Courses"],
+        "summary": "修改課程章節",
+        "parameters": [
+          { "name": "courseId", "in": "path", "type": "string", "required": true },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "main_section_title": { "type": "string", "example": "準備工作2" }
+              },
+              "required": ["main_section_title"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "成功修改課程章節" }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "刪除課程章節",
+        "parameters": [{ "name": "courseId", "in": "path", "type": "string", "required": true }],
+        "responses": {
+          "200": { "description": "成功刪除課程章節" }
         }
       }
     },
@@ -684,11 +887,7 @@
         "responses": {
           "200": {
             "description": "取得購物車成功",
-            "schema": {
-              "type": "object",
-              "properties": {
-              }
-            }
+            "schema": { "type": "object", "properties": {} }
           }
         }
       },
@@ -704,10 +903,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "course_id": {
-                  "type": "string",
-                  "example": "1c733528-e70f-42f6-948a-ea21abe9e36d"
-                }
+                "course_id": { "type": "string", "example": "1c733528-e70f-42f6-948a-ea21abe9e36d" }
               },
               "required": ["course_id"]
             }
@@ -719,25 +915,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "status": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "message": {
-                  "type": "string",
-                  "example": "成功加入課程到購物車"
-                },
+                "status": { "type": "boolean", "example": true },
+                "message": { "type": "string", "example": "成功加入課程到購物車" },
                 "data": {
                   "type": "object",
                   "properties": {
-                    "item_count": {
-                      "type": "integer",
-                      "example": 1
-                    },
-                    "total_price": {
-                      "type": "integer",
-                      "example": 1200
-                    }
+                    "item_count": { "type": "integer", "example": 1 },
+                    "total_price": { "type": "integer", "example": 1200 }
                   }
                 }
               }
@@ -761,10 +945,7 @@
               "properties": {
                 "course_ids": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
+                  "items": { "type": "string", "format": "uuid" },
                   "example": [
                     "16b4b875-e65f-46c5-b6db-bb5a0145c9e5",
                     "8ce78c0a-7c9c-4e47-a3b1-00a1ca832587"
@@ -781,29 +962,14 @@
             "schema": {
               "type": "object",
               "properties": {
-                "status": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "message": {
-                  "type": "string",
-                  "example": "成功加入課程到購物車"
-                },
+                "status": { "type": "boolean", "example": true },
+                "message": { "type": "string", "example": "成功加入課程到購物車" },
                 "data": {
                   "type": "object",
                   "properties": {
-                    "item_count": {
-                      "type": "integer",
-                      "example": 3
-                    },
-                    "total_price": {
-                      "type": "integer",
-                      "example": 3600
-                    },
-                    "errors": {
-                      "type": ["string", "null"],
-                      "example": null
-                    }
+                    "item_count": { "type": "integer", "example": 3 },
+                    "total_price": { "type": "integer", "example": 3600 },
+                    "errors": { "type": ["string", "null"], "example": null }
                   }
                 }
               }
@@ -824,23 +990,15 @@
             "schema": {
               "type": "object",
               "properties": {
-                "coupon_id": {
-                  "example": "d8fdfcbe-7e78-48e9-9797-6788775c679e"
-                },
-                "coupon": {
-                  "example": "buttersugar2025"
-                },
-                "discount_amount": {
-                  "example": "100"
-                }
+                "coupon_id": { "example": "d8fdfcbe-7e78-48e9-9797-6788775c679e" },
+                "coupon": { "example": "buttersugar2025" },
+                "discount_amount": { "example": "100" }
               }
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -866,41 +1024,17 @@
             "schema": {
               "type": "object",
               "properties": {
-                "status": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "message": {
-                  "type": "string",
-                  "example": "成功刪除課程"
-                },
+                "status": { "type": "boolean", "example": true },
+                "message": { "type": "string", "example": "成功刪除課程" },
                 "data": {
                   "type": "object",
                   "properties": {
-                    "item_count": {
-                      "type": "integer",
-                      "example": 2
-                    },
-                    "total_price": {
-                      "type": "integer",
-                      "example": 2400
-                    }
+                    "item_count": { "type": "integer", "example": 2 },
+                    "total_price": { "type": "integer", "example": 2400 }
                   }
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/v1/order/": {
-      "get": {
-        "tags": ["User"],
-        "summary": "取得所有訂單",
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
           }
         }
       }

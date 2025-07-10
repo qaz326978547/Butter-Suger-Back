@@ -205,7 +205,7 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
     throw appError(400, '缺少小節 ID 或影片')
   }
 
-  const subsectionRepo = dataSource.getRepository('course_subsections')
+  const subsectionRepo = dataSource.getRepository('course_subsection')
   const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
   if (!subsection) {
     throw appError(404, '小節不存在')
@@ -222,30 +222,29 @@ const uploadSubsectionVideo = async ({ subsectionId, file, folderName }) => {
 
   const videoUrl = await storage.upload(file, folderName)
 
-  subsection.video_url = videoUrl
+  subsection.video_file_url = videoUrl
   subsection.video_name = file.originalname || '未命名影片'
   subsection.video_size = formatFileSize(file.size || 0)
   subsection.video_type = file.mimetype || 'video/mp4'
-  subsection.video_status = 'ready'
+  subsection.video_status = 'available'
   await subsectionRepo.save(subsection)
 
   return videoUrl
 }
 
 const deleteSubsectionVideo = async ({ subsectionId }) => {
-  const subsectionRepo = dataSource.getRepository('course_subsections')
+  const subsectionRepo = dataSource.getRepository('course_subsection')
   const subsection = await subsectionRepo.findOne({ where: { id: subsectionId } })
   if (!subsection) {
     throw appError(404, '小節不存在')
   }
-
-  if (!subsection.video_url) {
+  if (!subsection.video_file_url) {
     throw appError(400, '小節尚未上傳影片')
   }
 
-  await storage.delete(subsection.video_url)
+  await storage.delete(subsection.video_file_url)
 
-  subsection.video_url = null
+  subsection.video_file_url = null
   subsection.video_name = null
   subsection.video_size = null
   subsection.video_type = null
@@ -253,6 +252,21 @@ const deleteSubsectionVideo = async ({ subsectionId }) => {
   await subsectionRepo.save(subsection)
 
   return true
+}
+
+async function saveVideoInfoToDB({ subsectionId, videoUrl, videoName, videoSize, videoType }) {
+  const repo = dataSource.getRepository('course_subsection')
+  const subsection = await repo.findOne({ where: { id: subsectionId } })
+  if (!subsection) throw new Error('小節不存在')
+
+  subsection.video_file_url = videoUrl // ✅ 修正這裡
+  subsection.video_name = videoName
+  subsection.video_size = formatFileSize(videoSize || 0)
+  subsection.video_type = videoType
+  subsection.status = 'available'
+  await repo.save(subsection)
+
+  return { status: 'updated', subsectionId }
 }
 
 module.exports = {
@@ -263,4 +277,5 @@ module.exports = {
   deleteSubsectionVideo,
   deleteCourseMedia,
   deleteVideo,
+  saveVideoInfoToDB,
 }
