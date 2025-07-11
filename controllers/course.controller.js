@@ -247,6 +247,7 @@ const courseController = {
    * @route DELETE /api/v1/course/:courseId/small-image
    */
   deleteCourseSmallImage: wrapAsync(async (req, res, next) => {
+    let logEntry = req.logEntry
     logEntry = {
       ...logEntry,
       action: "刪除課程小圖",
