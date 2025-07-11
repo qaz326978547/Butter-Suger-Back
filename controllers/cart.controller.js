@@ -308,6 +308,7 @@ const cartController = {
     deleteCartItems: wrapAsync(async (req, res, next) => {
         const user_id = req.user.id;
         const { cartItemId } = req.params
+        let logEntry = req.logEntry
         logEntry = {
             ...logEntry,
             action: "刪除購物車資料",
