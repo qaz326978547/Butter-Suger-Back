@@ -71,7 +71,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/section",
+									"raw": "http://buttersugar.zeabur.app/api/v1/course/95b85720-a232-46d1-9c87-313ccb6e048c/section",
 									"protocol": "http",
 									"host": [
 										"buttersugar",
@@ -82,7 +82,7 @@
 										"api",
 										"v1",
 										"course",
-										"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
+										"95b85720-a232-46d1-9c87-313ccb6e048c",
 										"section"
 									]
 								}
@@ -230,7 +230,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://buttersugar.zeabur.app/api/v1/course/section/dfcd9926-cb75-4f6d-bb9c-00e03caa1e1a/subsection",
+									"raw": "http://buttersugar.zeabur.app/api/v1/course/section/2e524106-2848-43f2-a0a9-9e2e9e1d7c70/subsection",
 									"protocol": "http",
 									"host": [
 										"buttersugar",
@@ -242,7 +242,7 @@
 										"v1",
 										"course",
 										"section",
-										"dfcd9926-cb75-4f6d-bb9c-00e03caa1e1a",
+										"2e524106-2848-43f2-a0a9-9e2e9e1d7c70",
 										"subsection"
 									]
 								}
@@ -694,7 +694,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/list",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/list?pageNum=1",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -706,6 +706,12 @@
 								"v1",
 								"course",
 								"list"
+							],
+							"query": [
+								{
+									"key": "pageNum",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1117,7 +1123,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://buttersugar.zeabur.app/api/v1/course/0698df09-5db5-4c09-86c5-f6f0a5dc87ce",
+							"raw": "https://buttersugar.zeabur.app/api/v1/course/95b85720-a232-46d1-9c87-313ccb6e048c",
 							"protocol": "https",
 							"host": [
 								"buttersugar",
@@ -1128,7 +1134,7 @@
 								"api",
 								"v1",
 								"course",
-								"0698df09-5db5-4c09-86c5-f6f0a5dc87ce"
+								"95b85720-a232-46d1-9c87-313ccb6e048c"
 							]
 						}
 					},
@@ -1198,14 +1204,14 @@
 							}
 						},
 						"url": {
-							"raw": "https:///buttersugar.zeabur.app/api/v1/course/e3984feb-9dd4-46e6-bdca-78b08da1ebc4/status",
+							"raw": "https:///buttersugar.zeabur.app/api/v1/course/f7309d8c-c5a1-41a4-8287-f34b69f8f78b/status",
 							"protocol": "https",
 							"path": [
 								"buttersugar.zeabur.app",
 								"api",
 								"v1",
 								"course",
-								"e3984feb-9dd4-46e6-bdca-78b08da1ebc4",
+								"f7309d8c-c5a1-41a4-8287-f34b69f8f78b",
 								"status"
 							]
 						}
@@ -2436,7 +2442,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://buttersugar.zeabur.app/api/v1/admin/system-log?pageNum=1&keyword=200",
+							"raw": "http://buttersugar.zeabur.app/api/v1/admin/system-log?pageNum=1",
 							"protocol": "http",
 							"host": [
 								"buttersugar",
@@ -2453,10 +2459,6 @@
 								{
 									"key": "pageNum",
 									"value": "1"
-								},
-								{
-									"key": "keyword",
-									"value": "200"
 								}
 							]
 						}
@@ -2464,6 +2466,14 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
